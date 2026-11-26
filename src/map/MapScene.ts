@@ -3,11 +3,15 @@
 import * as Phaser from "phaser";
 import {
   BUILDINGS, SIM, buildGraph, canPlace, costsFrom, key, pathBetween,
-  type Building, type GameState, type Tile,
+  type Building, type GameState,
 } from "../sim/index.ts";
 import { game } from "../game/store.ts";
 import { i18n } from "../i18n/index.ts";
-import { PALETTE, ROLE_COLORS } from "./palette.ts";
+import { allSprites, K, svgDataUrl } from "../art/sprites.ts";
+import { PALETTE } from "./palette.ts";
+
+const SPRITES = allSprites();
+const SPRITE = new Map(SPRITES.map((d) => [d.key, d]));
 
 const SIZE = 30;
 const SQUASH = 0.62; // isometric squash of the hex grid
@@ -59,8 +63,24 @@ export class MapScene extends Phaser.Scene {
   private keys!: Record<string, Phaser.Input.Keyboard.Key>;
   private catchment: Float64Array | null = null;
   private catchmentFor = "";
+  private tileImgs: Phaser.GameObjects.Image[] = [];
+  private tilesFor = "";
+  private thingImgs: Phaser.GameObjects.GameObject[] = [];
+  private workers: { img: Phaser.GameObjects.Image; role: number; b: string }[] = [];
+  private moverImgs: Phaser.GameObjects.Image[] = [];
+  private animClock = 0;
 
   constructor() { super("map"); }
+
+  preload() {
+    for (const d of SPRITES) this.load.image(d.key, svgDataUrl(d.svg));
+  }
+
+  /** Place a sprite with its anchor on a world point, at 1/K scale (sprites are drawn 2×). */
+  private sprite(key: string, x: number, y: number, depth: number): Phaser.GameObjects.Image {
+    const d = SPRITE.get(key)!;
+    return this.add.image(x, y, key).setOrigin(d.ox, d.oy).setScale(1 / K).setDepth(depth);
+  }
 
   create() {
     this.cameras.main.setBackgroundColor(PALETTE.paperDark);
@@ -69,6 +89,11 @@ export class MapScene extends Phaser.Scene {
     this.things = this.add.graphics();
     this.live = this.add.graphics();
     this.cursor = this.add.graphics();
+    this.ground.setDepth(5000);
+    this.overlay.setDepth(6000);
+    this.things.setDepth(9000);
+    this.live.setDepth(25000);
+    this.cursor.setDepth(30000);
     this.input.on("pointerdown", (p: Phaser.Input.Pointer) => {
       this.dragging = false;
       this.dragStart = { x: p.x, y: p.y, sx: this.cameras.main.scrollX, sy: this.cameras.main.scrollY };
@@ -169,62 +194,26 @@ export class MapScene extends Phaser.Scene {
 
   // ---------------------------------------------------------------- static layers
   private drawStatic(s: GameState) {
-    const g = this.ground;
-    g.clear();
-    // Draw back-to-front so raised hexes overlap correctly.
-    const tiles = [...s.tiles].sort((a, b) => a.r - b.r || a.q - b.q);
-    for (const t of tiles) {
-      const c = hexCenter(t.q, t.r);
-      const lift = LIFT[t.terrain];
-      const top = PALETTE.terrain[t.terrain];
-      if (lift > 0) {
-        g.fillStyle(PALETTE.shade(top, 0.62), 1);
-        const base = hexPoints(c.x, c.y, SIZE, 0);
-        const raised = hexPoints(c.x, c.y, SIZE, lift);
-        // Side walls (the three lower edges).
-        for (const [i, j] of [[0, 1], [1, 2], [2, 3]]) g.fillPoints([raised[i], raised[j], base[j], base[i]], true);
-      }
-      g.fillStyle(top, 1);
-      g.fillPoints(hexPoints(c.x, c.y, SIZE - 0.5, lift), true);
-      g.lineStyle(1, PALETTE.ink, t.terrain === "sea" ? 0.08 : 0.22);
-      g.strokePoints(hexPoints(c.x, c.y, SIZE - 0.5, lift), true);
-      this.terrainMarks(g, t, c.x, c.y - lift);
+    // Textured terrain tiles are created once per map; roads, rivers and things redraw on change.
+    const tilesKey = `${s.scenario}|${s.seed}`;
+    if (tilesKey !== this.tilesFor) {
+      for (const im of this.tileImgs) im.destroy();
+      this.tileImgs = s.tiles.map((t) => {
+        const c = hexCenter(t.q, t.r);
+        const v = Math.abs((t.q * 7 + t.r * 13) % 3);
+        return this.sprite(`t-${t.terrain}-${v}`, c.x, c.y - LIFT[t.terrain], c.y);
+      });
+      this.tilesFor = tilesKey;
+    }
+    this.ground.clear();
+    for (const t of s.tiles) if (t.deposit) {
+      const c = this.surface(s, t.q, t.r);
+      this.ground.fillStyle(PALETTE.ore, 1).fillCircle(c.x + 10, c.y + 5, 2.6).lineStyle(1, PALETTE.ink, 0.7).strokeCircle(c.x + 10, c.y + 5, 2.6);
     }
     this.drawRivers(s);
     this.drawInfra(s);
     this.drawOverlay(s);
     this.drawThings(s);
-  }
-
-  private terrainMarks(g: Phaser.GameObjects.Graphics, t: Tile, x: number, y: number) {
-    g.lineStyle(1.2, PALETTE.ink, 0.35);
-    if (t.terrain === "forest") {
-      for (const [dx, dy] of [[-8, 2], [0, -3], [8, 2]]) {
-        g.fillStyle(PALETTE.forestDark, 0.9);
-        g.fillTriangle(x + dx, y + dy - 9, x + dx - 5, y + dy + 2, x + dx + 5, y + dy + 2);
-      }
-    } else if (t.terrain === "hills") {
-      g.beginPath(); g.arc(x - 5, y + 4, 7, Math.PI, 0); g.strokePath();
-      g.beginPath(); g.arc(x + 7, y + 6, 5, Math.PI, 0); g.strokePath();
-    } else if (t.terrain === "mountains") {
-      g.fillStyle(PALETTE.snow, 0.9);
-      g.fillTriangle(x, y - 12, x - 10, y + 6, x + 10, y + 6);
-      g.lineStyle(1.2, PALETTE.ink, 0.5);
-      g.strokeTriangle(x, y - 12, x - 10, y + 6, x + 10, y + 6);
-    } else if (t.terrain === "fertile") {
-      g.lineStyle(1, PALETTE.ink, 0.18);
-      for (let i = -1; i <= 1; i++) g.lineBetween(x - 10, y + i * 5, x + 10, y + i * 5 - 2);
-    } else if (t.terrain === "sea") {
-      g.lineStyle(1, PALETTE.paper, 0.18);
-      g.beginPath(); g.arc(x - 4, y, 4, Math.PI * 1.1, Math.PI * 1.9); g.strokePath();
-      g.beginPath(); g.arc(x + 5, y + 3, 4, Math.PI * 1.1, Math.PI * 1.9); g.strokePath();
-    }
-    if (t.deposit) {
-      g.fillStyle(PALETTE.ore, 1);
-      g.fillCircle(x + 10, y + 5, 3);
-      g.lineStyle(1, PALETTE.ink, 0.6);
-      g.strokeCircle(x + 10, y + 5, 3);
-    }
   }
 
   private surface(s: GameState, q: number, r: number) {
@@ -320,143 +309,66 @@ export class MapScene extends Phaser.Scene {
     const g = this.things;
     g.clear();
     for (const l of this.labels) l.destroy();
+    for (const o of this.thingImgs) o.destroy();
+    for (const w of this.workers) w.img.destroy();
     this.labels = [];
+    this.thingImgs = [];
+    this.workers = [];
     const ov = game.ui.overlay;
     const avgWage = s.labor.avgWage || 1;
-    const items = [
-      ...s.towns.map((t) => ({ kind: "town" as const, t, r: t.r, q: t.q })),
-      ...s.buildings.map((b) => ({ kind: "building" as const, b, r: b.r, q: b.q })),
-    ].sort((a, b) => a.r - b.r || a.q - b.q);
-    for (const it of items) {
-      const c = this.surface(s, it.q, it.r);
-      if (it.kind === "town") {
-        const t = it.t;
-        const rad = 8 + Math.sqrt(t.pop) * 0.9;
-        // Houses clustered around a market cross.
-        const n = Math.min(9, 3 + Math.floor(t.pop / 20));
-        for (let i = 0; i < n; i++) {
-          const a = (i / n) * Math.PI * 2, d = rad * 0.55;
-          const x = c.x + Math.cos(a) * d, y = c.y + Math.sin(a) * d * SQUASH;
-          g.fillStyle(PALETTE.roof, 1);
-          g.fillTriangle(x - 5, y - 2, x + 5, y - 2, x, y - 8);
-          g.fillStyle(PALETTE.wall, 1);
-          g.fillRect(x - 4, y - 2, 8, 6);
-          g.lineStyle(1, PALETTE.ink, 0.7);
-          g.strokeRect(x - 4, y - 2, 8, 6);
-        }
-        g.fillStyle(PALETTE.gold, 1);
-        g.fillCircle(c.x, c.y - 2, 4);
-        g.lineStyle(1.5, PALETTE.ink, 0.9);
-        g.strokeCircle(c.x, c.y - 2, 4);
-        const label = this.add.text(c.x, c.y + rad * 0.7 + 4, `${i18n.t(`town.${t.name}`, { defaultValue: t.name })}`, {
-          fontFamily: "'EB Garamond', 'Amiri', Georgia, serif", fontSize: "13px", color: "#2a2018",
-          backgroundColor: "rgba(244,236,214,0.78)", padding: { x: 4, y: 1 },
-        }).setOrigin(0.5, 0).setResolution(2);
-        this.labels.push(label);
-        continue;
-      }
-      const b = it.b;
+    for (const t of s.towns) {
+      const c = this.surface(s, t.q, t.r);
+      const size = Math.max(1, Math.min(5, Math.round(Math.sqrt(t.pop) / 2.4)));
+      this.thingImgs.push(this.sprite(`town-${size}`, c.x, c.y + 4, 10000 + c.y));
+      const label = this.add.text(c.x, c.y + 10, `${i18n.t(`town.${t.name}`, { defaultValue: t.name })}`, {
+        fontFamily: "'EB Garamond', 'Amiri', Georgia, serif", fontSize: "13px", color: "#2a2018",
+        backgroundColor: "rgba(244,236,214,0.82)", padding: { x: 4, y: 1 },
+      }).setOrigin(0.5, 0).setResolution(2).setDepth(20000 + c.y);
+      this.labels.push(label);
+    }
+    for (const b of s.buildings) {
       const def = BUILDINGS[b.type];
-      // Plinth.
-      g.fillStyle(PALETTE.paper, 0.95);
-      g.fillEllipse(c.x, c.y + 4, 30, 14);
-      g.lineStyle(1, PALETTE.ink, 0.55);
-      g.strokeEllipse(c.x, c.y + 4, 30, 14);
-      // Overlay tints: price vs natural, or wage vs average (icons as well as colour).
+      const c = this.surface(s, b.q, b.r);
+      // Overlay tints sit under the illustration (with icons, never colour alone).
       if (ov === "prices" && def.good) {
         const gs = s.goods[def.good];
         const ratio = gs.price / gs.natural;
         const col = ratio > 1.15 ? PALETTE.bad : ratio < 0.87 ? PALETTE.cool : PALETTE.good;
-        g.fillStyle(col, 0.5);
-        g.fillEllipse(c.x, c.y + 4, 34, 17);
-        this.badge(c.x + 14, c.y - 16, ratio > 1.15 ? "▲" : ratio < 0.87 ? "▼" : "=", col);
+        g.fillStyle(col, 0.55).fillEllipse(c.x, c.y + 4, 40, 18);
+        this.badge(c.x + 14, c.y - 22, ratio > 1.15 ? "▲" : ratio < 0.87 ? "▼" : "=", col);
       }
       if (ov === "wages" && def.good) {
         const ratio = b.wage / avgWage;
-        const col = ratio > 1.1 ? PALETTE.good : ratio < 0.9 ? PALETTE.bad : PALETTE.warn;
-        g.fillStyle(col, 0.5);
-        g.fillEllipse(c.x, c.y + 4, 34, 17);
+        g.fillStyle(ratio > 1.1 ? PALETTE.good : ratio < 0.9 ? PALETTE.bad : PALETTE.warn, 0.55).fillEllipse(c.x, c.y + 4, 40, 18);
       }
-      this.icon(g, b, c.x, c.y);
-      if (def.good) {
-        // Specialists: one dot per worker, coloured by role; more roles at higher levels (§4.2).
-        const n = Math.min(20, Math.round(b.workers));
-        for (let i = 0; i < n; i++) {
-          const role = i % b.level;
-          const row = Math.floor(i / 10), col = i % 10;
-          g.fillStyle(ROLE_COLORS[role], 1);
-          g.fillCircle(c.x - 13 + col * 2.9, c.y + 14 + row * 3.5, 1.3);
-        }
-        // Level pips.
-        for (let i = 0; i < 5; i++) {
-          g.fillStyle(i < b.level ? PALETTE.gold : PALETTE.paperDark, 1);
-          g.fillRect(c.x - 9 + i * 4, c.y - 22, 3, 3);
-          g.lineStyle(0.6, PALETTE.ink, 0.7);
-          g.strokeRect(c.x - 9 + i * 4, c.y - 22, 3, 3);
-        }
-        if (b.inputFill < 0.7) this.badge(c.x - 15, c.y - 16, "!", PALETTE.bad);       // bottleneck
-        else if (b.sold < 0.6 && b.output > 0) this.badge(c.x - 15, c.y - 16, "✕", PALETTE.muted); // no buyers
-        else if (b.level < b.maxLevel) this.badge(c.x + 15, c.y - 20, "↑", PALETTE.good);
-        if (b.private) { g.fillStyle(PALETTE.ink, 0.6); g.fillCircle(c.x + 13, c.y + 9, 1.6); }
+      this.thingImgs.push(this.sprite(`b-${b.type}`, c.x, c.y + 5, 10000 + c.y));
+      if (!def.good) continue;
+      // Workers at their crafts: one figure per two hands, in the colours of their roles (§4.2).
+      const n = Math.min(8, Math.round(b.workers / 2));
+      for (let i = 0; i < n; i++) {
+        const role = i % b.level;
+        const a = Math.PI * (0.15 + (i / Math.max(1, n)) * 0.7);
+        const x = c.x + Math.cos(a) * 17 - 1, y = c.y + 9 + Math.sin(a) * 4;
+        this.workers.push({ img: this.sprite(`w-${role}-0`, x, y, 10001 + y), role, b: b.id });
       }
+      // Specialisation pips (gold leaf).
+      for (let i = 0; i < 5; i++) {
+        g.fillStyle(i < b.level ? PALETTE.gold : PALETTE.paperDark, 1).fillRect(c.x - 9 + i * 4, c.y - 27, 3, 3);
+        g.lineStyle(0.6, PALETTE.ink, 0.7).strokeRect(c.x - 9 + i * 4, c.y - 27, 3, 3);
+      }
+      if (b.inputFill < 0.7) this.badge(c.x - 15, c.y - 22, "!", PALETTE.bad);
+      else if (b.sold < 0.6 && b.output > 0) this.badge(c.x - 15, c.y - 22, "✕", PALETTE.muted);
+      else if (b.level < b.maxLevel) this.badge(c.x + 15, c.y - 26, "↑", PALETTE.good);
     }
+    this.things.setDepth(9000);
   }
 
   private badge(x: number, y: number, glyph: string, color: number) {
     const t = this.add.text(x, y, glyph, {
       fontFamily: "system-ui, sans-serif", fontSize: "11px", color: "#fff",
       backgroundColor: `#${color.toString(16).padStart(6, "0")}`, padding: { x: 3, y: 0 },
-    }).setOrigin(0.5).setResolution(2);
+    }).setOrigin(0.5).setResolution(2).setDepth(21000 + y);
     this.labels.push(t);
-  }
-
-  /** Small vector icons per building type: ink line art on the plinth. */
-  private icon(g: Phaser.GameObjects.Graphics, b: Building, x: number, y: number) {
-    const ink = PALETTE.ink;
-    g.lineStyle(1.4, ink, 0.9);
-    switch (b.type) {
-      case "farm":
-        g.fillStyle(PALETTE.wheat, 1);
-        for (let i = -2; i <= 2; i++) { g.fillRect(x + i * 4 - 1, y - 9, 2, 10); g.fillEllipse(x + i * 4, y - 10, 3, 5); }
-        break;
-      case "pasture":
-        g.fillStyle(0xffffff, 1); g.fillEllipse(x - 3, y - 4, 12, 8); g.strokeEllipse(x - 3, y - 4, 12, 8);
-        g.fillStyle(ink, 1); g.fillCircle(x + 4, y - 6, 2.5);
-        break;
-      case "lumber":
-        g.fillStyle(PALETTE.wood, 1); g.fillRect(x - 9, y - 6, 18, 4); g.fillRect(x - 7, y - 11, 14, 4);
-        g.strokeRect(x - 9, y - 6, 18, 4); g.strokeRect(x - 7, y - 11, 14, 4);
-        break;
-      case "mine":
-        g.fillStyle(PALETTE.ink, 1); g.fillTriangle(x - 8, y, x + 8, y, x, y - 12);
-        g.fillStyle(PALETTE.ore, 1); g.fillCircle(x, y - 4, 2.5);
-        break;
-      case "port":
-        g.lineStyle(2, ink, 1); g.lineBetween(x, y - 14, x, y + 2);
-        g.beginPath(); g.arc(x, y - 3, 7, 0.2, Math.PI - 0.2); g.strokePath(); g.lineBetween(x - 5, y - 11, x + 5, y - 11);
-        break;
-      case "courthouse":
-        g.fillStyle(PALETTE.wall, 1); g.fillRect(x - 9, y - 9, 18, 9); g.strokeRect(x - 9, y - 9, 18, 9);
-        g.fillStyle(PALETTE.roof, 1); g.fillTriangle(x - 11, y - 9, x + 11, y - 9, x, y - 16);
-        for (let i = -1; i <= 1; i++) g.lineBetween(x + i * 5, y - 8, x + i * 5, y);
-        break;
-      case "school":
-        g.fillStyle(PALETTE.paper, 1); g.fillRect(x - 8, y - 11, 16, 10); g.strokeRect(x - 8, y - 11, 16, 10);
-        g.lineBetween(x, y - 11, x, y - 1);
-        break;
-      case "granary":
-        g.fillStyle(PALETTE.wheat, 1); g.fillEllipse(x, y - 6, 14, 14); g.strokeEllipse(x, y - 6, 14, 14);
-        break;
-      default: {
-        // Workshops: a roofed shop with a chimney; the craft's colour on the door.
-        const door: Record<string, number> = { bakery: 0xc58a3c, weaver: 0x8a5aa8, smithy: 0x555555, builder: 0xa0522d, pinworks: 0xb8b8c8 };
-        g.fillStyle(PALETTE.wall, 1); g.fillRect(x - 9, y - 9, 18, 10); g.strokeRect(x - 9, y - 9, 18, 10);
-        g.fillStyle(PALETTE.roof, 1); g.fillTriangle(x - 11, y - 9, x + 11, y - 9, x, y - 17); g.strokeTriangle(x - 11, y - 9, x + 11, y - 9, x, y - 17);
-        g.fillStyle(PALETTE.ink, 1); g.fillRect(x + 5, y - 19, 3, 6);
-        g.fillStyle(door[b.type] ?? ink, 1); g.fillRect(x - 3, y - 5, 6, 6);
-        if (b.type === "pinworks") { g.lineStyle(1, ink, 1); g.lineBetween(x - 7, y - 3, x - 7, y + 1); g.fillCircle(x - 7, y - 3, 1); }
-      }
-    }
   }
 
   // ---------------------------------------------------------------- moving goods
@@ -494,25 +406,33 @@ export class MapScene extends Phaser.Scene {
   private drawLive(s: GameState, delta: number) {
     const g = this.live;
     g.clear();
-    for (const m of this.movers) {
+    // Carts, camel caravans (the Caravan era) and dhows, drawn from the illustrated set.
+    while (this.moverImgs.length < this.movers.length) this.moverImgs.push(this.add.image(0, 0, "v-cart").setScale(1 / K).setOrigin(0.5, 0.9));
+    this.moverImgs.forEach((im, i) => im.setVisible(i < this.movers.length));
+    const land = s.scenario === "needle" ? "v-camel" : "v-cart";
+    this.movers.forEach((m, idx) => {
       m.t = (m.t + m.speed * delta) % 1;
       const n = m.path.length - 1;
       const f = m.t * n;
       const i = Math.min(n - 1, Math.floor(f));
       const a = m.path[i], b = m.path[i + 1];
       const x = a.x + (b.x - a.x) * (f - i), y = a.y + (b.y - a.y) * (f - i);
-      if (m.ship) {
-        const fade = 1 - m.t;
-        g.fillStyle(PALETTE.paper, fade);
-        g.fillTriangle(x - 5, y, x + 5, y, x, y - 8);
-        g.lineStyle(1, PALETTE.ink, fade);
-        g.strokeTriangle(x - 5, y, x + 5, y, x, y - 8);
-      } else {
-        g.fillStyle(m.color, 1);
-        g.fillCircle(x, y - 3, m.size);
-        g.lineStyle(0.8, PALETTE.ink, 0.8);
-        g.strokeCircle(x, y - 3, m.size);
+      const im = this.moverImgs[idx];
+      const tex = m.ship ? "v-ship" : land;
+      if (im.texture.key !== tex) im.setTexture(tex);
+      im.setPosition(x, y).setDepth(10002 + y).setFlipX(b.x < a.x).setAlpha(m.ship ? 1 - m.t * 0.8 : 1);
+      if (!m.ship) {
+        // A bale of the cargo's colour rides on top.
+        g.fillStyle(m.color, 1).fillRect(x - 2.5, y - 9, 5, 3);
       }
+    });
+    // Workers at work: two-frame animation; idle shops stand still.
+    this.animClock += delta;
+    const frame = Math.floor(this.animClock / 380) % 2;
+    for (const w of this.workers) {
+      const bld = s.buildings.find((x) => x.id === w.b);
+      const busy = bld && bld.output > 0 && bld.inputFill > 0.3;
+      w.img.setTexture(`w-${w.role}-${busy ? frame : 0}`);
     }
     // Smoke from busy, specialised workshops.
     if (Math.random() < delta / 120) {
