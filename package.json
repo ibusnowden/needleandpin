@@ -1,0 +1,45 @@
+{
+  "name": "needle-and-pin",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "The Needle & The Pin: a strategy game on Smith's Wealth of Nations and al-Ghazali's economic thought.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "data:fetch": "python3 -I scripts/data/fetch.py",
+    "data:build": "python3 -I scripts/data/build.py && python3 -I scripts/data/check.py",
+    "quotes:verify": "python3 -I scripts/content/verify_quotes.py && python3 -I scripts/content/verify_ghazali.py",
+    "balance": "node scripts/balance.ts",
+    "test:ui": "playwright test",
+    "deploy": "node scripts/deploy.mjs"
+  },
+  "dependencies": {
+    "d3-scale": "^4.0.3",
+    "d3-shape": "^3.2.1",
+    "i18next": "^27.2.9",
+    "i18next-icu": "^2.7.1",
+    "intl-messageformat": "^12.2.1",
+    "phaser": "^4.2.1",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-i18next": "^18.0.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-shape": "^3.2.0",
+    "@types/node": "^26.6.11",
+    "@types/react": "^19.3.3",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.3.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.2",
+    "xlsx": "^0.18.5"
+  }
+}

@@ -1,0 +1,741 @@
+{
+  "app": {
+    "title": "The Needle & The Pin",
+    "tagline": "Grow a trading city into a wealthy nation — and win only if that wealth also feeds, educates and protects its people.",
+    "credit": "After Adam Smith's Wealth of Nations (1776) and al-Ghazali's Ihya' 'Ulum al-Din (c. 1100)."
+  },
+  "menu": {
+    "newGame": "New game",
+    "continue": "Continue",
+    "save": "Save",
+    "load": "Load saved game",
+    "export": "Export save file",
+    "import": "Import save file",
+    "language": "Language",
+    "textSize": "Text size",
+    "help": "How to play",
+    "codex": "Codex of Ideas",
+    "resume": "Resume",
+    "menu": "Menu",
+    "quit": "Back to title",
+    "seed": "Seed",
+    "credits": "Sources & credits"
+  },
+  "scenario": {
+    "needle": {
+      "name": "The Needle (tutorial)",
+      "desc": "A single market town. Learn the four root crafts, the division of labour and the extent of the market. About 15 minutes.",
+      "era": "Year {year}"
+    },
+    "britain1776": {
+      "name": "Britain, 1776",
+      "desc": "The flagship scenario. Mercantilist laws, the American war, early industry. Race the real history of British GDP and wages to 1850.",
+      "era": "{year}"
+    }
+  },
+  "top": {
+    "year": "Year",
+    "treasury": "Treasury",
+    "revenue": "Revenue",
+    "debt": "Debt",
+    "trust": "Money Trust",
+    "opulence": "Opulence",
+    "maslaha": "Maslaha",
+    "target": "target {v}",
+    "goodSociety": "Good Society",
+    "turnsCover": "Treasury covers {n, plural, one {# turn} other {# turns}} of spending",
+    "chapter": "Chapter {n} of {total}",
+    "busy": "The year passes…"
+  },
+  "tool": {
+    "inspect": "Inspect",
+    "road": "Road",
+    "canal": "Canal",
+    "rail": "Railway",
+    "demolish": "Demolish",
+    "foundTown": "Found a town",
+    "cost": "Cost {c}",
+    "groups": {
+      "raw": "Land",
+      "craft": "Workshops",
+      "civic": "Civic",
+      "works": "Public works"
+    }
+  },
+  "building": {
+    "farm": {
+      "name": "Farm",
+      "desc": "Grows grain on plains or fertile land (fertile +40%). Farming is a root craft."
+    },
+    "pasture": {
+      "name": "Pasture",
+      "desc": "Raises sheep for wool on plains or hills."
+    },
+    "lumber": {
+      "name": "Lumber camp",
+      "desc": "Cuts timber in forests: fuel for households and material for builders."
+    },
+    "mine": {
+      "name": "Iron mine",
+      "desc": "Digs ore from hills or mountains with an ore deposit (grey dot)."
+    },
+    "bakery": {
+      "name": "Bakery",
+      "desc": "Turns grain into bread, the first necessity."
+    },
+    "weaver": {
+      "name": "Weaver",
+      "desc": "Turns wool into cloth. Weaving is a root craft."
+    },
+    "smithy": {
+      "name": "Smithy",
+      "desc": "Turns ore into tools. Tools are what savings buy: they become capital."
+    },
+    "builder": {
+      "name": "Builder's yard",
+      "desc": "Turns timber into housing. Building is a root craft."
+    },
+    "pinworks": {
+      "name": "Pin workshop",
+      "desc": "Smith's pin factory. Little ore, many pins — if the market is wide enough."
+    },
+    "port": {
+      "name": "Port",
+      "desc": "On a coast. Ships reach foreign markets and import what you lack; sea lanes link your ports."
+    },
+    "courthouse": {
+      "name": "Courthouse",
+      "desc": "Justice within 4 hexes: secure property, less fraud. Governance is a root craft."
+    },
+    "school": {
+      "name": "School",
+      "desc": "Literacy within 3 hexes."
+    },
+    "granary": {
+      "name": "Public granary",
+      "desc": "Stores grain when it is cheap (funded by the relief budget) and releases it in dearth."
+    }
+  },
+  "good": {
+    "grain": "Grain",
+    "wool": "Wool",
+    "timber": "Timber",
+    "ore": "Iron ore",
+    "bread": "Bread",
+    "cloth": "Cloth",
+    "tools": "Tools",
+    "housing": "Housing",
+    "pins": "Pins & needles",
+    "spices": "Spices"
+  },
+  "tier": {
+    "raw": "Raw",
+    "staple": "Staple",
+    "refined": "Refined",
+    "luxury": "Luxury",
+    "necessity": "Necessity",
+    "comfort": "Comfort"
+  },
+  "terrain": {
+    "sea": "Sea",
+    "plains": "Plains",
+    "fertile": "Fertile plains",
+    "forest": "Forest",
+    "hills": "Hills",
+    "mountains": "Mountains",
+    "river": "River",
+    "deposit": "Ore deposit",
+    "coast": "Coast"
+  },
+  "infra": {
+    "road": "Road",
+    "canal": "Canal",
+    "rail": "Railway"
+  },
+  "panel": {
+    "nothing": "Select a hex on the map, or pick a tool below to build.",
+    "workers": "Workers",
+    "level": "Specialisation",
+    "levelOf": "Level {level} of 5",
+    "cap": "Market reach allows level {max}",
+    "reach": "Market reach",
+    "reachExplain": "{r} buyers within reach. Each doubling allows one more level. Roads, rivers, ports and honest money widen it.",
+    "output": "Output",
+    "explain": "Output {out} = {workers} workers × {base} each × specialisation ×{spec} × tools ×{cap}{terrain, select, none {} other { × land ×{terrain}}}{fill, select, none {} other { × inputs {fill}}}",
+    "wage": "Wage",
+    "price": "Price",
+    "natural": "natural {p}",
+    "capital": "Capital",
+    "sold": "Sold",
+    "profit": "Profit",
+    "private": "Founded by merchants (the invisible hand)",
+    "bottleneck": "Short of inputs: build more upstream.",
+    "noBuyers": "No buyers for much of the output.",
+    "canGrow": "Ready to split the work further next turn.",
+    "needHands": "Needs {n} workers to reach the next level.",
+    "traits": "Smith's three advantages",
+    "trait": {
+      "dexterity": "Dexterity",
+      "noSwitching": "No time lost switching tasks",
+      "machines": "Invention of machines"
+    },
+    "town": "Town",
+    "pop": "Population",
+    "mood": "Laborers' mood",
+    "civic": "Staffed by 2 public servants.",
+    "tile": "Terrain",
+    "goods": "Market",
+    "why": "Why?",
+    "markets": "Prices this turn",
+    "stock": "in store"
+  },
+  "overlay": {
+    "label": "Overlay",
+    "none": "None",
+    "reach": "Market reach",
+    "prices": "Prices",
+    "wages": "Wages",
+    "mood": "Class mood"
+  },
+  "policy": {
+    "title": "Policy cards",
+    "limit": "{n} of 2 cards played this turn",
+    "enact": "Enact",
+    "repeal": "Repeal",
+    "active": "In force",
+    "cornLaw": {
+      "name": "Corn Law",
+      "desc": "A heavy duty on foreign grain. Landlords cheer; bread costs more."
+    },
+    "pinMonopoly": {
+      "name": "Pin monopoly charter",
+      "desc": "Sell the pin trade to one company for a fee. Pins get dear and scarce."
+    },
+    "breadPriceCap": {
+      "name": "Bread price cap",
+      "desc": "Bread may not sell above its natural price. Queues and black markets when harvests fail."
+    },
+    "guildRules": {
+      "name": "Guild apprenticeship rules",
+      "desc": "Seven years' apprenticeship. Masters are pleased; workers move between trades far more slowly."
+    },
+    "internalTolls": {
+      "name": "Road tolls",
+      "desc": "Revenue for the treasury and the lords — and every route costs more."
+    },
+    "navigationActs": {
+      "name": "Navigation Acts",
+      "desc": "Trade only in our own ships. Merchants protected; foreign markets retaliate."
+    },
+    "testActs": {
+      "name": "Religious tests for office",
+      "desc": "Only members of the established church may hold office."
+    },
+    "debase": {
+      "name": "Debase the coin",
+      "desc": "Mix base metal into the coin: a large sum for the treasury now, then inflation and a collapse in Money Trust."
+    }
+  },
+  "budget": {
+    "title": "The sovereign's budget",
+    "intro": "Smith's four duties of the sovereign, and Ghazali's granaries. Each line is a share of last turn's revenue.",
+    "defense": "Defence",
+    "justice": "Justice",
+    "works": "Public works",
+    "education": "Education",
+    "relief": "Granaries & relief",
+    "defenseDesc": "Bandits and pirates raise every transport cost when defence is short.",
+    "justiceDesc": "Fair courts: secure property and less fraud.",
+    "worksDesc": "Maintains roads; cheaper construction.",
+    "educationDesc": "Literacy: faster labour mobility, Maslaha's intellect, institutions.",
+    "reliefDesc": "Fills the public granary and supports the poor.",
+    "adequacy": "{p}% of what this duty needs",
+    "total": "Spending {s} of revenue {r}; interest {i}",
+    "borrow": "Borrow {a}",
+    "repay": "Repay {a}",
+    "interest": "Interest rate {r}%"
+  },
+  "tax": {
+    "title": "Tax design",
+    "intro": "Smith's four maxims, graded A to F. Bad design breeds smuggling, evasion and unrest.",
+    "land": "Land tax (on rent)",
+    "exciseNecessities": "Excise on necessities",
+    "exciseLuxuries": "Excise on comforts & luxuries",
+    "customs": "Customs duties",
+    "collection": "Collection",
+    "salaried": "Salaried officers",
+    "farmers": "Tax farmers",
+    "equality": "Equality",
+    "certainty": "Certainty",
+    "convenience": "Convenience",
+    "economy": "Economy",
+    "equalityDesc": "Do people pay in proportion to their ability?",
+    "certaintyDesc": "Are amounts and timing clear, not left to a collector's whim?",
+    "convenienceDesc": "Is it collected when and how it is easiest to pay — without tempting smugglers?",
+    "economyDesc": "Does collection cost little?",
+    "smuggling": "Smuggling: {p}% of imports",
+    "breakdown": "Revenue last turn",
+    "collectionCost": "Cost of collection",
+    "incomeTax": "Income tax"
+  },
+  "inst": {
+    "title": "Institutions",
+    "intro": "Rules, money and trust make wealth possible. Develop one at a time; education and justice speed it up.",
+    "developing": "Developing: {name} ({p}%)",
+    "develop": "Develop",
+    "done": "Established",
+    "locked": "Not yet",
+    "why": {
+      "era": "A later era",
+      "requires": "Needs {list}",
+      "excluded": "The other finance path was chosen",
+      "tutorial": "Form the market first",
+      "technology": "Needs working steam engines",
+      "done": "Established"
+    },
+    "track": {
+      "money": "Money & finance",
+      "markets": "Markets & trade",
+      "law": "Law & order",
+      "knowledge": "Knowledge & welfare"
+    },
+    "coinage": {
+      "name": "Coinage",
+      "desc": "Coin of known weight. Removes the barter penalty on all trade."
+    },
+    "lettersOfCredit": {
+      "name": "Letters of credit",
+      "desc": "Merchants settle at a distance; savings flow more easily."
+    },
+    "banks": {
+      "name": "Interest banks",
+      "desc": "Fast credit growth and higher returns — and boom, bust and bank runs."
+    },
+    "partnershipHouses": {
+      "name": "Partnership houses",
+      "desc": "Mudaraba and musharaka: profit and loss shared. Slower, steadier, kinder to Maslaha."
+    },
+    "centralBank": {
+      "name": "Central bank",
+      "desc": "A lender of last resort: Money Trust recovers faster and higher."
+    },
+    "depositInsurance": {
+      "name": "Deposit insurance",
+      "desc": "No more runs on sound banks."
+    },
+    "marketSquares": {
+      "name": "Market squares",
+      "desc": "Town populations count 20% more toward market reach."
+    },
+    "merchantShipping": {
+      "name": "Merchant shipping",
+      "desc": "Cheaper sea lanes and double port capacity."
+    },
+    "canals": {
+      "name": "Canals",
+      "desc": "Unlocks canals: the cheapest inland transport before rail."
+    },
+    "railways": {
+      "name": "Railways",
+      "desc": "Unlocks railways."
+    },
+    "tradeBlocs": {
+      "name": "Trade blocs",
+      "desc": "Free trade among neighbours."
+    },
+    "hisba": {
+      "name": "Hisba office",
+      "desc": "The market inspector: fraud falls fast and grain hoarders can be broken."
+    },
+    "contractCourts": {
+      "name": "Contract courts",
+      "desc": "Enforceable contracts: less fraud, prosecution of cheats."
+    },
+    "jointStock": {
+      "name": "Joint-stock companies",
+      "desc": "Pooled capital: every building and work costs 25% less."
+    },
+    "factoryActs": {
+      "name": "Factory Acts",
+      "desc": "Limits on child labour: households and children protected; output −4%."
+    },
+    "competitionLaw": {
+      "name": "Competition law",
+      "desc": "Monopolies broken up."
+    },
+    "elementarySchools": {
+      "name": "Elementary schools",
+      "desc": "Raises the literacy the nation can reach."
+    },
+    "printingPress": {
+      "name": "Printing press",
+      "desc": "Literacy grows half as fast again; public schooling develops faster."
+    },
+    "learnedSocieties": {
+      "name": "Learned societies",
+      "desc": "Inventions spread half as fast again."
+    },
+    "publicSchooling": {
+      "name": "Public schooling",
+      "desc": "Schooling for every child: literacy rises much faster and higher."
+    },
+    "socialInsurance": {
+      "name": "Social insurance",
+      "desc": "A floor under every household."
+    }
+  },
+  "class": {
+    "laborers": "Laborers",
+    "merchants": "Merchants & masters",
+    "landlords": "Landlords",
+    "satisfaction": "Satisfaction",
+    "influence": "Influence",
+    "income": "Income",
+    "laborersWant": "Want cheap bread, jobs and schooling. Ignored: riots, emigration, revolution.",
+    "merchantsWant": "Want low taxes, monopolies and protection. Ignored: capital flight.",
+    "landlordsWant": "Want grain tariffs and a low land tax. Ignored: they block reforms."
+  },
+  "advisor": {
+    "title": "The council",
+    "scotsman": {
+      "name": "The Scotsman",
+      "inspired": "inspired by Adam Smith"
+    },
+    "scholar": {
+      "name": "The Scholar of Tus",
+      "inspired": "inspired by al-Ghazali"
+    },
+    "trust": "Trust {t}",
+    "resigned": "Has resigned from the council.",
+    "favours": "favours",
+    "opposes": "opposes",
+    "neutral": "has no strong view",
+    "say": {
+      "scotsman": {
+        "widen": "Widen the market and the rest follows. Your best shops are waiting on roads, not on hands.",
+        "tariffs": "Every duty you lay on foreign goods is a duty on your own people, and your neighbours will answer in kind.",
+        "guilds": "Seven years to learn a trade a clever lad could learn in weeks. The guild rules keep hands where they are not wanted.",
+        "coin": "A coin that cheats its holder will not be held for long. Mend the money before anything else.",
+        "monopoly": "A monopolist keeps the market understocked. You granted it; you can revoke it.",
+        "schools": "For a small expense the public can teach nearly every child to read, write and count.",
+        "tolls": "Tolls on every road shrink every market. Take the gates down.",
+        "fine": "The country prospers. Keep the coin true, the roads open and the courts honest.",
+        "debt": "The debt grows. Interest paid today is investment lost tomorrow.",
+        "capitalShort": "Savings are what equip the workshops. Do nothing to frighten them away."
+      },
+      "scholar": {
+        "bread": "There are families who cannot buy bread. Wealth is a means; ask what it is for.",
+        "fraud": "Short weights and hidden defects are spreading. The market that cannot trust itself will shrink.",
+        "mirror": "The coin is a mirror for the value of all things. You have clouded it.",
+        "richFor": "The merchants grow rich while the poor leave on every ship. Rich and brittle is not the goal.",
+        "poor": "The poor are restless and the stores are empty. Fill the granary in good years.",
+        "knowledge": "Knowledge is a protection the state owes, as much as bread and safety.",
+        "worship": "No one should be shut out of office for how they worship. Trust needs open doors.",
+        "fine": "Bread is honest and the coin is true. Guard what you have built.",
+        "hoard": "Coin is being buried, not spent. Money that is hoarded fails at its work.",
+        "crafts": "A people needs four crafts before a market: farming, weaving, building, and someone to keep order."
+      }
+    }
+  },
+  "event": {
+    "title": "A matter for the council",
+    "why": "Why?",
+    "history": "What really happened",
+    "requires": "Not available",
+    "chooseFirst": "Answer the council before the year can end."
+  },
+  "reckoning": {
+    "title": "The Reckoning of {year}",
+    "intro": "A chapter closes. History is read against your nation.",
+    "chronicle": "Chronicle",
+    "meters": "Where you stand",
+    "ghost": "Against the ghost of history",
+    "whatIf": "What if?",
+    "whatIfIntro": "Pick one decision from the last chapter. The same years are replayed with it reversed — same seed, same weather, same luck.",
+    "whatIfRun": "Replay",
+    "actual": "What you did",
+    "alternative": "The road not taken",
+    "noDecisions": "No reversible decisions this chapter.",
+    "reform": "Choose one reform to define the next chapter",
+    "none": "No reform",
+    "continue": "Begin the next chapter"
+  },
+  "reform": {
+    "openPorts": {
+      "name": "Open the ports",
+      "desc": "Customs down to 8%, the Navigation Acts repealed, foreign markets 30% wider. Protected merchants and landlords grumble."
+    },
+    "repealCornLaws": {
+      "name": "Repeal the Corn Laws",
+      "desc": "Foreign grain enters freely, for good. Landlords are furious; bread gets cheaper."
+    },
+    "abolishTolls": {
+      "name": "Abolish road tolls",
+      "desc": "Every route cheaper, for good."
+    },
+    "canalMania": {
+      "name": "Canal mania",
+      "desc": "Establish canals at once (costs 30% of a year's revenue)."
+    },
+    "foundCentralBank": {
+      "name": "Found a central bank",
+      "desc": "A lender of last resort, established at once."
+    },
+    "publicSchoolingAct": {
+      "name": "Public schooling act",
+      "desc": "Schooling for every child; education budget at least 12%."
+    },
+    "factoryReform": {
+      "name": "Factory reform",
+      "desc": "Factory Acts at once. Masters object; families gain."
+    },
+    "debtConsolidation": {
+      "name": "Consolidate the debt",
+      "desc": "Lower interest on the national debt; trust +4."
+    },
+    "poorLawReform": {
+      "name": "Reform the poor law",
+      "desc": "Relief of at least 8% of revenue, administered fairly."
+    },
+    "foundMint": {
+      "name": "Found a mint",
+      "desc": "Coinage established at once."
+    },
+    "marketInspectors": {
+      "name": "Market inspectors",
+      "desc": "The hisba office established at once."
+    },
+    "repealTestActs": {
+      "name": "Repeal religious tests",
+      "desc": "Office open to citizens of every confession, for good."
+    }
+  },
+  "ending": {
+    "title": "{year}: the verdict",
+    "golden": {
+      "name": "Golden Age",
+      "desc": "Rich and good: both meters above target, and history beaten."
+    },
+    "gilded": {
+      "name": "Gilded Age",
+      "desc": "Rich, but brittle: Opulence above target, Maslaha below."
+    },
+    "pious": {
+      "name": "Pious Stagnation",
+      "desc": "Fair, but stagnant: Maslaha above target, Opulence below."
+    },
+    "decline": {
+      "name": "Decline",
+      "desc": "Neither rich nor good enough."
+    },
+    "collapse": {
+      "name": "Collapse",
+      "desc": "The nation fell before its time."
+    },
+    "reason": {
+      "revolution": "Revolution: the laborers rose after years of despair.",
+      "bankruptcy": "State bankruptcy: interest swallowed the revenue.",
+      "famine": "Famine: too many died for want of bread."
+    },
+    "medal": "Medal: you beat the ghost of history by 25% or more.",
+    "ghostRatio": "Your nation reached {p}% of history.",
+    "playAgain": "Play again",
+    "chronicle": "The chronicle of your reign"
+  },
+  "chronicle": {
+    "debase": "In {year} the coin was debased.",
+    "tutorial": {
+      "market": "In year {year} all four root crafts stood, and a market formed."
+    },
+    "war": {
+      "lost": "The colonies were lost all the same, and the war debt remained."
+    },
+    "resign": {
+      "scotsman": "In {year} the Scotsman resigned from the council.",
+      "scholar": "In {year} the Scholar of Tus resigned from the council."
+    },
+    "inst": "In {year}: {name} established."
+  },
+  "meter": {
+    "opulenceTitle": "Opulence (Smith)",
+    "maslahaTitle": "Maslaha — the common good (Ghazali)",
+    "opulenceIntro": "Rebuilt each turn from five measures. The real wage of the lowest laborer weighs most: Smith's own test of a nation's wealth.",
+    "maslahaIntro": "Ghazali's five protections, each 20%. Faith is measured as freedom of worship and trust in honest institutions — never which religion a nation follows.",
+    "interaction": "High Opulence with low Maslaha brings bubbles, unrest and emigration. Both above 60 earns the Good Society bonus: institutions develop faster and crises strike less often.",
+    "part": {
+      "realWage": "Real wage of the lowest laborer",
+      "gdppc": "Output per person",
+      "capital": "Capital per worker",
+      "reach": "Market reach",
+      "trade": "Trade volume",
+      "nafs": "Life (nafs)",
+      "aql": "Intellect ('aql)",
+      "nasl": "Lineage — family (nasl)",
+      "mal": "Property (mal)",
+      "din": "Faith & ethics (din)"
+    },
+    "partDesc": {
+      "realWage": "Wage ÷ cost of a basic basket of bread, cloth, fuel and rent (welfare ratio).",
+      "gdppc": "Real output per head, in the scenario's units.",
+      "capital": "Tools and machines per worker, against the start.",
+      "reach": "Share of people living inside well-connected markets.",
+      "trade": "Imports and exports per person, against the start.",
+      "nafs": "Necessities secured, and how comfortably the poorest can afford them; famine deaths count against it.",
+      "aql": "Literacy and schooling.",
+      "nasl": "Household stability: wages, work, housing, relief and child welfare.",
+      "mal": "Money Trust, honest markets and fair courts.",
+      "din": "Trust in institutions, honest markets, and freedom of worship."
+    },
+    "weight": "{w}%"
+  },
+  "ghost": {
+    "title": "Ghost of history",
+    "gdppc": "GDP per capita",
+    "realWage": "Real wage",
+    "you": "Your nation",
+    "history": "History",
+    "ahead": "{p}% of history",
+    "noData": "No historical series for this scenario.",
+    "source": "Source: {s}, {y} ({kind})",
+    "observed": "observed",
+    "interpolated": "interpolated",
+    "estimated": "estimated",
+    "units": {
+      "gdppc": "2011 international $",
+      "realWage": "welfare ratio (baskets)"
+    },
+    "expand": "Expand chart",
+    "sources": "Data sources"
+  },
+  "codex": {
+    "title": "Codex of Ideas",
+    "intro": "Ideas you have met in play. {n} of {total} discovered.",
+    "locked": "Not yet discovered",
+    "original": "In the original",
+    "translation": "Our translation",
+    "pendingArabic": "The Arabic passage is awaiting verification against the Dar al-Minhaj critical edition. Until then we show only our paraphrase, never an unchecked quotation.",
+    "pendingEdition": "Arabic text to be confirmed against the Dar al-Minhaj edition.",
+    "verified": "Quoted verbatim from the Project Gutenberg text.",
+    "paraphrase": "Paraphrase",
+    "inGame": "In the game",
+    "example": "In the real world",
+    "read": "Read the full text",
+    "toggle": "Show {lang}",
+    "smith": "Adam Smith",
+    "ghazali": "al-Ghazali",
+    "both": "Smith & Ghazali",
+    "verifiedMarifa": "Quoted from the Arabic (Dar al-Ma'rifa edition, via al-Maktaba al-Shamila), checked automatically against the cited page. Translation ours.",
+    "verifiedEdition": "Quoted from the Arabic and checked against the Dar al-Minhaj critical edition. Translation ours."
+  },
+  "toast": {
+    "discovered": "Discovered: {title}",
+    "saved": "Game saved.",
+    "loaded": "Game loaded."
+  },
+  "error": {
+    "terrain": "Cannot build on this terrain.",
+    "deposit": "A mine needs an ore deposit (grey dot).",
+    "coastal": "A port must be on the coast.",
+    "occupied": "Something is already here.",
+    "town": "That is a town.",
+    "treasury": "The treasury cannot afford it.",
+    "institution": "Needs an institution first.",
+    "exists": "Already built.",
+    "nothing": "Nothing to remove.",
+    "tooClose": "Too close to another town (3 hexes).",
+    "cardLimit": "Only two policy cards per turn.",
+    "locked": "A reform has settled this for good.",
+    "blocked": "The landlords block it while they are angry and strong.",
+    "same": "Already in force.",
+    "event": "Answer the council first.",
+    "reckoning": "Finish the Reckoning first.",
+    "ended": "The game is over.",
+    "noSave": "No saved game found.",
+    "badSave": "That file is not a Needle & Pin save.",
+    "sim": "The simulation failed: {msg}",
+    "noTile": "Off the map.",
+    "era": "A later era.",
+    "requires": "Its prerequisites are missing.",
+    "excluded": "The other finance path was chosen.",
+    "tutorial": "Form the market first.",
+    "technology": "Needs working steam engines.",
+    "done": "Already established.",
+    "noEvent": "No event is waiting.",
+    "choice": "That choice is not available.",
+    "notReckoning": "Not at a Reckoning.",
+    "reform": "Not one of the reforms on offer."
+  },
+  "tutorial": {
+    "title": "The Needle",
+    "goal": "Goal: Opulence {o} and Maslaha {m} by year 20.",
+    "crafts": "Ghazali's four root crafts",
+    "craft": {
+      "farming": "Farming",
+      "weaving": "Weaving",
+      "building": "Building",
+      "governance": "Governance"
+    },
+    "step0": "Your town already farms. Build a Weaver, a Builder's yard and a Courthouse near it (Workshops and Civic tools below).",
+    "step1": "A market has formed. Build a Pin workshop next to the town and select it: see the gold catchment of its market.",
+    "step2": "Your pin workshop is stuck at level 1: its market is too small. Lay a road to the next village and watch the catchment grow.",
+    "step3": "Develop Coinage (Institutions). Barter halves every market; honest coin removes the penalty.",
+    "step4": "Balance both meters: fund schools and justice, keep bread cheap, and keep the coin true.",
+    "done": "Done"
+  },
+  "town": {
+    "newName": "New town {n}",
+    "needle": {
+      "town": "Market town",
+      "village1": "Hill village",
+      "village2": "River village"
+    },
+    "London": "London",
+    "Bristol": "Bristol",
+    "Birmingham": "Birmingham",
+    "Manchester": "Manchester",
+    "Liverpool": "Liverpool",
+    "Leeds": "Leeds",
+    "Norwich": "Norwich",
+    "Newcastle": "Newcastle",
+    "Edinburgh": "Edinburgh",
+    "Glasgow": "Glasgow"
+  },
+  "help": {
+    "title": "How to play",
+    "body": [
+      "You don't command citizens. You set the conditions — roads, money, laws, institutions — and the invisible hand does the rest: workers move to better-paying shops on their own, and merchants found new workshops where prices are high.",
+      "Every workshop has a specialisation level from 1 to 5. Each level splits the work among more specialists and multiplies output per worker. But a workshop can only specialise as far as its market reach allows: select a workshop to see its gold catchment.",
+      "Prices rise when goods are scarce and fall in a glut. A price spike is a signal: it pulls workers and capital in.",
+      "Each turn: read the market, build, play up to two policy cards, set taxes and budget, develop an institution, then End turn. Events ask the council for a decision.",
+      "You win by raising both meters above the scenario's targets: Opulence (Smith) and Maslaha (Ghazali). In Britain, 1776, the ghost of history races you.",
+      "Keys: E end turn · B budget · T taxes · I institutions · C codex · O cycle overlays · 1–9 tools · Esc close · WASD/arrows pan · +/− zoom."
+    ]
+  },
+  "units": {
+    "gdppc": "$",
+    "index": "index",
+    "baskets": "baskets"
+  },
+  "credits": {
+    "title": "Sources & credits",
+    "data": "Historical data",
+    "texts": "Texts",
+    "smith": "Adam Smith, An Inquiry into the Nature and Causes of the Wealth of Nations (1776). Public domain; quotations checked against Project Gutenberg ebook #3300.",
+    "ghazali": "Abu Hamid al-Ghazali, Ihya' 'Ulum al-Din (c. 1100), quoted from the Dar al-Ma'rifa (Beirut) edition, and al-Mustasfa, ed. Muhammad 'Abd al-Salam 'Abd al-Shafi (Dar al-Kutub al-'Ilmiyya), both via al-Maktaba al-Shamila, with volume and page cited. English translations are our own. A cross-check against the Dar al-Minhaj critical edition (Jeddah, 2011) is pending.",
+    "engine": "Built with Phaser 4, React and i18next."
+  },
+  "common": {
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No",
+    "of": "of",
+    "turn": "Turn {n}",
+    "cost": "Cost",
+    "on": "On",
+    "off": "Off",
+    "back": "Back"
+  },
+  "a11y": {
+    "map": "Map of your nation. Use the arrow keys to pan and the side panel to inspect."
+  }
+}

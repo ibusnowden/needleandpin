@@ -1,0 +1,30 @@
+{
+  "id": "britain1776",
+  "label": "Britain, 1776",
+  "startYear": 1776,
+  "endYear": 1850,
+  "series": {
+    "gdppc": {
+      "source": "maddison_2023",
+      "country": "GBR",
+      "variable": "gdppc",
+      "units": "2011 international $"
+    },
+    "pop": {
+      "source": "maddison_2023",
+      "country": "GBR",
+      "variable": "pop",
+      "units": "thousands"
+    },
+    "realWage": {
+      "source": "allen_labourers",
+      "city": "London",
+      "units": "welfare ratio (baskets)"
+    },
+    "realWageClio": {
+      "source": "clio_real_wage",
+      "country": "United Kingdom",
+      "units": "Clio Infra labourers' real wage"
+    }
+  }
+}

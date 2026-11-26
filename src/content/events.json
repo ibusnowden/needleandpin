@@ -1,0 +1,3951 @@
+[
+  {
+    "id": "drought",
+    "category": "harvest",
+    "icon": "drought",
+    "weight": 3,
+    "cooldown": 7,
+    "when": {
+      "minTurn": 3
+    },
+    "codex": "natural-price",
+    "title": {
+      "en": "Drought",
+      "ar": "جفاف"
+    },
+    "body": {
+      "en": "The rains failed. The harvest is less than half what the farms expected, and bread prices are already climbing.",
+      "ar": "احتبس المطر، فجاء الحصاد دون نصف ما رجته المزارع، وأخذ سعر الخبز يرتفع."
+    },
+    "onFire": [
+      {
+        "op": "stock",
+        "good": "grain",
+        "v": 0.35,
+        "mult": true
+      },
+      {
+        "op": "price",
+        "good": "grain",
+        "mult": 1.25
+      }
+    ],
+    "advice": {
+      "scotsman": {
+        "en": "Let the price rise. Dear grain calls grain in from every quarter that has some to spare.",
+        "ar": "دع السعر يرتفع؛ فغلاء القمح يستدعيه من كل ناحية فيها فضل منه."
+      },
+      "scholar": {
+        "en": "A market that lets the poor go hungry has forgotten what it is for. Open the stores.",
+        "ar": "السوق التي تترك الفقير جائعًا قد نسيت الغاية التي قامت لها. افتحوا المخازن."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Let the market work",
+          "ar": "دع السوق تعمل"
+        },
+        "hint": {
+          "en": "High prices draw supply, but the poor suffer first.",
+          "ar": "الأسعار المرتفعة تجلب المعروض، لكن الفقراء يتألمون أولًا."
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -6
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year} the rains failed, and the crown let the price of grain find its own level.",
+          "ar": "في سنة {year} احتبس المطر، فتركت الدولةُ سعر القمح يجد مستواه بنفسه."
+        }
+      },
+      {
+        "label": {
+          "en": "Open the public granary",
+          "ar": "افتح مخازن الغلال العامة"
+        },
+        "hint": {
+          "en": "Uses grain stored in good years. Works only if you stored any.",
+          "ar": "تستعمل غلالًا خُزنت في سنوات الخير، ولا تنفع إن لم يُخزَن شيء."
+        },
+        "effects": [
+          {
+            "op": "releaseGranary"
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 6
+          },
+          {
+            "op": "institutionTrust",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year}, a year of drought, the public granaries were opened to the people.",
+          "ar": "في سنة {year}، سنة الجفاف، فُتحت مخازن الغلال العامة للناس."
+        }
+      },
+      {
+        "label": {
+          "en": "Buy grain abroad with treasury money",
+          "ar": "اشترِ القمح من الخارج بمال الخزانة"
+        },
+        "requires": {
+          "treasuryRevenue": 0.3
+        },
+        "hint": {
+          "en": "Costs 30% of a year's revenue.",
+          "ar": "تكلّف ثلاثين في المئة من إيراد سنة."
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.3,
+            "scale": "revenue"
+          },
+          {
+            "op": "stock",
+            "good": "grain",
+            "v": 1.8,
+            "mult": true
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year} the treasury bought grain from abroad to carry the people through a drought.",
+          "ar": "في سنة {year} اشترت الخزانة قمحًا من الخارج لتعبر بالناس سنة الجفاف."
+        }
+      }
+    ]
+  },
+  {
+    "id": "grainHoarders",
+    "category": "harvest",
+    "icon": "hoard",
+    "weight": 3,
+    "cooldown": 6,
+    "when": {
+      "minTurn": 2,
+      "all": [
+        {
+          "stat": "grainPriceRatio",
+          "gt": 1.2
+        }
+      ]
+    },
+    "codex": "ihtikar",
+    "title": {
+      "en": "Grain hoarders",
+      "ar": "المحتكرون"
+    },
+    "body": {
+      "en": "Some dealers are holding grain back in their barns, waiting for the price to climb higher still. The bakers say they cannot buy at any price.",
+      "ar": "حبس بعض التجار القمح في مخازنهم ينتظرون أن يزداد السعر ارتفاعًا، والخبازون يقولون إنهم لا يجدون ما يشترونه بأي ثمن."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "The dealer who stores grain in plenty and sells it in scarcity does the public a service, whatever the mob may say.",
+        "ar": "تاجر القمح الذي يخزنه في الرخاء ويبيعه في الشدة يخدم الناس، مهما قالت العامة."
+      },
+      "scholar": {
+        "en": "Hoarding the people's food to raise its price is a grave wrong. This is exactly what the market inspector is for.",
+        "ar": "احتكار قوت الناس لرفع سعره ظلم عظيم، ولهذا بالذات وُجد المحتسب."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Send the market inspector",
+          "ar": "أرسل المحتسب"
+        },
+        "requires": {
+          "institution": "hisba"
+        },
+        "hint": {
+          "en": "Forces the grain onto the market at fair prices.",
+          "ar": "يُخرج القمح إلى السوق بسعر عادل."
+        },
+        "effects": [
+          {
+            "op": "stock",
+            "good": "grain",
+            "v": 1.4,
+            "mult": true
+          },
+          {
+            "op": "price",
+            "good": "grain",
+            "mult": 0.88
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -5
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 5
+          },
+          {
+            "op": "fraud",
+            "v": -0.03
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year} the muhtasib broke the grain hoarders' corner.",
+          "ar": "في سنة {year} كسر المحتسب احتكار تجار القمح."
+        }
+      },
+      {
+        "label": {
+          "en": "Leave the dealers alone",
+          "ar": "دع التجار وشأنهم"
+        },
+        "hint": {
+          "en": "Prices stay high for a while, then supply returns.",
+          "ar": "تبقى الأسعار مرتفعة حينًا، ثم يعود المعروض."
+        },
+        "effects": [
+          {
+            "op": "price",
+            "good": "grain",
+            "mult": 1.12
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -6
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 4
+          },
+          {
+            "op": "delay",
+            "turns": 2,
+            "effects": [
+              {
+                "op": "stock",
+                "good": "grain",
+                "v": 1.3,
+                "mult": true
+              }
+            ]
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year} the grain dealers were left to hold their stocks, and the poor paid dearly for bread.",
+          "ar": "في سنة {year} تُرك تجار القمح يحبسون مخزونهم، فدفع الفقراء ثمن الخبز غاليًا."
+        }
+      },
+      {
+        "label": {
+          "en": "Seize the barns and sell at a fixed price",
+          "ar": "صادِر المخازن وبِع بسعر محدد"
+        },
+        "hint": {
+          "en": "Immediate relief. Property feels less secure.",
+          "ar": "فرج عاجل، لكن الملكية تبدو أقل أمانًا."
+        },
+        "effects": [
+          {
+            "op": "stock",
+            "good": "grain",
+            "v": 1.5,
+            "mult": true
+          },
+          {
+            "op": "price",
+            "good": "grain",
+            "mult": 0.8
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -14
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 7
+          },
+          {
+            "op": "institutionTrust",
+            "v": -6
+          },
+          {
+            "op": "trust",
+            "v": -3
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        },
+        "chronicle": {
+          "en": "In {year} the crown seized the grain barns by force.",
+          "ar": "في سنة {year} صادرت الدولة مخازن القمح بالقوة."
+        }
+      }
+    ]
+  },
+  {
+    "id": "bumperCrop",
+    "category": "harvest",
+    "icon": "harvest",
+    "weight": 2,
+    "cooldown": 6,
+    "when": {
+      "minTurn": 2
+    },
+    "codex": "natural-price",
+    "title": {
+      "en": "A bumper crop",
+      "ar": "موسم وفير"
+    },
+    "body": {
+      "en": "The best harvest in living memory. Barns overflow, and grain prices are sliding below what it costs to grow.",
+      "ar": "أوفر حصاد يذكره الأحياء؛ امتلأت المخازن، وأخذ سعر القمح ينزل دون كلفة زراعته."
+    },
+    "onFire": [
+      {
+        "op": "stock",
+        "good": "grain",
+        "v": 1.9,
+        "mult": true
+      }
+    ],
+    "advice": {
+      "scotsman": {
+        "en": "Cheap bread is no misfortune. The farmers will grow something else next year if this does not pay.",
+        "ar": "الخبز الرخيص ليس مصيبة، وسيزرع الفلاحون غيره في العام المقبل إن لم يُربحهم."
+      },
+      "scholar": {
+        "en": "Joseph stored in the seven good years. Fill the granary while grain is cheap.",
+        "ar": "خزن يوسف في السبع السمان؛ فاملأوا المخازن ما دام القمح رخيصًا."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Fill the public granary",
+          "ar": "املأ مخازن الغلال العامة"
+        },
+        "hint": {
+          "en": "Costs 15% of revenue. Stored grain protects against famine later.",
+          "ar": "تكلّف خمسة عشر في المئة من الإيراد، والمخزون يقي من المجاعة لاحقًا."
+        },
+        "requires": {
+          "treasuryRevenue": 0.15
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.15,
+            "scale": "revenue"
+          },
+          {
+            "op": "stock",
+            "good": "grain",
+            "v": 0.7,
+            "mult": true
+          },
+          {
+            "op": "granary",
+            "v": 2.5
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In the rich harvest of {year} the granaries were filled against leaner years.",
+          "ar": "في حصاد {year} الوفير مُلئت المخازن ادخارًا لسنوات الشدة."
+        }
+      },
+      {
+        "label": {
+          "en": "Enjoy the cheap bread",
+          "ar": "تمتّع بالخبز الرخيص"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 5
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -5
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "sheepMurrain",
+    "category": "harvest",
+    "icon": "sheep",
+    "weight": 1,
+    "cooldown": 10,
+    "when": {
+      "minTurn": 4
+    },
+    "title": {
+      "en": "Murrain among the flocks",
+      "ar": "وباء في القطعان"
+    },
+    "body": {
+      "en": "A sickness is running through the sheep. Wool will be scarce this year, and the weavers are worried.",
+      "ar": "يسري وباء في الغنم، وسيقل الصوف هذا العام، والنساجون قلقون."
+    },
+    "onFire": [
+      {
+        "op": "stock",
+        "good": "wool",
+        "v": 0.4,
+        "mult": true
+      },
+      {
+        "op": "price",
+        "good": "wool",
+        "mult": 1.3
+      }
+    ],
+    "choices": [
+      {
+        "label": {
+          "en": "Import wool through the ports",
+          "ar": "استورد الصوف عبر الموانئ"
+        },
+        "hint": {
+          "en": "Trade covers the gap if you have ports and low duties.",
+          "ar": "التجارة تسد النقص إن كانت لديك موانئ ورسوم منخفضة."
+        },
+        "effects": [
+          {
+            "op": "customs",
+            "v": -0.02
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Pay for the cull and fresh flocks",
+          "ar": "موّل الذبح وتجديد القطعان"
+        },
+        "requires": {
+          "treasuryRevenue": 0.12
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.12,
+            "scale": "revenue"
+          },
+          {
+            "op": "delay",
+            "turns": 1,
+            "effects": [
+              {
+                "op": "stock",
+                "good": "wool",
+                "v": 2.0,
+                "mult": true
+              }
+            ]
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "silverShortage",
+    "category": "money",
+    "icon": "coin",
+    "weight": 2,
+    "cooldown": 10,
+    "when": {
+      "minTurn": 5,
+      "institution": {
+        "coinage": true
+      }
+    },
+    "codex": "money-mirror",
+    "title": {
+      "en": "Silver shortage",
+      "ar": "شح الفضة"
+    },
+    "body": {
+      "en": "Silver is flowing out faster than it comes in. Merchants complain there is not enough good coin to settle their trades, and the treasury is short.",
+      "ar": "تخرج الفضة أسرع مما تدخل، ويشكو التجار قلة النقد الجيد لتسوية معاملاتهم، والخزانة في ضيق."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "Mix base metal into the coin and you cheat every creditor in the kingdom. It always ends the same way.",
+        "ar": "إن خلطت المعدن الرخيص بالنقد غششت كل دائن في المملكة، وهكذا تنتهي الأمور دائمًا."
+      },
+      "scholar": {
+        "en": "Coin is a mirror that shows the value of things. Cloud the mirror and nobody can see what anything is worth.",
+        "ar": "النقد مرآة تُرى فيها قيم الأشياء؛ فإن كدّرتها لم يعد أحد يرى قيمة شيء."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Debase the coin",
+          "ar": "اغشش العملة"
+        },
+        "hint": {
+          "en": "Treasury +60% of revenue now. Inflation and a Money Trust collapse follow.",
+          "ar": "الخزانة تزيد ستين في المئة من الإيراد الآن، ثم يتبع ذلك تضخم وانهيار في الثقة بالنقد."
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": 0.6,
+            "scale": "revenue"
+          },
+          {
+            "op": "trust",
+            "v": -26
+          },
+          {
+            "op": "inflation",
+            "v": 0.25
+          },
+          {
+            "op": "flag",
+            "name": "debasedViaEvent"
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year}, short of silver, the crown debased the coin.",
+          "ar": "في سنة {year}، لشح الفضة، غشّت الدولة العملة."
+        }
+      },
+      {
+        "label": {
+          "en": "Borrow to tide things over",
+          "ar": "اقترض لتجاوز الضائقة"
+        },
+        "effects": [
+          {
+            "op": "debt",
+            "v": 0.5,
+            "scale": "revenue"
+          },
+          {
+            "op": "treasury",
+            "v": 0.5,
+            "scale": "revenue"
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Tighten spending and keep the coin sound",
+          "ar": "قلّل الإنفاق وحافظ على سلامة النقد"
+        },
+        "effects": [
+          {
+            "op": "trust",
+            "v": 5
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -4
+          },
+          {
+            "op": "institutionTrust",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year} the crown chose a sound coin over an easy year.",
+          "ar": "في سنة {year} آثرت الدولة سلامة النقد على سنة سهلة."
+        }
+      }
+    ]
+  },
+  {
+    "id": "counterfeitWave",
+    "category": "money",
+    "icon": "counterfeit",
+    "weight": 2,
+    "cooldown": 8,
+    "when": {
+      "minTurn": 4,
+      "institution": {
+        "coinage": true
+      }
+    },
+    "codex": "money-mirror",
+    "title": {
+      "en": "A wave of counterfeits",
+      "ar": "موجة من النقود المزيفة"
+    },
+    "body": {
+      "en": "False coins are turning up in every market. Shopkeepers bite each coin and weigh it twice, and trade is slowing.",
+      "ar": "ظهرت النقود المزيفة في كل سوق، فصار الباعة يعضّون كل قطعة ويزنونها مرتين، وتباطأت التجارة."
+    },
+    "onFire": [
+      {
+        "op": "fraud",
+        "v": 0.06
+      },
+      {
+        "op": "trust",
+        "v": -5
+      }
+    ],
+    "choices": [
+      {
+        "label": {
+          "en": "Fund the mint and the courts",
+          "ar": "موّل دار السكّة والمحاكم"
+        },
+        "requires": {
+          "treasuryRevenue": 0.2
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.2,
+            "scale": "revenue"
+          },
+          {
+            "op": "fraud",
+            "v": -0.07
+          },
+          {
+            "op": "trust",
+            "v": 6
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Send inspectors to every market",
+          "ar": "أرسل المحتسبين إلى كل سوق"
+        },
+        "requires": {
+          "institution": "hisba"
+        },
+        "effects": [
+          {
+            "op": "fraud",
+            "v": -0.09
+          },
+          {
+            "op": "trust",
+            "v": 4
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -2
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Ignore it",
+          "ar": "تجاهل الأمر"
+        },
+        "effects": [
+          {
+            "op": "delay",
+            "turns": 3,
+            "effects": [
+              {
+                "op": "trust",
+                "v": -8
+              },
+              {
+                "op": "fraud",
+                "v": 0.05
+              }
+            ]
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "coinClipping",
+    "category": "money",
+    "icon": "coin",
+    "weight": 1,
+    "cooldown": 12,
+    "when": {
+      "minTurn": 6,
+      "institution": {
+        "coinage": true
+      }
+    },
+    "codex": "money-mirror",
+    "title": {
+      "en": "Clipped coin",
+      "ar": "النقود المقصوصة"
+    },
+    "body": {
+      "en": "Thieves shave slivers of silver from the edges of coins. Light coins pass hand to hand while full-weight coins vanish into strongboxes.",
+      "ar": "يقصّ اللصوص شرائح من حواف النقود، فتدور الخفيفة بين الأيدي وتختفي الوازنة في الصناديق."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Recoin at full weight",
+          "ar": "أعِد سكّ النقد بوزنه الكامل"
+        },
+        "requires": {
+          "treasuryRevenue": 0.35
+        },
+        "hint": {
+          "en": "Costly now; trust repairs faster.",
+          "ar": "مكلف الآن، لكن الثقة تُصلَح أسرع."
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.35,
+            "scale": "revenue"
+          },
+          {
+            "op": "trust",
+            "v": 9
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year} the whole coinage was recalled and struck again at full weight.",
+          "ar": "في سنة {year} سُحب النقد كله وأعيد سكّه بوزنه الكامل."
+        }
+      },
+      {
+        "label": {
+          "en": "Tolerate it",
+          "ar": "تساهل معه"
+        },
+        "effects": [
+          {
+            "op": "trust",
+            "v": -6
+          },
+          {
+            "op": "fraud",
+            "v": 0.03
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "paperMoney",
+    "category": "money",
+    "icon": "paper",
+    "weight": 2,
+    "cooldown": 12,
+    "when": {
+      "minTurn": 6,
+      "era": [
+        3,
+        4,
+        5
+      ],
+      "any": [
+        {
+          "stat": "treasuryRevenue",
+          "lt": 0.3
+        }
+      ]
+    },
+    "codex": "money-mirror",
+    "title": {
+      "en": "A tempting printing press",
+      "ar": "مطبعة مُغرية"
+    },
+    "body": {
+      "en": "A clever financier proposes that the treasury simply print notes to pay its bills. 'Paper costs nothing,' he says.",
+      "ar": "يقترح مموّل بارع أن تطبع الخزانة أوراقًا تسدّ بها ديونها، ويقول: «الورق لا يكلّف شيئًا»."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "Paper that the bank will turn into coin on demand is a fine thing. Paper printed to pay the government's bills is another matter.",
+        "ar": "الورق الذي يصرفه المصرف ذهبًا عند الطلب نافع، أما الورق المطبوع لسداد ديون الحكومة فأمر آخر."
+      },
+      "scholar": {
+        "en": "Whoever makes money from nothing takes a little from everyone who holds it.",
+        "ar": "من صنع المال من لا شيء أخذ قليلًا من كل من يحمله."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Print the notes",
+          "ar": "اطبع الأوراق"
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": 0.8,
+            "scale": "revenue"
+          },
+          {
+            "op": "inflation",
+            "v": 0.22
+          },
+          {
+            "op": "delay",
+            "turns": 3,
+            "effects": [
+              {
+                "op": "trust",
+                "v": -14
+              }
+            ]
+          },
+          {
+            "op": "flag",
+            "name": "printedMoney"
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year} the treasury paid its debts with freshly printed paper. Prices remembered it for years.",
+          "ar": "في سنة {year} سدّت الخزانة ديونها بورق مطبوع حديثًا، وبقيت الأسعار تذكر ذلك سنين."
+        }
+      },
+      {
+        "label": {
+          "en": "Refuse",
+          "ar": "ارفض"
+        },
+        "effects": [
+          {
+            "op": "trust",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "hoardedCoin",
+    "category": "money",
+    "icon": "hoard",
+    "weight": 3,
+    "cooldown": 6,
+    "when": {
+      "minTurn": 3,
+      "all": [
+        {
+          "stat": "trust",
+          "lt": 48
+        }
+      ]
+    },
+    "codex": "money-mirror",
+    "title": {
+      "en": "Coin disappears",
+      "ar": "النقد يختفي"
+    },
+    "body": {
+      "en": "Nobody trusts the coin to keep its value, so everyone who can is burying good money in the garden. Markets are quiet for lack of it.",
+      "ar": "لا يثق أحد بأن النقد سيحفظ قيمته، فصار كل قادر يدفن المال الجيد في حديقته، وسكنت الأسواق لقلّته."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Pledge a sound coin and pay for it",
+          "ar": "تعهّد بنقد سليم وادفع ثمنه"
+        },
+        "requires": {
+          "treasuryRevenue": 0.25
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.25,
+            "scale": "revenue"
+          },
+          {
+            "op": "trust",
+            "v": 10
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Order hoards to be declared and spent",
+          "ar": "أمُر بالإفصاح عن المدّخرات وإنفاقها"
+        },
+        "effects": [
+          {
+            "op": "trust",
+            "v": -4
+          },
+          {
+            "op": "fraud",
+            "v": 0.04
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -8
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "bankRun",
+    "category": "money",
+    "icon": "bank",
+    "weight": 6,
+    "cooldown": 4,
+    "when": {
+      "institution": {
+        "banks": true
+      },
+      "all": [
+        {
+          "stat": "credit",
+          "lt": -0.1
+        }
+      ]
+    },
+    "codex": "two-finance-paths",
+    "title": {
+      "en": "A run on the banks",
+      "ar": "تهافت على المصارف"
+    },
+    "body": {
+      "en": "Rumours spread that the country banks have lent far more than they hold. Crowds queue at the doors to turn notes into coin.",
+      "ar": "شاعت أخبار أن مصارف الأقاليم أقرضت أضعاف ما تملك، فاصطفّت الجموع على الأبواب لتصرف أوراقها نقدًا."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "A bank that lends only on real bills of trade rarely fails. These lent on hope.",
+        "ar": "المصرف الذي لا يقرض إلا على كمبيالات تجارة حقيقية قلّما يفلس، وهؤلاء أقرضوا على الأمل."
+      },
+      "scholar": {
+        "en": "When the gain was theirs and the loss is everyone's, the bargain was never fair.",
+        "ar": "إن كان الربح لهم والخسارة على الجميع، فالصفقة لم تكن عادلة قط."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Lend to the banks to stop the panic",
+          "ar": "أقرض المصارف لإيقاف الذعر"
+        },
+        "requires": {
+          "treasuryRevenue": 0.3
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.3,
+            "scale": "revenue"
+          },
+          {
+            "op": "trust",
+            "v": 4
+          },
+          {
+            "op": "credit",
+            "v": 0.2
+          },
+          {
+            "op": "capital",
+            "mult": 0.97
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": -1
+        }
+      },
+      {
+        "label": {
+          "en": "Let the reckless banks fail",
+          "ar": "دع المصارف المتهورة تفلس"
+        },
+        "effects": [
+          {
+            "op": "capital",
+            "mult": 0.86
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -14
+          },
+          {
+            "op": "trust",
+            "v": -8
+          },
+          {
+            "op": "credit",
+            "v": 0.25
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year} the reckless banks were left to fail, and many fortunes went with them.",
+          "ar": "في سنة {year} تُركت المصارف المتهورة تفلس، وذهبت معها ثروات كثيرة."
+        }
+      },
+      {
+        "label": {
+          "en": "Suspend payment in coin",
+          "ar": "أوقف الصرف نقدًا"
+        },
+        "effects": [
+          {
+            "op": "inflation",
+            "v": 0.12
+          },
+          {
+            "op": "trust",
+            "v": -5
+          },
+          {
+            "op": "credit",
+            "v": 0.15
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "pinMonopolyPetition",
+    "category": "lobbying",
+    "icon": "charter",
+    "weight": 3,
+    "cooldown": 10,
+    "when": {
+      "minTurn": 3,
+      "policy": {
+        "pinMonopoly": false
+      },
+      "all": [
+        {
+          "stat": "pinworks",
+          "gt": 0
+        }
+      ]
+    },
+    "codex": "conspiracy-against-public",
+    "title": {
+      "en": "A charter for the pin trade",
+      "ar": "امتياز لتجارة الدبابيس"
+    },
+    "body": {
+      "en": "The leading pin-makers offer the treasury a handsome fee for the sole right to make and sell pins. 'Order and quality,' they promise.",
+      "ar": "يعرض كبار صنّاع الدبابيس على الخزانة رسمًا سخيًّا مقابل حق منفرد في صنعها وبيعها، ويعدون بـ«النظام والجودة»."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "People of the same trade seldom meet together, even for merriment, but the conversation ends in a contrivance to raise prices.",
+        "ar": "قلّما يجتمع أهل الحرفة الواحدة، ولو للهو، إلا وانتهى حديثهم إلى حيلة لرفع الأسعار."
+      },
+      "scholar": {
+        "en": "A fee to the treasury today, a tax on every household forever.",
+        "ar": "رسم للخزانة اليوم، وضريبة على كل بيت إلى الأبد."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Grant the charter",
+          "ar": "امنح الامتياز"
+        },
+        "hint": {
+          "en": "Treasury +40% of revenue now. Pins get dearer and scarcer.",
+          "ar": "الخزانة تزيد أربعين في المئة من الإيراد، والدبابيس تغلو وتقلّ."
+        },
+        "effects": [
+          {
+            "op": "policy",
+            "id": "pinMonopoly",
+            "on": true
+          },
+          {
+            "op": "treasury",
+            "v": 0.4,
+            "scale": "revenue"
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 12
+          },
+          {
+            "op": "institutionTrust",
+            "v": -4
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year} the pin trade was sold to a single company, and pins doubled in price.",
+          "ar": "في سنة {year} بيعت تجارة الدبابيس لشركة واحدة، فتضاعف سعرها."
+        }
+      },
+      {
+        "label": {
+          "en": "Refuse: the trade stays open",
+          "ar": "ارفض: تبقى الحرفة مفتوحة"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -8
+          },
+          {
+            "op": "institutionTrust",
+            "v": 2
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "cornLawPetition",
+    "category": "lobbying",
+    "icon": "grain",
+    "weight": 3,
+    "cooldown": 10,
+    "when": {
+      "minTurn": 3,
+      "policy": {
+        "cornLaw": false
+      }
+    },
+    "codex": "mercantile-system",
+    "title": {
+      "en": "The landlords want a grain tariff",
+      "ar": "الملّاك يريدون رسمًا على القمح"
+    },
+    "body": {
+      "en": "The great landowners petition for a heavy duty on foreign grain. Cheap imports, they say, will ruin the farms that feed the nation.",
+      "ar": "يلتمس كبار الملّاك رسمًا ثقيلًا على القمح الأجنبي، ويقولون إن الواردات الرخيصة ستخرّب المزارع التي تطعم الأمة."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "A tax on the bread of the poor, collected for the rent of the rich.",
+        "ar": "ضريبة على خبز الفقير تُجبى لريع الغني."
+      },
+      "scholar": {
+        "en": "Ask who eats the bread and who owns the field, and the answer is plain.",
+        "ar": "اسأل من يأكل الخبز ومن يملك الحقل، يتضح الجواب."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Pass the Corn Law",
+          "ar": "أقرّ قانون الحبوب"
+        },
+        "effects": [
+          {
+            "op": "policy",
+            "id": "cornLaw",
+            "on": true
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 15
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -6
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year} a duty on foreign grain was passed, to the landlords' cheers.",
+          "ar": "في سنة {year} أُقرّ رسم على القمح الأجنبي وسط تهليل الملّاك."
+        }
+      },
+      {
+        "label": {
+          "en": "Refuse",
+          "ar": "ارفض"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -12
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "guildCharter",
+    "category": "lobbying",
+    "icon": "guild",
+    "weight": 2,
+    "cooldown": 10,
+    "when": {
+      "minTurn": 4,
+      "policy": {
+        "guildRules": false
+      }
+    },
+    "codex": "invisible-hand",
+    "title": {
+      "en": "The masters ask for apprenticeship rules",
+      "ar": "أرباب الحِرف يطلبون قواعد للتلمذة"
+    },
+    "body": {
+      "en": "The masters of the crafts want a law: no one may practise a trade without seven years of apprenticeship to a master.",
+      "ar": "يريد أرباب الحِرف قانونًا: لا يمارس أحد حرفة إلا بعد سبع سنين من التلمذة على أستاذ في الصنعة."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Grant the guild rules",
+          "ar": "امنح قواعد الطوائف"
+        },
+        "hint": {
+          "en": "Workers move between trades much more slowly.",
+          "ar": "ينتقل العمال بين الحِرف ببطء أشد."
+        },
+        "effects": [
+          {
+            "op": "policy",
+            "id": "guildRules",
+            "on": true
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 8
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Refuse",
+          "ar": "ارفض"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -6
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "tollPetition",
+    "category": "lobbying",
+    "icon": "toll",
+    "weight": 2,
+    "cooldown": 10,
+    "when": {
+      "minTurn": 3,
+      "policy": {
+        "internalTolls": false
+      }
+    },
+    "codex": "extent-of-market",
+    "title": {
+      "en": "Tolls on the roads",
+      "ar": "رسوم مرور على الطرق"
+    },
+    "body": {
+      "en": "Local lords offer to share the takings if they may set up toll gates on the roads that cross their land.",
+      "ar": "يعرض السادة المحليون مقاسمة الحصيلة إن أُذن لهم بنصب بوابات لجباية رسوم المرور على الطرق التي تعبر أراضيهم."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Allow the tolls",
+          "ar": "اسمح برسوم المرور"
+        },
+        "hint": {
+          "en": "Treasury income, but every route costs more: market reach shrinks.",
+          "ar": "دخل للخزانة، لكن كل طريق يغلو فيضيق نطاق السوق."
+        },
+        "effects": [
+          {
+            "op": "policy",
+            "id": "internalTolls",
+            "on": true
+          },
+          {
+            "op": "treasury",
+            "v": 0.2,
+            "scale": "revenue"
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 8
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      },
+      {
+        "label": {
+          "en": "Keep the roads free",
+          "ar": "أبقِ الطرق حرّة"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -5
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "eastIndiaCharter",
+    "category": "history",
+    "icon": "ship",
+    "weight": 2,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "minYear": 1780,
+      "maxYear": 1835
+    },
+    "codex": "mercantile-system",
+    "title": {
+      "en": "The company's eastern monopoly",
+      "ar": "احتكار الشركة لتجارة الشرق"
+    },
+    "body": {
+      "en": "The great chartered company asks Parliament to renew its sole right to the trade with the East. Spices, tea and silk come only through its ships.",
+      "ar": "تطلب الشركة صاحبة الامتياز من البرلمان تجديد حقها المنفرد في تجارة الشرق، فلا تأتي التوابل والشاي والحرير إلا على سفنها."
+    },
+    "history": {
+      "en": "Britain's East India Company lost its monopoly of trade with India in 1813 and with China in 1833. Smith attacked it at length in Books IV and V.",
+      "ar": "فقدت شركة الهند الشرقية البريطانية احتكار التجارة مع الهند سنة 1813 ومع الصين سنة 1833، وقد هاجمها سميث طويلًا في الكتابين الرابع والخامس."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Renew the monopoly",
+          "ar": "جدّد الاحتكار"
+        },
+        "effects": [
+          {
+            "op": "price",
+            "good": "spices",
+            "mult": 1.4
+          },
+          {
+            "op": "treasury",
+            "v": 0.3,
+            "scale": "revenue"
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 8
+          },
+          {
+            "op": "foreign",
+            "mult": 0.92
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Open the eastern trade to all",
+          "ar": "افتح تجارة الشرق للجميع"
+        },
+        "effects": [
+          {
+            "op": "price",
+            "good": "spices",
+            "mult": 0.75
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -4
+          },
+          {
+            "op": "foreign",
+            "mult": 1.12
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        },
+        "chronicle": {
+          "en": "In {year} the eastern trade was thrown open to every merchant.",
+          "ar": "في سنة {year} فُتحت تجارة الشرق لكل تاجر."
+        }
+      }
+    ]
+  },
+  {
+    "id": "exportBounty",
+    "category": "lobbying",
+    "icon": "grain",
+    "weight": 2,
+    "cooldown": 12,
+    "when": {
+      "minTurn": 5,
+      "all": [
+        {
+          "stat": "ports",
+          "gt": 0
+        }
+      ]
+    },
+    "codex": "mercantile-system",
+    "title": {
+      "en": "A bounty on grain exports",
+      "ar": "مكافأة على تصدير القمح"
+    },
+    "body": {
+      "en": "Farmers ask the treasury to pay them a bounty on every quarter of grain shipped abroad.",
+      "ar": "يطلب المزارعون أن تدفع الخزانة مكافأة على كل كيل من القمح يُشحن إلى الخارج."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Pay the bounty",
+          "ar": "ادفع المكافأة"
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.2,
+            "scale": "revenue"
+          },
+          {
+            "op": "price",
+            "good": "grain",
+            "mult": 1.15
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 9
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -4
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      },
+      {
+        "label": {
+          "en": "Refuse",
+          "ar": "ارفض"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -5
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "spinningJenny",
+    "category": "invention",
+    "icon": "jenny",
+    "weight": 3,
+    "once": true,
+    "when": {
+      "minTurn": 2,
+      "era": [
+        3,
+        4
+      ]
+    },
+    "title": {
+      "en": "A spinning machine",
+      "ar": "آلة للغزل"
+    },
+    "body": {
+      "en": "A weaver has built a frame that spins eight threads at once. The spinners' guild calls it a thief of honest work.",
+      "ar": "صنع نسّاج إطارًا يغزل ثمانية خيوط معًا، وطائفة الغزّالين تسمّيه سارقًا للعمل الشريف."
+    },
+    "history": {
+      "en": "James Hargreaves' spinning jenny (c. 1764) and Arkwright's water frame (1769) began the mechanisation of cotton spinning.",
+      "ar": "بدأت آلة الغزل التي صنعها جيمس هارغريفز (نحو 1764) والإطار المائي لأركرايت (1769) مكننة غزل القطن."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Fund its spread",
+          "ar": "موّل انتشارها"
+        },
+        "requires": {
+          "treasuryRevenue": 0.2
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.2,
+            "scale": "revenue"
+          },
+          {
+            "op": "technology",
+            "v": 0.05
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 5
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Leave it to the market",
+          "ar": "اتركها للسوق"
+        },
+        "effects": [
+          {
+            "op": "delay",
+            "turns": 3,
+            "effects": [
+              {
+                "op": "technology",
+                "v": 0.04
+              }
+            ]
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Let the guild ban it",
+          "ar": "دع الطائفة تحظرها"
+        },
+        "requires": {
+          "policy": "guildRules"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 4
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "steamEngine",
+    "category": "invention",
+    "icon": "steam",
+    "weight": 3,
+    "once": true,
+    "when": {
+      "minYear": 1776,
+      "scenario": [
+        "britain1776"
+      ]
+    },
+    "title": {
+      "en": "An engine that works by steam",
+      "ar": "محرّك يعمل بالبخار"
+    },
+    "body": {
+      "en": "An instrument-maker from Glasgow and a Birmingham manufacturer have built a steam engine that burns a quarter of the fuel of the old ones. They seek backing.",
+      "ar": "صنع صانع أدوات من غلاسكو وصاحب مصنع من برمنغهام محرّكًا بخاريًّا يحرق ربع وقود المحركات القديمة، ويطلبان من يموّلهما."
+    },
+    "history": {
+      "en": "James Watt and Matthew Boulton sold their first engines in 1776, the year The Wealth of Nations appeared.",
+      "ar": "باع جيمس وات وماثيو بولتون أول محركاتهما سنة 1776، وهي السنة التي صدر فيها كتاب «ثروة الأمم»."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Back the partnership",
+          "ar": "موّل الشراكة"
+        },
+        "requires": {
+          "treasuryRevenue": 0.25
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.25,
+            "scale": "revenue"
+          },
+          {
+            "op": "delay",
+            "turns": 4,
+            "effects": [
+              {
+                "op": "technology",
+                "v": 0.1
+              }
+            ]
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 0
+        },
+        "chronicle": {
+          "en": "In {year} the crown backed a new engine that worked by steam.",
+          "ar": "في سنة {year} موّلت الدولة محرّكًا جديدًا يعمل بالبخار."
+        }
+      },
+      {
+        "label": {
+          "en": "Let private capital decide",
+          "ar": "دع رأس المال الخاص يقرّر"
+        },
+        "effects": [
+          {
+            "op": "delay",
+            "turns": 8,
+            "effects": [
+              {
+                "op": "technology",
+                "v": 0.07
+              }
+            ]
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "printers",
+    "category": "invention",
+    "icon": "press",
+    "weight": 2,
+    "once": true,
+    "when": {
+      "scenario": [
+        "needle"
+      ],
+      "minTurn": 8,
+      "institution": {
+        "printingPress": false
+      }
+    },
+    "title": {
+      "en": "A press with movable type",
+      "ar": "مطبعة بحروف متحركة"
+    },
+    "body": {
+      "en": "A travelling craftsman shows a press that can make a hundred copies of a page in a morning.",
+      "ar": "يعرض حِرفيّ متجوّل مطبعة تصنع مئة نسخة من الصفحة في صباح واحد."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Invite him to settle",
+          "ar": "ادعُه إلى الإقامة"
+        },
+        "requires": {
+          "treasuryRevenue": 0.15
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.15,
+            "scale": "revenue"
+          },
+          {
+            "op": "literacy",
+            "v": 0.03
+          },
+          {
+            "op": "progress",
+            "v": 15
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Send him on his way",
+          "ar": "اصرفه في طريقه"
+        },
+        "effects": [],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "machineBreakers",
+    "category": "society",
+    "icon": "hammer",
+    "weight": 3,
+    "cooldown": 10,
+    "when": {
+      "minTurn": 6,
+      "all": [
+        {
+          "stat": "technology",
+          "gt": 1.08
+        },
+        {
+          "stat": "laborers",
+          "lt": 45
+        }
+      ]
+    },
+    "title": {
+      "en": "Machine breakers",
+      "ar": "محطّمو الآلات"
+    },
+    "body": {
+      "en": "Masked weavers are breaking the new frames at night. They say the machines have taken their bread.",
+      "ar": "نسّاجون ملثّمون يحطّمون الأطر الجديدة ليلًا، ويقولون إن الآلات أخذت خبزهم."
+    },
+    "history": {
+      "en": "The Luddite machine-breaking of 1811–1816 began among the framework knitters of Nottinghamshire.",
+      "ar": "بدأت حركة تحطيم الآلات «اللوديّة» بين 1811 و1816 بين حائكي الأطر في نوتنغهامشير."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Send the troops",
+          "ar": "أرسل الجند"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -10
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 6
+          },
+          {
+            "op": "institutionTrust",
+            "v": -6
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": -1
+        }
+      },
+      {
+        "label": {
+          "en": "Fund schooling and relief for displaced workers",
+          "ar": "موّل تعليمًا وإعانة للعمال المُزاحين"
+        },
+        "requires": {
+          "treasuryRevenue": 0.25
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.25,
+            "scale": "revenue"
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 9
+          },
+          {
+            "op": "literacy",
+            "v": 0.01
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Do nothing",
+          "ar": "لا تفعل شيئًا"
+        },
+        "effects": [
+          {
+            "op": "capital",
+            "mult": 0.95
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -6
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "canalPromoters",
+    "category": "invention",
+    "icon": "canal",
+    "weight": 2,
+    "once": true,
+    "when": {
+      "era": [
+        3
+      ],
+      "institution": {
+        "canals": false
+      }
+    },
+    "codex": "extent-of-market",
+    "title": {
+      "en": "Canal promoters",
+      "ar": "مروّجو القنوات"
+    },
+    "body": {
+      "en": "A duke's canal has halved the price of coal in the town it reaches. Investors now want a charter to dig canals across the country.",
+      "ar": "خفّضت قناة أحد الدوقات سعر الفحم إلى النصف في المدينة التي تبلغها، والمستثمرون يريدون الآن امتيازًا لحفر القنوات في أرجاء البلاد."
+    },
+    "history": {
+      "en": "The Duke of Bridgewater's canal (opened 1761) halved coal prices in Manchester and set off the 'canal mania' of the 1790s.",
+      "ar": "خفّضت قناة دوق بريدجووتر (افتُتحت سنة 1761) أسعار الفحم في مانشستر إلى النصف، وأطلقت «حمّى القنوات» في تسعينيات القرن الثامن عشر."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Grant the charters",
+          "ar": "امنح الامتيازات"
+        },
+        "effects": [
+          {
+            "op": "progress",
+            "v": 40
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 5
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Not yet",
+          "ar": "ليس الآن"
+        },
+        "effects": [],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "tradeTreaty",
+    "category": "trade",
+    "icon": "treaty",
+    "weight": 2,
+    "cooldown": 15,
+    "when": {
+      "minTurn": 5,
+      "all": [
+        {
+          "stat": "ports",
+          "gt": 0
+        },
+        {
+          "stat": "customs",
+          "gt": 0.08
+        }
+      ]
+    },
+    "codex": "mercantile-system",
+    "title": {
+      "en": "A neighbour offers a trade treaty",
+      "ar": "جار يعرض معاهدة تجارية"
+    },
+    "body": {
+      "en": "The rival kingdom across the sea proposes that both sides cut their duties on each other's goods.",
+      "ar": "تقترح المملكة المنافسة عبر البحر أن يخفّض الطرفان رسومهما على سلع كلٍّ منهما."
+    },
+    "history": {
+      "en": "The Eden Treaty of 1786 cut duties between Britain and France, until war ended it in 1793.",
+      "ar": "خفّضت معاهدة إيدن سنة 1786 الرسوم بين بريطانيا وفرنسا، حتى أنهتها الحرب سنة 1793."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Sign the treaty",
+          "ar": "وقّع المعاهدة"
+        },
+        "effects": [
+          {
+            "op": "customs",
+            "v": -0.08
+          },
+          {
+            "op": "foreign",
+            "mult": 1.15
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 4
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -3
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        },
+        "chronicle": {
+          "en": "In {year} a treaty cut the duties between the two kingdoms.",
+          "ar": "في سنة {year} خفّضت معاهدة الرسوم بين المملكتين."
+        }
+      },
+      {
+        "label": {
+          "en": "Decline",
+          "ar": "ارفض"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -2
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "pirates",
+    "category": "trade",
+    "icon": "pirate",
+    "weight": 2,
+    "cooldown": 8,
+    "when": {
+      "minTurn": 3,
+      "all": [
+        {
+          "stat": "ports",
+          "gt": 0
+        }
+      ]
+    },
+    "title": {
+      "en": "Pirates on the sea lanes",
+      "ar": "قراصنة على طرق البحر"
+    },
+    "body": {
+      "en": "Corsairs have taken three merchant ships this season. Insurers are tripling their rates.",
+      "ar": "استولى القراصنة على ثلاث سفن تجارية هذا الموسم، ورفع المؤمّنون أسعارهم ثلاثة أضعاف."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "Defence is the first duty of the sovereign, and trade cannot flourish without it.",
+        "ar": "الدفاع أول واجبات الحاكم، ولا تزدهر التجارة بدونه."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Send the navy",
+          "ar": "أرسل الأسطول"
+        },
+        "requires": {
+          "treasuryRevenue": 0.25
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.25,
+            "scale": "revenue"
+          },
+          {
+            "op": "bandits",
+            "v": -0.05
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 5
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Let merchants arm their own ships",
+          "ar": "دع التجار يسلّحون سفنهم"
+        },
+        "effects": [
+          {
+            "op": "foreign",
+            "mult": 0.95
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -4
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "newSeaRoute",
+    "category": "trade",
+    "icon": "compass",
+    "weight": 1,
+    "once": true,
+    "when": {
+      "minTurn": 6,
+      "all": [
+        {
+          "stat": "ports",
+          "gt": 0
+        }
+      ]
+    },
+    "codex": "extent-of-market",
+    "title": {
+      "en": "A new sea route",
+      "ar": "طريق بحري جديد"
+    },
+    "body": {
+      "en": "Captains report a shorter passage to distant markets, round a cape that was thought impassable.",
+      "ar": "يخبر الربابنة عن ممر أقصر إلى أسواق بعيدة، حول رأس كان يُظن أنه لا يُعبَر."
+    },
+    "onFire": [
+      {
+        "op": "foreign",
+        "mult": 1.2
+      }
+    ],
+    "choices": [
+      {
+        "label": {
+          "en": "Wonderful news",
+          "ar": "خبر رائع"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 5
+          }
+        ],
+        "advisors": {}
+      }
+    ]
+  },
+  {
+    "id": "tradeWar",
+    "category": "trade",
+    "icon": "war",
+    "weight": 4,
+    "cooldown": 8,
+    "when": {
+      "minTurn": 4,
+      "all": [
+        {
+          "stat": "customs",
+          "gt": 0.3
+        },
+        {
+          "stat": "ports",
+          "gt": 0
+        }
+      ]
+    },
+    "codex": "mercantile-system",
+    "title": {
+      "en": "Retaliation",
+      "ar": "معاملة بالمثل"
+    },
+    "body": {
+      "en": "Our neighbours have answered our high duties with high duties of their own. Our exporters are losing their best customers.",
+      "ar": "ردّ جيراننا على رسومنا العالية برسوم عالية مثلها، وأخذ مصدّرونا يخسرون أفضل زبائنهم."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Lower our duties",
+          "ar": "خفّض رسومنا"
+        },
+        "effects": [
+          {
+            "op": "customs",
+            "v": -0.1
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 2
+          },
+          {
+            "op": "foreign",
+            "mult": 1.05
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Escalate",
+          "ar": "صعّد"
+        },
+        "effects": [
+          {
+            "op": "customs",
+            "v": 0.05
+          },
+          {
+            "op": "foreign",
+            "mult": 0.85
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        },
+        "chronicle": {
+          "en": "In {year} a tariff war closed the best markets abroad.",
+          "ar": "في سنة {year} أغلقت حرب الرسوم أفضل الأسواق في الخارج."
+        }
+      }
+    ]
+  },
+  {
+    "id": "smugglers",
+    "category": "trade",
+    "icon": "smuggle",
+    "weight": 4,
+    "cooldown": 6,
+    "when": {
+      "all": [
+        {
+          "stat": "smuggling",
+          "gt": 0.15
+        }
+      ]
+    },
+    "codex": "four-maxims",
+    "title": {
+      "en": "Smugglers on the coast",
+      "ar": "مهرّبون على الساحل"
+    },
+    "body": {
+      "en": "Whole villages live by running goods past the customs men at night. The duties are so high that honest importers cannot compete.",
+      "ar": "تعيش قرى بأكملها على تهريب البضائع ليلًا متخطّية رجال الجمارك، والرسوم عالية إلى حدّ أن المستورد الأمين لا يقدر على المنافسة."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "A tax so heavy it tempts men to break the law punishes them for the temptation it creates.",
+        "ar": "الضريبة الثقيلة التي تغري الناس بخرق القانون تعاقبهم على إغراء صنعته هي."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Lower the duties",
+          "ar": "خفّض الرسوم"
+        },
+        "effects": [
+          {
+            "op": "customs",
+            "v": -0.1
+          },
+          {
+            "op": "fraud",
+            "v": -0.03
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Hire more revenue cutters",
+          "ar": "استأجر مزيدًا من زوارق الجمارك"
+        },
+        "requires": {
+          "treasuryRevenue": 0.15
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.15,
+            "scale": "revenue"
+          },
+          {
+            "op": "fraud",
+            "v": -0.02
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -3
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Look the other way",
+          "ar": "غضّ الطرف"
+        },
+        "effects": [
+          {
+            "op": "fraud",
+            "v": 0.05
+          },
+          {
+            "op": "institutionTrust",
+            "v": -3
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "strike",
+    "category": "society",
+    "icon": "strike",
+    "weight": 3,
+    "cooldown": 6,
+    "when": {
+      "minTurn": 3,
+      "all": [
+        {
+          "stat": "laborers",
+          "lt": 42
+        }
+      ]
+    },
+    "title": {
+      "en": "A strike",
+      "ar": "إضراب"
+    },
+    "body": {
+      "en": "The journeymen of the largest workshops have laid down their tools. They want a wage they can feed a family on.",
+      "ar": "ألقى صنّاع أكبر الورش أدواتهم، ويريدون أجرًا يكفي لإطعام أسرة."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Raise poor relief",
+          "ar": "زِد إعانة الفقراء"
+        },
+        "requires": {
+          "treasuryRevenue": 0.15
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.15,
+            "scale": "revenue"
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 8
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Arbitrate before a magistrate",
+          "ar": "أحِل النزاع إلى قاضٍ"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 5
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -4
+          },
+          {
+            "op": "institutionTrust",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Ban combinations of workmen",
+          "ar": "احظر تكتلات العمال"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -9
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 6
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year} workmen were forbidden to combine, though masters met freely.",
+          "ar": "في سنة {year} مُنع العمال من التكتل، في حين اجتمع أرباب العمل بحرية."
+        }
+      }
+    ]
+  },
+  {
+    "id": "schoolPetition",
+    "category": "society",
+    "icon": "school",
+    "weight": 2,
+    "cooldown": 10,
+    "when": {
+      "minTurn": 3,
+      "all": [
+        {
+          "stat": "literacy",
+          "lt": 0.75
+        }
+      ]
+    },
+    "codex": "duties-of-sovereign",
+    "title": {
+      "en": "A petition for schools",
+      "ar": "عريضة لإنشاء مدارس"
+    },
+    "body": {
+      "en": "Parents in the poorer parishes ask for a schoolroom and a master, so their children can learn to read, write and reckon.",
+      "ar": "يطلب آباء في الأحياء الفقيرة غرفة دراسة ومعلّمًا ليتعلّم أبناؤهم القراءة والكتابة والحساب."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "For a very small expense the public can make nearly every child learn to read, write and count.",
+        "ar": "بنفقة يسيرة جدًّا تستطيع الدولة أن تعلّم كل طفل تقريبًا القراءة والكتابة والحساب."
+      },
+      "scholar": {
+        "en": "Knowledge is a protection the state owes, like bread and safety.",
+        "ar": "العلم حماية تدين بها الدولة كالخبز والأمن."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Fund the schools",
+          "ar": "موّل المدارس"
+        },
+        "requires": {
+          "treasuryRevenue": 0.15
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.15,
+            "scale": "revenue"
+          },
+          {
+            "op": "literacy",
+            "v": 0.02
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Decline",
+          "ar": "ارفض"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -3
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "fraudScandal",
+    "category": "society",
+    "icon": "scales",
+    "weight": 3,
+    "cooldown": 8,
+    "when": {
+      "minTurn": 3,
+      "all": [
+        {
+          "stat": "fraud",
+          "gt": 0.2
+        }
+      ]
+    },
+    "codex": "honest-trade",
+    "title": {
+      "en": "Short weights",
+      "ar": "تطفيف الموازين"
+    },
+    "body": {
+      "en": "A famous merchant house has been caught selling short measures and passing off bad cloth as good. The town is in uproar.",
+      "ar": "ضُبط بيت تجاري مشهور يطفّف الكيل ويبيع رديء القماش على أنه جيد، والمدينة في هياج."
+    },
+    "advice": {
+      "scholar": {
+        "en": "The trader who cheats on the weight has cheated more than one customer. He has taught the whole market to distrust.",
+        "ar": "التاجر الذي يطفّف الميزان لم يغشّ زبونًا واحدًا، بل علّم السوق كلها الريبة."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Prosecute in open court",
+          "ar": "حاكِمهم علنًا"
+        },
+        "requires": {
+          "institution": "contractCourts"
+        },
+        "effects": [
+          {
+            "op": "fraud",
+            "v": -0.08
+          },
+          {
+            "op": "institutionTrust",
+            "v": 6
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -5
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Let the market inspector punish them",
+          "ar": "دع المحتسب يعاقبهم"
+        },
+        "requires": {
+          "institution": "hisba"
+        },
+        "effects": [
+          {
+            "op": "fraud",
+            "v": -0.1
+          },
+          {
+            "op": "institutionTrust",
+            "v": 5
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -3
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Accept their apology and a donation",
+          "ar": "اقبل اعتذارهم وتبرّعهم"
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": 0.1,
+            "scale": "revenue"
+          },
+          {
+            "op": "fraud",
+            "v": 0.04
+          },
+          {
+            "op": "institutionTrust",
+            "v": -8
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "emigration",
+    "category": "society",
+    "icon": "ship",
+    "weight": 3,
+    "cooldown": 8,
+    "when": {
+      "minTurn": 4,
+      "any": [
+        {
+          "stat": "gap",
+          "gt": 22
+        },
+        {
+          "stat": "laborers",
+          "lt": 30
+        }
+      ]
+    },
+    "codex": "five-protections",
+    "title": {
+      "en": "The poor are leaving",
+      "ar": "الفقراء يرحلون"
+    },
+    "body": {
+      "en": "Ships leave every week crowded with families who say there is no future for them here, however rich the merchants grow.",
+      "ar": "تبحر السفن كل أسبوع مكتظّة بأسر تقول إنه لا مستقبل لها هنا، مهما اغتنى التجار."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Spend on relief and housing",
+          "ar": "أنفق على الإعانة والسكن"
+        },
+        "requires": {
+          "treasuryRevenue": 0.2
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.2,
+            "scale": "revenue"
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 7
+          },
+          {
+            "op": "stock",
+            "good": "housing",
+            "v": 1.3,
+            "mult": true
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Let them go",
+          "ar": "دعهم يرحلون"
+        },
+        "effects": [
+          {
+            "op": "pop",
+            "mult": 0.98
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "dissentersPetition",
+    "category": "history",
+    "icon": "scroll",
+    "weight": 2,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "minYear": 1787,
+      "policy": {
+        "testActs": true
+      }
+    },
+    "codex": "five-protections",
+    "title": {
+      "en": "The dissenters' petition",
+      "ar": "عريضة المنشقّين عن الكنيسة"
+    },
+    "body": {
+      "en": "Citizens who worship outside the established church petition to be allowed to hold public office like everyone else.",
+      "ar": "يلتمس مواطنون يتعبّدون خارج الكنيسة الرسمية أن يُسمح لهم بتولّي المناصب العامة كغيرهم."
+    },
+    "history": {
+      "en": "Parliament rejected repeal of the Test and Corporation Acts in 1787, 1789 and 1790, and finally repealed them in 1828.",
+      "ar": "رفض البرلمان إلغاء قانونَي الاختبار والهيئات سنوات 1787 و1789 و1790، ثم ألغاهما أخيرًا سنة 1828."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Repeal the restrictions",
+          "ar": "ألغِ القيود"
+        },
+        "effects": [
+          {
+            "op": "policy",
+            "id": "testActs",
+            "on": false
+          },
+          {
+            "op": "worship",
+            "v": 0.2
+          },
+          {
+            "op": "institutionTrust",
+            "v": 5
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -5
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year} citizens of every confession were admitted to public office.",
+          "ar": "في سنة {year} قُبل المواطنون من كل مذهب في المناصب العامة."
+        }
+      },
+      {
+        "label": {
+          "en": "Keep the restrictions",
+          "ar": "أبقِ القيود"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 4
+          },
+          {
+            "op": "institutionTrust",
+            "v": -3
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "americanWar",
+    "category": "history",
+    "icon": "war",
+    "weight": 5,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "maxYear": 1779
+    },
+    "title": {
+      "en": "War in the American colonies",
+      "ar": "الحرب في المستعمرات الأمريكية"
+    },
+    "body": {
+      "en": "The American colonies have declared independence. Generals ask for more regiments; merchants fear for the Atlantic trade.",
+      "ar": "أعلنت المستعمرات الأمريكية استقلالها، والقادة يطلبون مزيدًا من الأفواج، والتجار يخشون على تجارة الأطلسي."
+    },
+    "history": {
+      "en": "The war lasted until 1783. Britain's national debt rose from about £127 million to roughly £240 million, more than £100 million added. Smith had argued that the colonies cost Britain more than they returned.",
+      "ar": "دامت الحرب حتى 1783، وارتفع الدين العام البريطاني من نحو 127 مليون جنيه إلى نحو 240 مليونًا، أي بزيادة تفوق مئة مليون. وكان سميث قد رأى أن المستعمرات تكلّف بريطانيا أكثر مما تعطيها."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "The colonies have cost this country far more than they ever returned. Make peace and trade with them as friends.",
+        "ar": "كلّفت المستعمرات هذا البلد أكثر بكثير مما أعطته؛ فاعقد الصلح وتاجر معها صديقًا."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Fight on",
+          "ar": "واصل الحرب"
+        },
+        "effects": [
+          {
+            "op": "debt",
+            "v": 1.5,
+            "scale": "revenue"
+          },
+          {
+            "op": "foreign",
+            "mult": 0.9
+          },
+          {
+            "op": "delay",
+            "turns": 7,
+            "effects": [
+              {
+                "op": "foreign",
+                "mult": 1.08
+              },
+              {
+                "op": "debt",
+                "v": 2.5,
+                "scale": "revenue"
+              },
+              {
+                "op": "chronicle",
+                "key": "war.lost"
+              }
+            ]
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year} the crown chose to fight on in America, and borrowed heavily to do it.",
+          "ar": "في سنة {year} اختارت الدولة مواصلة الحرب في أمريكا، واقترضت كثيرًا لذلك."
+        }
+      },
+      {
+        "label": {
+          "en": "Seek an early peace",
+          "ar": "اطلب صلحًا مبكرًا"
+        },
+        "effects": [
+          {
+            "op": "debt",
+            "v": 0.4,
+            "scale": "revenue"
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -6
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 5
+          },
+          {
+            "op": "institutionTrust",
+            "v": -3
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year} the crown made an early peace with the American colonies.",
+          "ar": "في سنة {year} عقدت الدولة صلحًا مبكرًا مع المستعمرات الأمريكية."
+        }
+      }
+    ]
+  },
+  {
+    "id": "sinkingFund",
+    "category": "history",
+    "icon": "ledger",
+    "weight": 3,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "minYear": 1784,
+      "maxYear": 1795
+    },
+    "codex": "public-debt",
+    "title": {
+      "en": "A sinking fund",
+      "ar": "صندوق لإطفاء الدين"
+    },
+    "body": {
+      "en": "The young chief minister proposes setting aside a fixed sum every year to buy back the national debt.",
+      "ar": "يقترح رئيس الوزراء الشاب تخصيص مبلغ ثابت كل عام لشراء الدين العام وإطفائه."
+    },
+    "history": {
+      "en": "William Pitt the Younger created his sinking fund in 1786.",
+      "ar": "أنشأ وليام بيت الأصغر صندوق إطفاء الدين سنة 1786."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Create the fund",
+          "ar": "أنشئ الصندوق"
+        },
+        "requires": {
+          "treasuryRevenue": 0.3
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.3,
+            "scale": "revenue"
+          },
+          {
+            "op": "debt",
+            "v": -0.6,
+            "scale": "revenue"
+          },
+          {
+            "op": "trust",
+            "v": 4
+          },
+          {
+            "op": "flag",
+            "name": "debtConsolidation"
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Spend the money now",
+          "ar": "أنفق المال الآن"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 2
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "restriction1797",
+    "category": "history",
+    "icon": "bank",
+    "weight": 4,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "minYear": 1795,
+      "maxYear": 1800
+    },
+    "codex": "money-mirror",
+    "title": {
+      "en": "An invasion scare",
+      "ar": "ذعر من غزو"
+    },
+    "body": {
+      "en": "A French force has landed on the coast. Depositors rush to swap notes for gold, and the bank's reserves are draining by the hour.",
+      "ar": "نزلت قوة فرنسية على الساحل، فهرع المودعون إلى صرف أوراقهم ذهبًا، واحتياطي المصرف ينفد ساعة بعد ساعة."
+    },
+    "history": {
+      "en": "In February 1797 the Bank of England suspended payment of its notes in gold. The 'Restriction Period' lasted until 1821.",
+      "ar": "في فبراير 1797 أوقف بنك إنجلترا صرف أوراقه ذهبًا، ودامت «فترة التقييد» حتى 1821."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Suspend gold payments",
+          "ar": "أوقف الصرف بالذهب"
+        },
+        "effects": [
+          {
+            "op": "inflation",
+            "v": 0.15
+          },
+          {
+            "op": "trust",
+            "v": -6
+          },
+          {
+            "op": "treasury",
+            "v": 0.3,
+            "scale": "revenue"
+          },
+          {
+            "op": "delay",
+            "turns": 12,
+            "effects": [
+              {
+                "op": "trust",
+                "v": 6
+              }
+            ]
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      },
+      {
+        "label": {
+          "en": "Keep paying gold, whatever it costs",
+          "ar": "واصل الصرف ذهبًا مهما كلّف"
+        },
+        "effects": [
+          {
+            "op": "capital",
+            "mult": 0.94
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -8
+          },
+          {
+            "op": "trust",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "incomeTax",
+    "category": "history",
+    "icon": "ledger",
+    "weight": 4,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "minYear": 1798,
+      "maxYear": 1815
+    },
+    "codex": "four-maxims",
+    "title": {
+      "en": "A tax on income",
+      "ar": "ضريبة على الدخل"
+    },
+    "body": {
+      "en": "The war is costing more than customs and excise can raise. The minister proposes a graduated tax on incomes above a modest level.",
+      "ar": "تكلّف الحرب أكثر مما تجمعه الجمارك وضرائب الاستهلاك، فيقترح الوزير ضريبة متدرّجة على الدخول فوق حدّ متواضع."
+    },
+    "history": {
+      "en": "Pitt introduced Britain's first income tax in 1799. It was abolished in 1816 and brought back by Peel in 1842.",
+      "ar": "فرض بيت أول ضريبة دخل في بريطانيا سنة 1799، وأُلغيت سنة 1816، ثم أعادها بيل سنة 1842."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "Subjects ought to contribute in proportion to their abilities. This comes nearer that than a tax on beer and candles.",
+        "ar": "ينبغي أن يسهم الرعايا بقدر طاقتهم، وهذا أقرب إلى ذلك من ضريبة على الجعة والشموع."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Introduce the income tax, and cut excise on necessities",
+          "ar": "افرض ضريبة الدخل وخفّض ضرائب الاستهلاك على الضروريات"
+        },
+        "effects": [
+          {
+            "op": "flag",
+            "name": "incomeTax"
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -8
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -6
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 6
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Borrow instead",
+          "ar": "اقترض بدلًا من ذلك"
+        },
+        "effects": [
+          {
+            "op": "debt",
+            "v": 1.0,
+            "scale": "revenue"
+          },
+          {
+            "op": "treasury",
+            "v": 1.0,
+            "scale": "revenue"
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "continentalSystem",
+    "category": "history",
+    "icon": "war",
+    "weight": 5,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "minYear": 1806,
+      "maxYear": 1812
+    },
+    "title": {
+      "en": "A continental blockade",
+      "ar": "حصار قاري"
+    },
+    "body": {
+      "en": "The French emperor has forbidden every port he controls to trade with us. Warehouses fill with goods nobody can ship.",
+      "ar": "منع الإمبراطور الفرنسي كل ميناء تحت سيطرته من التجارة معنا، فامتلأت المخازن بسلع لا يقدر أحد على شحنها."
+    },
+    "history": {
+      "en": "Napoleon's Continental System (1806) tried to ruin Britain by closing Europe to its trade. Smuggling and new markets in the Americas blunted it.",
+      "ar": "حاول النظام القاري الذي فرضه نابليون (1806) تخريب بريطانيا بإغلاق أوروبا أمام تجارتها، وأضعفه التهريب والأسواق الجديدة في الأمريكتين."
+    },
+    "onFire": [
+      {
+        "op": "foreign",
+        "mult": 0.75
+      },
+      {
+        "op": "delay",
+        "turns": 4,
+        "effects": [
+          {
+            "op": "foreign",
+            "mult": 1.3
+          }
+        ]
+      }
+    ],
+    "choices": [
+      {
+        "label": {
+          "en": "Find new markets across the Atlantic",
+          "ar": "ابحث عن أسواق جديدة عبر الأطلسي"
+        },
+        "effects": [
+          {
+            "op": "foreign",
+            "mult": 1.08
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 0
+        }
+      },
+      {
+        "label": {
+          "en": "Blockade them in return",
+          "ar": "حاصرهم بالمثل"
+        },
+        "effects": [
+          {
+            "op": "debt",
+            "v": 0.5,
+            "scale": "revenue"
+          },
+          {
+            "op": "foreign",
+            "mult": 0.95
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 3
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "corn1815",
+    "category": "history",
+    "icon": "grain",
+    "weight": 5,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "minYear": 1814,
+      "maxYear": 1820
+    },
+    "codex": "mercantile-system",
+    "title": {
+      "en": "Peace, and cheap foreign grain",
+      "ar": "السلام والقمح الأجنبي الرخيص"
+    },
+    "body": {
+      "en": "With the war over, foreign grain is coming in cheap. The landlords in Parliament want to ban imports until the price at home is very high.",
+      "ar": "بانتهاء الحرب صار القمح الأجنبي يرد رخيصًا، والملّاك في البرلمان يريدون منع الاستيراد حتى يبلغ السعر في الداخل حدًّا عاليًا جدًّا."
+    },
+    "history": {
+      "en": "The Corn Law of 1815 banned imports of wheat until the home price reached 80 shillings a quarter. It was repealed in 1846.",
+      "ar": "منع قانون الحبوب لسنة 1815 استيراد القمح حتى يبلغ سعره في الداخل ثمانين شلنًا للكيل، وأُلغي سنة 1846."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Pass the stronger Corn Law",
+          "ar": "أقرّ قانون الحبوب المشدّد"
+        },
+        "effects": [
+          {
+            "op": "policy",
+            "id": "cornLaw",
+            "on": true
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 14
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -8
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year} Parliament shut out foreign grain until bread was dear at home.",
+          "ar": "في سنة {year} أغلق البرلمان الباب أمام القمح الأجنبي حتى يغلو الخبز في الداخل."
+        }
+      },
+      {
+        "label": {
+          "en": "Let the grain in",
+          "ar": "اسمح بدخول القمح"
+        },
+        "effects": [
+          {
+            "op": "policy",
+            "id": "cornLaw",
+            "on": false
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -14
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 8
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year}, against the landlords, foreign grain was let in freely.",
+          "ar": "في سنة {year}، على خلاف رغبة الملّاك، سُمح بدخول القمح الأجنبي بحرية."
+        }
+      }
+    ]
+  },
+  {
+    "id": "reformMeeting",
+    "category": "history",
+    "icon": "crowd",
+    "weight": 4,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "minYear": 1816,
+      "maxYear": 1832,
+      "all": [
+        {
+          "stat": "laborers",
+          "lt": 55
+        }
+      ]
+    },
+    "title": {
+      "en": "A great meeting for reform",
+      "ar": "اجتماع حاشد للإصلاح"
+    },
+    "body": {
+      "en": "Sixty thousand people have gathered in a field to demand a fair vote and cheaper bread. The magistrates are nervous and the yeomanry is mounted.",
+      "ar": "تجمّع ستون ألفًا في حقل يطالبون بتصويت عادل وخبز أرخص، والقضاة قلقون والفرسان على ظهور خيولهم."
+    },
+    "history": {
+      "en": "At St Peter's Field, Manchester, in 1819, cavalry charged a reform meeting, killing at least 15 people: the 'Peterloo Massacre'. The Reform Act followed in 1832.",
+      "ar": "في حقل سانت بيترز بمانشستر سنة 1819 هاجم الفرسان اجتماعًا للإصلاح فقُتل خمسة عشر شخصًا على الأقل، وعُرفت الحادثة بـ«مذبحة بيترلو»، ثم صدر قانون الإصلاح سنة 1832."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Disperse the meeting by force",
+          "ar": "فرّق الاجتماع بالقوة"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": -14
+          },
+          {
+            "op": "institutionTrust",
+            "v": -12
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": 5
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        },
+        "chronicle": {
+          "en": "In {year} soldiers charged a peaceful crowd that had come to ask for reform.",
+          "ar": "في سنة {year} هاجم الجند حشدًا مسالمًا جاء يطالب بالإصلاح."
+        }
+      },
+      {
+        "label": {
+          "en": "Hear their petition",
+          "ar": "استمع إلى عريضتهم"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 8
+          },
+          {
+            "op": "institutionTrust",
+            "v": 6
+          },
+          {
+            "op": "class",
+            "cls": "landlords",
+            "v": -6
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        },
+        "chronicle": {
+          "en": "In {year} the crown received the reformers' petition and promised a hearing.",
+          "ar": "في سنة {year} تسلّمت الدولة عريضة المصلحين ووعدت بالنظر فيها."
+        }
+      }
+    ]
+  },
+  {
+    "id": "factoryChildren",
+    "category": "society",
+    "icon": "child",
+    "weight": 3,
+    "once": true,
+    "when": {
+      "era": [
+        4
+      ],
+      "institution": {
+        "factoryActs": false
+      }
+    },
+    "codex": "five-protections",
+    "title": {
+      "en": "Children in the mills",
+      "ar": "الأطفال في المصانع"
+    },
+    "body": {
+      "en": "A doctor reports that children of seven work twelve-hour shifts in the cotton mills. Some masters say the trade cannot survive without them.",
+      "ar": "يفيد طبيب بأن أطفالًا في السابعة يعملون نوبات من اثنتي عشرة ساعة في مصانع القطن، ويقول بعض أصحاب المصانع إن الصنعة لا تقوم بدونهم."
+    },
+    "history": {
+      "en": "The Factory Act of 1833 banned work by children under nine in textile mills and created factory inspectors.",
+      "ar": "منع قانون المصانع لسنة 1833 تشغيل الأطفال دون التاسعة في مصانع النسيج، وأنشأ مفتشين للمصانع."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Begin drafting a Factory Act",
+          "ar": "ابدأ صياغة قانون للمصانع"
+        },
+        "effects": [
+          {
+            "op": "progress",
+            "v": 35
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -5
+          },
+          {
+            "op": "class",
+            "cls": "laborers",
+            "v": 5
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Leave it to the masters",
+          "ar": "اترك الأمر لأصحاب المصانع"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": 3
+          },
+          {
+            "op": "institutionTrust",
+            "v": -4
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "railwayMania",
+    "category": "money",
+    "icon": "rail",
+    "weight": 3,
+    "once": true,
+    "when": {
+      "scenario": [
+        "britain1776"
+      ],
+      "minYear": 1836,
+      "institution": {
+        "railways": true
+      }
+    },
+    "codex": "two-finance-paths",
+    "title": {
+      "en": "Railway mania",
+      "ar": "حمّى السكك الحديدية"
+    },
+    "body": {
+      "en": "Everyone is buying railway shares, including lines that will never be built. Share prices double every few months.",
+      "ar": "الجميع يشترون أسهم السكك الحديدية، حتى أسهم خطوط لن تُبنى أبدًا، والأسعار تتضاعف كل بضعة أشهر."
+    },
+    "history": {
+      "en": "Britain's railway mania peaked in 1846; many companies collapsed, but the boom left the country a national rail network.",
+      "ar": "بلغت حمّى السكك الحديدية في بريطانيا ذروتها سنة 1846، وانهارت شركات كثيرة، لكن الطفرة تركت للبلاد شبكة سكك وطنية."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Let the boom run",
+          "ar": "دع الطفرة تمضي"
+        },
+        "effects": [
+          {
+            "op": "credit",
+            "v": 0.2
+          },
+          {
+            "op": "capital",
+            "mult": 1.05
+          },
+          {
+            "op": "delay",
+            "turns": 3,
+            "effects": [
+              {
+                "op": "capital",
+                "mult": 0.9
+              },
+              {
+                "op": "class",
+                "cls": "merchants",
+                "v": -10
+              }
+            ]
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": -1
+        }
+      },
+      {
+        "label": {
+          "en": "Require proper accounts before a line is chartered",
+          "ar": "اشترط حسابات سليمة قبل منح امتياز أي خط"
+        },
+        "effects": [
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -4
+          },
+          {
+            "op": "fraud",
+            "v": -0.03
+          },
+          {
+            "op": "institutionTrust",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "banditsRoad",
+    "category": "trade",
+    "icon": "bandit",
+    "weight": 3,
+    "cooldown": 6,
+    "when": {
+      "minTurn": 3,
+      "all": [
+        {
+          "stat": "banditry",
+          "gt": 0.15
+        }
+      ]
+    },
+    "codex": "duties-of-sovereign",
+    "title": {
+      "en": "Highwaymen",
+      "ar": "قطّاع الطرق"
+    },
+    "body": {
+      "en": "Robbers are holding up carts on the main roads. Carriers now travel only in convoys and charge double.",
+      "ar": "يعترض اللصوص العربات على الطرق الرئيسة، فصار الحمّالون لا يسيرون إلا في قوافل ويطلبون أجرًا مضاعفًا."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Raise the watch",
+          "ar": "زِد الحراسة"
+        },
+        "requires": {
+          "treasuryRevenue": 0.15
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.15,
+            "scale": "revenue"
+          },
+          {
+            "op": "bandits",
+            "v": -0.1
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Let the carriers manage",
+          "ar": "دع الحمّالين يتدبّرون"
+        },
+        "effects": [
+          {
+            "op": "bandits",
+            "v": 0.05
+          },
+          {
+            "op": "class",
+            "cls": "merchants",
+            "v": -4
+          }
+        ],
+        "advisors": {
+          "scotsman": -1,
+          "scholar": -1
+        }
+      }
+    ]
+  },
+  {
+    "id": "travellingMoneychanger",
+    "category": "money",
+    "icon": "coin",
+    "weight": 6,
+    "once": true,
+    "when": {
+      "scenario": [
+        "needle"
+      ],
+      "minTurn": 4,
+      "institution": {
+        "coinage": false
+      }
+    },
+    "codex": "origin-of-money",
+    "title": {
+      "en": "The trouble with barter",
+      "ar": "مشكلة المقايضة"
+    },
+    "body": {
+      "en": "A baker wants cloth, but the weaver wants nails, and the smith wants bread. Half the morning goes on finding someone who wants what you have.",
+      "ar": "يريد الخباز قماشًا، والنساج يريد مسامير، والحداد يريد خبزًا، ويذهب نصف الصباح في البحث عمّن يريد ما عندك."
+    },
+    "advice": {
+      "scotsman": {
+        "en": "Every prudent man keeps by him some commodity that few will refuse in exchange. That is how money begins.",
+        "ar": "كل عاقل يحتفظ بسلعة لا يكاد أحد يرفضها في المبادلة، وهكذا يبدأ النقد."
+      },
+      "scholar": {
+        "en": "God created dinars and dirhams as judges and intermediaries between all other goods, so that goods may be valued by them.",
+        "ar": "خلق الله تعالى الدنانير والدراهم حاكمين ومتوسطين بين سائر الأموال حتى تُقدَّر الأموال بهما."
+      }
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Strike a coin of honest weight",
+          "ar": "اضرب نقدًا بوزن صادق"
+        },
+        "effects": [
+          {
+            "op": "progress",
+            "v": 30
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        },
+        "hint": {
+          "en": "Advances the Coinage institution.",
+          "ar": "يقدّم مؤسسة السكّة."
+        }
+      }
+    ]
+  },
+  {
+    "id": "millerWeights",
+    "category": "society",
+    "icon": "scales",
+    "weight": 4,
+    "once": true,
+    "when": {
+      "scenario": [
+        "needle"
+      ],
+      "minTurn": 6
+    },
+    "codex": "honest-trade",
+    "title": {
+      "en": "The miller's thumb",
+      "ar": "إبهام الطحّان"
+    },
+    "body": {
+      "en": "Villagers swear the miller presses his thumb on the scale. Nobody can prove it, and everybody believes it.",
+      "ar": "يقسم القرويون أن الطحّان يضغط بإبهامه على الميزان، ولا يقدر أحد على إثبات ذلك، والجميع يصدّقونه."
+    },
+    "choices": [
+      {
+        "label": {
+          "en": "Appoint a market inspector",
+          "ar": "عيّن محتسبًا"
+        },
+        "effects": [
+          {
+            "op": "progress",
+            "v": 20
+          },
+          {
+            "op": "fraud",
+            "v": -0.03
+          }
+        ],
+        "advisors": {
+          "scotsman": 0,
+          "scholar": 1
+        }
+      },
+      {
+        "label": {
+          "en": "Stamp official weights and measures",
+          "ar": "اختم الموازين والمكاييل بختم رسمي"
+        },
+        "requires": {
+          "treasuryRevenue": 0.1
+        },
+        "effects": [
+          {
+            "op": "treasury",
+            "v": -0.1,
+            "scale": "revenue"
+          },
+          {
+            "op": "fraud",
+            "v": -0.05
+          },
+          {
+            "op": "institutionTrust",
+            "v": 4
+          }
+        ],
+        "advisors": {
+          "scotsman": 1,
+          "scholar": 1
+        }
+      }
+    ]
+  }
+]

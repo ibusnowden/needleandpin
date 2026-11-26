@@ -1,0 +1,29 @@
+{
+  "maddison_2023": {
+    "title": "Maddison Project Database 2023",
+    "citation": "Bolt, J. and van Zanden, J.L. (2024), 'Maddison style estimates of the evolution of the world economy: A new 2023 update', Journal of Economic Surveys, 1-41.",
+    "license": "CC BY 4.0",
+    "landing": "https://www.rug.nl/ggdc/historicaldevelopment/maddison/releases/maddison-project-database-2023",
+    "url": "https://dataverse.nl/api/access/datafile/421302",
+    "file": "mpd2023.xlsx",
+    "units": "GDP per capita, 2011 international dollars"
+  },
+  "clio_real_wage": {
+    "title": "Clio Infra: Labourers' Real Wage (broad)",
+    "citation": "Clio Infra, Labourers' Real Wage, https://clio-infra.eu/Indicators/LabourersRealWage.html (data compiled from Allen and others).",
+    "license": "Clio Infra terms: free for research and education with citation (check before launch)",
+    "landing": "https://clio-infra.eu/Indicators/LabourersRealWage.html",
+    "url": "https://clio-infra.eu/data/LabourersRealWage_Broad.xlsx",
+    "file": "clio_real_wage_broad.xlsx",
+    "units": "Welfare ratio: subsistence baskets bought by a labourer's annual earnings"
+  },
+  "allen_labourers": {
+    "title": "Robert C. Allen: building labourers' wages, prices and welfare ratios (European cities)",
+    "citation": "Allen, R.C. (2001), 'The Great Divergence in European Wages and Prices from the Middle Ages to the First World War', Explorations in Economic History 38, 411-447. Data: labourersxls.xls.",
+    "license": "Published research data; free for research and education with citation (check before launch)",
+    "landing": "https://www.nuffield.ox.ac.uk/people/sites/allen-research-pages/",
+    "url": "https://www.nuffield.ox.ac.uk/media/2138/labourersxls.xls",
+    "file": "allen_labourers.xls",
+    "units": "Welfare ratio: annual earnings / cost of a family's respectability basket"
+  }
+}

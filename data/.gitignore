@@ -1,0 +1,3 @@
+# Raw downloads are re-fetchable with `npm run data:fetch`; manifest.json pins their hashes.
+raw/*
+!raw/manifest.json

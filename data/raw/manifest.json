@@ -1,0 +1,20 @@
+{
+  "maddison_2023": {
+    "file": "mpd2023.xlsx",
+    "sha256": "ecc5916ca12789b983fc4be437f8a354bbf4291323605324ac3e0aea4c57cbb6",
+    "bytes": 4903804,
+    "fetched": "2026-11-26"
+  },
+  "clio_real_wage": {
+    "file": "clio_real_wage_broad.xlsx",
+    "sha256": "837f3e14bbd365ea9ff66786e2524ba0d9e9ad280ecd55bb7d05b726f7304f61",
+    "bytes": 342047,
+    "fetched": "2026-11-26"
+  },
+  "allen_labourers": {
+    "file": "allen_labourers.xls",
+    "sha256": "f6a7d436a85db31d7c6ce96e1c974dc8024e7ff3b6163cd6751ef891c77b556a",
+    "bytes": 787054,
+    "fetched": "2026-11-26"
+  }
+}

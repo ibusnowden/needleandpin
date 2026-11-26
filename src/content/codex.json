@@ -1,0 +1,728 @@
+[
+  {
+    "id": "division-of-labour",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book I, ch. 1",
+      "ar": "ثروة الأمم، الكتاب الأول، الفصل 1"
+    },
+    "title": {
+      "en": "The Division of Labour",
+      "ar": "تقسيم العمل"
+    },
+    "summary": {
+      "en": "Smith opens his book in a small pin factory. One worker alone, he says, could hardly make twenty pins a day. Split the work into about eighteen distinct operations and ten workers make some 48,000. He gives three reasons: each worker's dexterity grows, no time is lost moving from one task to another, and people who repeat one task invent machines to make it easier. In the game, every workshop has a specialization level from 1 to 5. Each level adds specialist roles and multiplies output per worker.",
+      "ar": "يفتتح سميث كتابه في مصنع صغير للدبابيس. يقول إن العامل وحده لا يكاد يصنع عشرين دبوسًا في اليوم، فإذا قُسّم العمل إلى نحو ثماني عشرة عملية متميزة صنع عشرة عمال نحو ثمانية وأربعين ألفًا. ويذكر ثلاثة أسباب: تزداد مهارة كل عامل، ولا يضيع وقت في الانتقال من عمل إلى آخر، ومن يكرّر عملًا واحدًا يخترع آلات تيسّره. في اللعبة لكل ورشة مستوى تخصص من 1 إلى 5، وكل مستوى يضيف أدوارًا متخصصة ويضاعف ناتج العامل."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "One man draws out the wire; another straights it; a third cuts it; a fourth points it; a fifth grinds it at the top for receiving the head",
+      "translation": {
+        "ar": "رجل يسحب السلك، وآخر يقوّمه، وثالث يقطعه، ورابع يبري طرفه، وخامس يسنّ أعلاه ليتلقّى الرأس"
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "Henry Ford's moving assembly line (1913) cut the time to build a Model T chassis from about twelve hours to about ninety minutes.",
+      "ar": "خفّض خط التجميع المتحرك لهنري فورد (1913) زمن تجميع هيكل سيارة «موديل تي» من نحو اثنتي عشرة ساعة إلى نحو تسعين دقيقة."
+    },
+    "mechanic": {
+      "en": "Specialization level, m(s) = 1.6^(s−1).",
+      "ar": "مستوى التخصص، م(س) = 1.6^(س−1)."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "needle-hands",
+    "author": "ghazali",
+    "ref": {
+      "en": "Ihya' 'Ulum al-Din, Book 32 (Patience and Thankfulness), vol. 4 p. 119",
+      "ar": "إحياء علوم الدين، كتاب الصبر والشكر، ج4 ص119"
+    },
+    "title": {
+      "en": "Twenty-Five Passes of the Needle",
+      "ar": "الإبرة تمرّ خمسًا وعشرين مرة"
+    },
+    "summary": {
+      "en": "Some seven centuries before Smith, al-Ghazali asked his readers to count the blessings hidden in ordinary things. Even the needle, he writes, a small tool for sewing the clothes that keep out the cold, takes its form from a piece of iron only after passing through the needle-maker's hands twenty-five times, with a separate task at each pass. Remarkably close to Smith's eighteen operations in the pin factory. A page later he traces the chain of crafts that feed us: the baker, the miller, the ploughman, the smith who makes the plough, the carpenter who makes the smith's tools, and the ruler who keeps the craftsmen in order. Ghazali asks a question Smith does not: what is all this wealth for? That question is the second meter of this game.",
+      "ar": "قبل سميث بنحو سبعة قرون دعا الغزالي قرّاءه إلى أن يعدّوا النعم المخبوءة في الأشياء المألوفة. فالإبرة، وهي آلة صغيرة فائدتها خياطة اللباس الذي يمنع البرد، لا تكتمل صورتها من حديدة إلا بعد أن تمرّ على يد الإبري خمسًا وعشرين مرة، يتعاطى في كل مرة منها عملًا، وهو قريب على نحو لافت من العمليات الثماني عشرة في مصنع الدبابيس عند سميث. وبعد صفحة يتتبّع سلسلة الصناعات التي تطعمنا: الخبّاز والطحّان والحرّاث، والحدّاد الذي يصلح آلات الحراثة، والنجّار الذي يصلح آلات الحدّاد، والسلطان الذي يصلح الصنّاع. ويسأل الغزالي سؤالًا لا يسأله سميث: ما الغاية من هذه الثروة؟ وهذا السؤال هو المقياس الثاني في هذه اللعبة."
+    },
+    "quote": {
+      "lang": "ar",
+      "text": "حتى إن الإبرة التي هي آلة صغيرة فائدتها خياطة اللباس الذي يمنع البرد عنك لا تكمل صورتها من حديدة تصلح للإبرة إلا بعد أن تمر على يد الإبري خمساً وعشرين مرة ويتعاطى في كل مرة منها عملاً",
+      "status": "verified-dar-al-marifa",
+      "translation": {
+        "en": "Even the needle, a small tool whose use is to sew the clothing that keeps the cold from you, does not take its form from a piece of iron fit for a needle until it has passed through the needle-maker's hands twenty-five times, with a task performed at each pass."
+      }
+    },
+    "example": {
+      "en": "A modern smartphone contains parts made in dozens of countries; no single firm knows how to make all of them.",
+      "ar": "يحتوي الهاتف الذكي الحديث على أجزاء صُنعت في عشرات البلدان، ولا تعرف شركة واحدة كيف تصنعها كلها."
+    },
+    "mechanic": {
+      "en": "The tutorial: one workshop learning to split its work.",
+      "ar": "الدرس التمهيدي: ورشة واحدة تتعلم تقسيم عملها."
+    },
+    "read": "https://shamela.ws/book/9472/1278"
+  },
+  {
+    "id": "extent-of-market",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book I, ch. 3",
+      "ar": "ثروة الأمم، الكتاب الأول، الفصل 3"
+    },
+    "title": {
+      "en": "The Extent of the Market",
+      "ar": "اتساع السوق"
+    },
+    "summary": {
+      "en": "A pin factory making 48,000 pins a day is useless in a village that needs a few hundred. Specialization only pays when there are enough buyers within reach. That is why, Smith notes, the first great civilizations grew along rivers and coasts, where water carriage was cheap. In the game, a workshop's specialization level is capped by its market reach: the population it can get goods to at a sensible cost. Every doubling of reach allows one more level. Roads, ports, canals, honest money and low tolls all extend it.",
+      "ar": "مصنع يصنع ثمانية وأربعين ألف دبوس في اليوم لا نفع فيه في قرية تحتاج بضع مئات. التخصص لا يُربح إلا إذا كان في المتناول مشترون كفاية، ولهذا، كما يلاحظ سميث، نشأت الحضارات الكبرى الأولى على الأنهار والسواحل حيث النقل بالماء رخيص. في اللعبة يُحدّ مستوى تخصص الورشة بنطاق سوقها: عدد السكان الذين تبلغهم بضاعتها بكلفة معقولة، وكل تضاعف للنطاق يسمح بمستوى إضافي. الطرق والموانئ والقنوات والنقد الصادق وقلة رسوم المرور كلها توسّعه."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "As it is the power of exchanging that gives occasion to the division of labour, so the extent of this division must always be limited by the extent of that power, or, in other words, by the extent of the market.",
+      "translation": {
+        "ar": "لما كانت القدرة على المبادلة هي ما يتيح تقسيم العمل، كان مدى هذا التقسيم محدودًا دائمًا بمدى تلك القدرة، أي بعبارة أخرى، باتساع السوق."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "Shipping containers (from 1956) cut sea freight costs so far that factories could specialise in a single component for buyers worldwide.",
+      "ar": "خفّضت حاويات الشحن (منذ 1956) كلفة النقل البحري حتى صارت المصانع تتخصص في قطعة واحدة لمشترين في أنحاء العالم."
+    },
+    "mechanic": {
+      "en": "Market reach R = Σ population × e^(−cost/c0); s_max = 1 + ⌊log₂(R/R0)⌋.",
+      "ar": "نطاق السوق ن = مجموع السكان × e^(−الكلفة/ك0)، والحد الأعلى للتخصص = 1 + ⌊لو₂(ن/ن0)⌋."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "origin-of-money",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book I, ch. 4",
+      "ar": "ثروة الأمم، الكتاب الأول، الفصل 4"
+    },
+    "title": {
+      "en": "The Origin of Money",
+      "ar": "نشأة النقد"
+    },
+    "summary": {
+      "en": "Barter needs a 'double coincidence of wants': the baker must want what the weaver has, at the same moment. Smith describes how people therefore came to keep some commodity that nearly everyone would accept, such as cattle, salt or shells, and finally metals, which keep, divide and carry well. Coined metal of known weight and fineness saved the trouble of weighing at every sale. In the game, trade before Coinage suffers a barter penalty that halves every workshop's market reach.",
+      "ar": "تحتاج المقايضة إلى «توافق مزدوج في الرغبات»: أن يريد الخباز ما عند النساج في اللحظة نفسها. ويصف سميث كيف صار الناس يحتفظون بسلعة يقبلها الجميع تقريبًا، كالماشية والملح والأصداف، ثم المعادن التي تُحفظ وتُقسم وتُحمل بسهولة. وأغنى المعدن المسكوك بوزن وعيار معلومين عن الوزن عند كل بيع. في اللعبة تعاني التجارة قبل السكّة عقوبة المقايضة التي تنصّف نطاق سوق كل ورشة."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "a certain quantity of some one commodity or other, such as he imagined few people would be likely to refuse in exchange for the produce of their industry.",
+      "translation": {
+        "ar": "قدرًا من سلعة ما، يظن أن قليلًا من الناس سيرفضونها مقابل نتاج صنعتهم."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "In prisoner-of-war camps during the Second World War, cigarettes became the common currency.",
+      "ar": "في معسكرات أسرى الحرب العالمية الثانية صارت السجائر العملة المشتركة."
+    },
+    "mechanic": {
+      "en": "Coinage institution removes the barter penalty (reach × 0.5).",
+      "ar": "مؤسسة السكّة تزيل عقوبة المقايضة (النطاق × 0.5)."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "money-mirror",
+    "author": "ghazali",
+    "ref": {
+      "en": "Ihya', Book 32 (Patience and Thankfulness), vol. 4 p. 91; Book 13 (Earning and Living), vol. 2 pp. 73–74",
+      "ar": "الإحياء، كتاب الصبر والشكر، ج4 ص91؛ كتاب آداب الكسب والمعاش، ج2 ص73–74"
+    },
+    "title": {
+      "en": "Money as a Mirror",
+      "ar": "النقد مرآة"
+    },
+    "summary": {
+      "en": "For al-Ghazali, gold and silver coins are not wanted for themselves. God created them to stand as judges and intermediaries between all other goods, so that every good can be valued by them, like a mirror that has no colour of its own but shows every colour. Two misuses follow. Whoever hoards coin, he says, wrongs it and defeats its purpose, like someone who imprisons the judge of the community. And in the Book of Earning, passing off counterfeit coin is an injustice that spreads as the coin passes from hand to hand. In the game, debasement fills the treasury at once, then inflation and a collapse in Money Trust follow, and trust takes about ten turns to repair.",
+      "ar": "الذهب والفضة عند الغزالي لا يُطلبان لذاتهما، بل خلقهما الله حاكمين ومتوسطين بين سائر الأموال حتى تُقدَّر الأموال بهما، كالمرآة لا لون لها وتحكي كل لون. ويترتب على ذلك سوءان: من كنزهما فقد ظلمهما وأبطل الحكمة فيهما، وكان كمن حبس حاكم المسلمين في سجن. وفي كتاب آداب الكسب أن ترويج الزيف من الدراهم ظلم يتردّد في الأيدي ويعمّ ضرره. في اللعبة يملأ الغش الخزانة فورًا، ثم يتبعه التضخم وانهيار الثقة بالنقد، ويحتاج إصلاح الثقة إلى نحو عشر جولات."
+    },
+    "quote": {
+      "lang": "ar",
+      "text": "فخلق الله تعالى الدنانير والدراهم حاكمين ومتوسطين بين سائر الأموال حتى تقدر الأموال بهما… كالمرآة لا لون لها وتحكي كل لون فكذلك النقد لا غرض فيه وهو وسيلة إلى كل غرض",
+      "status": "verified-dar-al-marifa",
+      "translation": {
+        "en": "So God created dinars and dirhams as judges and intermediaries between all other goods, so that goods may be valued by them… like a mirror, which has no colour yet shows every colour: so money has no purpose in itself, yet it is the means to every purpose."
+      }
+    },
+    "example": {
+      "en": "Henry VIII's 'Great Debasement' (1544–1551) cut the silver in English coins from 92.5% to about 25%. Prices roughly doubled.",
+      "ar": "خفّض «الغش العظيم» لهنري الثامن (1544–1551) نسبة الفضة في النقود الإنجليزية من 92.5% إلى نحو 25%، فتضاعفت الأسعار تقريبًا."
+    },
+    "mechanic": {
+      "en": "Money Trust (0–100): reach × trust/100; debasement −26 trust and +25% pending inflation.",
+      "ar": "الثقة بالنقد (0–100): النطاق × الثقة/100، والغش ينقص الثقة 26 ويضيف تضخمًا مؤجلًا 25%."
+    },
+    "read": "https://shamela.ws/book/9472/1250"
+  },
+  {
+    "id": "natural-price",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book I, ch. 7",
+      "ar": "ثروة الأمم، الكتاب الأول، الفصل 7"
+    },
+    "title": {
+      "en": "Market Price and Natural Price",
+      "ar": "سعر السوق والسعر الطبيعي"
+    },
+    "summary": {
+      "en": "Every good has a natural price: enough to pay the labour, capital and land that made it at their ordinary rates. The market price can sit far above or below it. When a good is scarce its price climbs, its makers earn unusual profits, and workers and capital move in until supply catches up and the price falls back. A price spike is a signal, not just a nuisance. In the game, each good's price moves with excess demand and is pulled toward its natural price. Capping a price silences the signal: shortages and black markets follow.",
+      "ar": "لكل سلعة سعر طبيعي يكفي لدفع أجر العمل ورأس المال والأرض التي صنعتها بمعدلاتها المعتادة، وقد يرتفع سعر السوق فوقه كثيرًا أو ينخفض دونه. إذا ندرت سلعة ارتفع سعرها وربح صانعوها أرباحًا غير معتادة، فيتجه إليها العمال ورأس المال حتى يلحق العرض ويعود السعر إلى الانخفاض. فارتفاع السعر إشارة وليس إزعاجًا فقط. في اللعبة يتحرك سعر كل سلعة مع فائض الطلب ويُشدّ نحو سعرها الطبيعي، وتسعير السلعة جبرًا يُسكت الإشارة فيتبعه نقص وسوق سوداء."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "The natural price, therefore, is, as it were, the central price, to which the prices of all commodities are continually gravitating.",
+      "translation": {
+        "ar": "فالسعر الطبيعي، إذن، هو بمثابة السعر المركزي الذي تنجذب إليه أسعار جميع السلع على الدوام."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "After the 2021 chip shortage, high prices drew billions into new chip factories.",
+      "ar": "بعد نقص الرقائق سنة 2021 جذبت الأسعار المرتفعة مليارات إلى مصانع رقائق جديدة."
+    },
+    "mechanic": {
+      "en": "p(t+1) = p(t)·(1 + λ(D−S)/S) + μ(p* − p(t)), with λ = 0.3, μ = 0.15.",
+      "ar": "س(ن+1) = س(ن)·(1 + λ(ط−ع)/ع) + μ(س* − س(ن))، حيث λ = 0.3 وμ = 0.15."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "real-wages",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book I, ch. 8",
+      "ar": "ثروة الأمم، الكتاب الأول، الفصل 8"
+    },
+    "title": {
+      "en": "The Test of a Nation's Wealth",
+      "ar": "معيار ثروة الأمة"
+    },
+    "summary": {
+      "en": "For Smith, the wealth of a nation is not the gold in its vaults. It is how much the work of ordinary people can buy. He argues that generous wages are both the effect and the sign of growing wealth, and that a society where most people are poor cannot be called flourishing. Economic historians now measure this as a 'welfare ratio': how many subsistence baskets a labourer's earnings can buy. The Opulence meter gives this number the largest weight, and the ghost line uses Robert Allen's real figures for London labourers.",
+      "ar": "ثروة الأمة عند سميث ليست الذهب في خزائنها، بل ما يستطيع عمل عامة الناس أن يشتريه. ويرى أن الأجور الكريمة نتيجة لنمو الثروة وعلامة عليه، وأن مجتمعًا أكثر أهله فقراء لا يصح أن يوصف بالازدهار. يقيس مؤرخو الاقتصاد هذا اليوم بـ«نسبة الرفاه»: كم سلة كفاف يشتري دخل العامل. ويعطي مقياس الثروة هذا الرقم أكبر وزن، ويستعمل خط التاريخ أرقام روبرت ألن الحقيقية لعمّال لندن."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "No society can surely be flourishing and happy, of which the far greater part of the members are poor and miserable.",
+      "translation": {
+        "ar": "لا يمكن يقينًا أن يكون مجتمع مزدهرًا سعيدًا وأكثر أفراده فقراء بائسون."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "London builders' labourers earned about 1.3 subsistence baskets in 1776 and about 1.6 by 1850 (Allen 2001).",
+      "ar": "كان عمّال البناء في لندن يكسبون نحو 1.3 سلة كفاف سنة 1776 ونحو 1.6 بحلول 1850 (ألن 2001)."
+    },
+    "mechanic": {
+      "en": "Opulence, 35%: wage ÷ cost of the basic basket.",
+      "ar": "الثروة، 35%: الأجر ÷ كلفة السلة الأساسية."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "invisible-hand",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book IV, ch. 2",
+      "ar": "ثروة الأمم، الكتاب الرابع، الفصل 2"
+    },
+    "title": {
+      "en": "The Invisible Hand",
+      "ar": "اليد الخفية"
+    },
+    "summary": {
+      "en": "Smith uses the phrase only once in this book. A merchant who invests at home, seeking only his own gain, ends up adding to the nation's revenue too, an end that was no part of his intention. Millions of separate choices about where to work and what to make add up to an order nobody designed. Smith was no fan of merchants: he trusted competition, not their goodwill. In the game you don't place workers. They move by themselves toward workshops that pay better, and merchants build new workshops where prices are high. Guild rules and illiteracy slow them down.",
+      "ar": "لم يستعمل سميث هذه العبارة في كتابه إلا مرة واحدة: التاجر الذي يستثمر في بلده لا يطلب إلا ربحه، فيزيد مع ذلك دخل الأمة، وهي غاية لم تكن من قصده. ملايين الاختيارات المنفصلة عن مكان العمل وما يُصنع تتراكم في نظام لم يصمّمه أحد. ولم يكن سميث محبًّا للتجار، فقد وثق بالمنافسة لا بنواياهم. في اللعبة لا تضع العمال بنفسك، بل ينتقلون وحدهم إلى الورش التي تدفع أكثر، ويبني التجار ورشًا جديدة حيث ترتفع الأسعار، وتبطئهم قواعد الطوائف والأمية."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "led by an invisible hand to promote an end which was no part of his intention.",
+      "translation": {
+        "ar": "تقوده يد خفية إلى تحقيق غاية لم تكن جزءًا من قصده."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "No one plans how much bread a city bakes each morning, yet the shelves are full.",
+      "ar": "لا أحد يخطط لكمية الخبز التي تخبزها مدينة كل صباح، ومع ذلك تمتلئ الرفوف."
+    },
+    "mechanic": {
+      "en": "Each turn a share η of workers moves toward higher wages; merchants found workshops where prices exceed natural price.",
+      "ar": "في كل جولة تنتقل نسبة η من العمال نحو الأجور الأعلى، ويؤسس التجار ورشًا حيث يفوق السعر السعر الطبيعي."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "conspiracy-against-public",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book I, ch. 10",
+      "ar": "ثروة الأمم، الكتاب الأول، الفصل 10"
+    },
+    "title": {
+      "en": "A Conspiracy Against the Public",
+      "ar": "تآمر على الجمهور"
+    },
+    "summary": {
+      "en": "Smith admired markets but distrusted merchants. Masters of the same trade, he warned, keep meeting to raise prices, and they lobby the state for monopolies, charters and tariffs that serve them at the public's expense. A monopolist keeps the market understocked so that he can sell above the natural price. In the game the merchant lobby keeps proposing 'helpful' charters. Granting one fills the treasury and pleases the merchants. Pins then become dearer and scarcer, and trust in institutions slips.",
+      "ar": "أُعجب سميث بالأسواق لكنه ارتاب في التجار، وحذّر من أن أرباب الحرفة الواحدة يجتمعون مرارًا لرفع الأسعار، ويضغطون على الدولة لنيل الاحتكارات والامتيازات والرسوم التي تخدمهم على حساب الجمهور. فالمحتكر يُبقي السوق ناقصة ليبيع فوق السعر الطبيعي. في اللعبة يقترح لوبي التجار باستمرار امتيازات «نافعة»، فإن منحتها امتلأت الخزانة ورضي التجار، ثم تغلو الدبابيس وتقلّ وتضعف الثقة بالمؤسسات."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "People of the same trade seldom meet together, even for merriment and diversion, but the conversation ends in a conspiracy against the public, or in some contrivance to raise prices.",
+      "translation": {
+        "ar": "قلّما يجتمع أهل الحرفة الواحدة، ولو للهو والتسلية، إلا وانتهى حديثهم إلى تآمر على الجمهور أو حيلة لرفع الأسعار."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "The 1990s lysine cartel was caught on FBI tapes joking that 'the competitor is our friend; the customer is our enemy.'",
+      "ar": "ضُبط كارتل اللايسين في التسعينيات في تسجيلات مكتب التحقيقات الفيدرالي يمزح بأن «المنافس صديقنا والزبون عدونا»."
+    },
+    "mechanic": {
+      "en": "Pin monopoly: output × 0.7, price ≥ 1.6 × natural; merchants +, institution trust −.",
+      "ar": "احتكار الدبابيس: الناتج × 0.7، والسعر ≥ 1.6 × الطبيعي، ويرضى التجار وتقل الثقة بالمؤسسات."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "mercantile-system",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book IV, ch. 8",
+      "ar": "ثروة الأمم، الكتاب الرابع، الفصل 8"
+    },
+    "title": {
+      "en": "The Mercantile System",
+      "ar": "النظام التجاري (المركنتيلية)"
+    },
+    "summary": {
+      "en": "Most of Book IV is an attack on the mercantile system: the belief that a nation grows rich by piling up gold, taxing imports and subsidising exports. Smith argues that this confuses money with wealth and sacrifices consumers to producers. A tariff on foreign grain raises the rent of landlords and the price of everyone's bread, and rival nations answer duties with duties of their own. In the game, tariffs, the Corn Law and the Navigation Acts help a few classes at once. The bill arrives later, as dearer bread, smaller foreign markets and smuggling.",
+      "ar": "يكاد الكتاب الرابع كله يكون هجومًا على النظام التجاري: الاعتقاد بأن الأمة تغتني بتكديس الذهب وفرض الرسوم على الواردات ودعم الصادرات. يرى سميث أن هذا يخلط بين النقد والثروة ويضحّي بالمستهلكين لمصلحة المنتجين. فالرسم على القمح الأجنبي يرفع ريع الملّاك وسعر خبز الجميع، والأمم المنافسة تردّ على الرسوم برسوم مثلها. في اللعبة تفيد الرسوم وقانون الحبوب وقوانين الملاحة طبقات قليلة في الحال، ثم تأتي الفاتورة لاحقًا خبزًا أغلى وأسواقًا خارجية أضيق وتهريبًا."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "Consumption is the sole end and purpose of all production; and the interest of the producer ought to be attended to, only so far as it may be necessary for promoting that of the consumer.",
+      "translation": {
+        "ar": "الاستهلاك هو الغاية الوحيدة لكل إنتاج، ولا ينبغي الالتفات إلى مصلحة المنتج إلا بقدر ما يلزم لخدمة مصلحة المستهلك."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "Britain's Corn Laws (1815–1846) kept bread dear for three decades; their repeal split the governing party.",
+      "ar": "أبقت قوانين الحبوب البريطانية (1815–1846) الخبز غاليًا ثلاثة عقود، وشقّ إلغاؤها الحزب الحاكم."
+    },
+    "mechanic": {
+      "en": "Customs and the Corn Law raise import prices; rivals retaliate, shrinking foreign reach.",
+      "ar": "الجمارك وقانون الحبوب ترفع أسعار الواردات، ويردّ المنافسون بالمثل فيضيق النطاق الخارجي."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "capital",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book II, ch. 3",
+      "ar": "ثروة الأمم، الكتاب الثاني، الفصل 3"
+    },
+    "title": {
+      "en": "Saving Builds Capital",
+      "ar": "الادخار يبني رأس المال"
+    },
+    "summary": {
+      "en": "Tools, machines, workshops and stock are what let labour produce more, and they come from saving. What a frugal person saves is not hoarded, Smith says: it is spent by others on productive labour, which reproduces it with a profit. A nation's wealth grows when it saves and invests more than it wastes. In the game, each class saves part of its income. Savings buy tools, tools become capital in the workshops with the best profits, and capital depreciates about 5% a turn.",
+      "ar": "الأدوات والآلات والورش والمخزون هي ما يجعل العمل أكثر إنتاجًا، ومصدرها الادخار. يقول سميث إن ما يدّخره المقتصد لا يُكنز، بل ينفقه غيره على عمل منتج يعيده بربح. وتنمو ثروة الأمة حين تدّخر وتستثمر أكثر مما تبدّد. في اللعبة تدّخر كل طبقة جزءًا من دخلها، والمدّخرات تشتري الأدوات، والأدوات تصير رأس مال في الورش الأربح، ويُستهلك رأس المال بنحو 5% في كل جولة."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "Parsimony, and not industry, is the immediate cause of the increase of capital.",
+      "translation": {
+        "ar": "الاقتصاد في الإنفاق، لا الكدّ، هو السبب المباشر لزيادة رأس المال."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "South Korea's saving rate rose from under 10% of GDP in the early 1960s to over 30% from the late 1980s, financing its industrial build-up.",
+      "ar": "ارتفع معدّل الادخار في كوريا الجنوبية من أقل من 10% من الناتج في أوائل الستينيات إلى أكثر من 30% منذ أواخر الثمانينيات، فموّل بناءها الصناعي."
+    },
+    "mechanic": {
+      "en": "K(t+1) = (1 − δ)K(t) + investment, δ ≈ 5%.",
+      "ar": "ر(ن+1) = (1 − δ)ر(ن) + الاستثمار، δ ≈ 5%."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "two-finance-paths",
+    "author": "both",
+    "ref": {
+      "en": "Wealth of Nations, Book II, ch. 2; Ghazali, Ihya', Book 13 (Earning and Living), vol. 2 pp. 64–71",
+      "ar": "ثروة الأمم، الكتاب الثاني، الفصل 2؛ الغزالي، الإحياء، كتاب آداب الكسب والمعاش، ج2 ص64–71"
+    },
+    "title": {
+      "en": "Two Paths for Finance",
+      "ar": "طريقان للتمويل"
+    },
+    "summary": {
+      "en": "Smith praised Scottish banks for putting idle money to work, and he watched the Ayr Bank collapse in 1772 after lending far beyond its means. Islamic commercial law, which Ghazali discusses, forbids interest (riba) but allows partnerships such as mudaraba, where an investor and a merchant share profit and loss. In the game you choose a dominant path in the Commerce era. Interest banks grow credit fast but run in boom and bust, with bank runs. Partnership houses grow more slowly, share risk, suffer fewer crashes and support Maslaha. Neither is strictly better.",
+      "ar": "امتدح سميث المصارف الإسكتلندية لأنها شغّلت المال المعطّل، وشهد انهيار مصرف آير سنة 1772 بعد أن أقرض فوق طاقته بكثير. أما الفقه التجاري الإسلامي الذي يتناوله الغزالي فيحرّم الربا ويبيح الشركات كالمضاربة، حيث يتقاسم صاحب المال والتاجر الربح والخسارة. في اللعبة تختار طريقًا غالبًا في عصر التجارة: مصارف الفائدة تنمّي الائتمان بسرعة لكنها تمرّ بطفرات وانهيارات وتهافت على السحب، وبيوت الشراكة أبطأ نموًّا لكنها تقاسم المخاطر وتقل فيها الأزمات وتدعم المصلحة، وليس أحدهما خيرًا من الآخر مطلقًا."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "upon the Daedalian wings of paper money",
+      "translation": {
+        "ar": "على أجنحة دِدالوس من النقد الورقي"
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "Islamic banks today offer mudaraba accounts in which depositors share in the bank's profits instead of receiving fixed interest.",
+      "ar": "تقدّم المصارف الإسلامية اليوم حسابات مضاربة يشارك فيها المودعون في أرباح المصرف بدل فائدة ثابتة."
+    },
+    "mechanic": {
+      "en": "Banks: investment efficiency 1.05 + credit cycle, bank runs. Partnership houses: 0.97, steady.",
+      "ar": "المصارف: كفاءة استثمار 1.05 مع دورة ائتمان وتهافت على السحب. بيوت الشراكة: 0.97 بثبات."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "duties-of-sovereign",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book V, ch. 1",
+      "ar": "ثروة الأمم، الكتاب الخامس، الفصل 1"
+    },
+    "title": {
+      "en": "The Duties of the Sovereign",
+      "ar": "واجبات الحاكم"
+    },
+    "summary": {
+      "en": "Smith gives the state real work to do. It must defend the nation, administer justice so that property and contracts are secure, and build public works, such as roads, bridges, canals and harbours, that no private person would profit enough to build. It should also educate the common people, whose minds the narrow routine of divided labour could otherwise dull. In the game these are four budget lines. Underfund defence and bandits raise transport costs. Underfund justice and fraud spreads. Neglect works and roads decay. Starve education and literacy falls.",
+      "ar": "يعطي سميث الدولة عملًا حقيقيًّا: أن تدافع عن الأمة، وأن تقيم العدل ليأمن الناس على أملاكهم وعقودهم، وأن تبني المرافق العامة من طرق وجسور وقنوات وموانئ لا يربح منها فرد ما يكفي لبنائها، وأن تعلّم عامة الناس الذين قد يُبلّد عقولَهم روتينُ العمل المقسّم الضيق. في اللعبة هذه أربعة بنود في الميزانية: قصّر في الدفاع يرفع قطّاع الطرق كلفة النقل، وقصّر في العدل ينتشر الغش، وأهمل المرافق تتداعى الطرق، وأجِع التعليم تتراجع القراءة والكتابة."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "For a very small expense, the public can facilitate, can encourage and can even impose upon almost the whole body of the people, the necessity of acquiring those most essential parts of education.",
+      "translation": {
+        "ar": "بنفقة يسيرة جدًّا تستطيع الدولة أن تيسّر وتشجّع، بل وتفرض على عامة الناس تقريبًا، ضرورة اكتساب أهم أجزاء التعليم."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "Scotland's parish schools, required by law from 1696, gave it one of Europe's highest literacy rates by Smith's day.",
+      "ar": "منحت مدارس الأبرشيات في إسكتلندا، المفروضة بالقانون منذ 1696، البلادَ واحدة من أعلى نسب القراءة والكتابة في أوروبا في زمن سميث."
+    },
+    "mechanic": {
+      "en": "Budget lines: defence, justice, public works, education (+ Ghazali's granaries and relief).",
+      "ar": "بنود الميزانية: الدفاع والعدل والمرافق العامة والتعليم (مع مخازن الغلال والإعانة عند الغزالي)."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "four-maxims",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book V, ch. 2",
+      "ar": "ثروة الأمم، الكتاب الخامس، الفصل 2"
+    },
+    "title": {
+      "en": "Four Maxims of Taxation",
+      "ar": "القواعد الأربع للضرائب"
+    },
+    "summary": {
+      "en": "Smith sets out four rules for good taxes. Equality: people should pay in proportion to their ability. Certainty: the amount and timing should be clear, not left to a collector's whim. Convenience: taxes should be collected when and how it is easiest to pay. Economy: collection should cost little and should not tempt people into smuggling. The tax screen grades your system on each maxim from A to F. Tax farmers, heavy duties on necessities, and duties so high they breed smugglers all lower your grades.",
+      "ar": "يضع سميث أربع قواعد للضرائب الجيدة: المساواة، أي أن يدفع الناس بقدر طاقتهم؛ واليقين، أي أن يكون المقدار والموعد واضحين لا متروكين لهوى الجابي؛ والملاءمة، أي أن تُجبى في الوقت والطريقة الأيسر على الدافع؛ والاقتصاد، أي أن تكون كلفة الجباية قليلة وألا تغري الناس بالتهريب. تقيّم شاشة الضرائب نظامك على كل قاعدة من A إلى F، والملتزمون بالجباية والرسوم الثقيلة على الضروريات والرسوم العالية التي تولّد المهرّبين كلها تخفض درجاتك."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "The subjects of every state ought to contribute towards the support of the government, as nearly as possible, in proportion to their respective abilities",
+      "translation": {
+        "ar": "ينبغي أن يسهم رعايا كل دولة في نفقة الحكومة، بقدر الإمكان، بنسبة قدراتهم كلٌّ بحسبه"
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "France's pre-revolutionary tax farmers, the Ferme générale, kept much of what they collected and were widely hated.",
+      "ar": "احتفظ ملتزمو الضرائب في فرنسا قبل الثورة، «الفيرم جنرال»، بكثير مما جبوه، وكانوا مكروهين على نطاق واسع."
+    },
+    "mechanic": {
+      "en": "Tax screen: four grades (A–F) computed from who pays, collection method, smuggling and cost.",
+      "ar": "شاشة الضرائب: أربع درجات (A–F) تُحسب ممن يدفع وطريقة الجباية والتهريب والكلفة."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "public-debt",
+    "author": "smith",
+    "ref": {
+      "en": "Wealth of Nations, Book V, ch. 3",
+      "ar": "ثروة الأمم، الكتاب الخامس، الفصل 3"
+    },
+    "title": {
+      "en": "Public Debt",
+      "ar": "الدين العام"
+    },
+    "summary": {
+      "en": "Wars in Smith's century were paid for mostly by borrowing. Britain's debt had climbed past £100 million by 1763, and Smith feared it would one day ruin the country, as it had ruined others. Borrowing spares today's taxpayers and burdens tomorrow's with interest. In the game you may borrow freely, and deficits are covered automatically, but interest is charged every turn after. When interest eats most of the revenue, the state is heading for bankruptcy.",
+      "ar": "كانت حروب قرن سميث تُموَّل في الغالب بالاقتراض، وقد تجاوز دين بريطانيا مئة مليون جنيه سنة 1763، وخشي سميث أن يخرّب البلاد يومًا كما خرّب غيرها. الاقتراض يرحم دافعي الضرائب اليوم ويثقل كاهل دافعيها غدًا بالفوائد. في اللعبة يمكنك الاقتراض بحرية، ويُغطّى العجز تلقائيًّا، لكن الفائدة تُحتسب في كل جولة بعدها، فإذا ابتلعت الفوائد معظم الإيراد فالدولة في طريقها إلى الإفلاس."
+    },
+    "quote": {
+      "lang": "en",
+      "text": "The practice of funding has gradually enfeebled every state which has adopted it.",
+      "translation": {
+        "ar": "لقد أضعفت سياسة الاقتراض الممّول تدريجيًّا كل دولة اتّبعتها."
+      },
+      "status": "verified-gutenberg"
+    },
+    "example": {
+      "en": "Spain's Philip II defaulted on his debts four times between 1557 and 1596.",
+      "ar": "تخلّف فيليب الثاني ملك إسبانيا عن سداد ديونه أربع مرات بين 1557 و1596."
+    },
+    "mechanic": {
+      "en": "Debt × interest charged every turn; interest > 75% of revenue for 3 turns → bankruptcy.",
+      "ar": "الدين × الفائدة يُحتسب كل جولة، وإن تجاوزت الفائدة 75% من الإيراد ثلاث جولات → الإفلاس."
+    },
+    "read": "https://www.gutenberg.org/ebooks/3300"
+  },
+  {
+    "id": "root-crafts",
+    "author": "ghazali",
+    "ref": {
+      "en": "Ihya' 'Ulum al-Din, Book 1 (Knowledge), vol. 1 pp. 12–13",
+      "ar": "إحياء علوم الدين، كتاب العلم، ج1 ص12–13"
+    },
+    "title": {
+      "en": "The Four Root Crafts",
+      "ar": "أصول الصناعات الأربع"
+    },
+    "summary": {
+      "en": "Al-Ghazali names a handful of crafts that no society can do without. They are commonly given as farming for food, weaving for clothing, building for shelter, and governance, which keeps order so that the other three can be carried on in peace. Every other craft serves or refines one of these. The tutorial begins here: your settlement needs all four before a market can form. A market rests on production, and on someone keeping order.",
+      "ar": "يذكر الغزالي صناعات قليلة لا يستغني عنها مجتمع، وتُذكر عادة: الفلاحة للطعام، والحياكة للّباس، والبناء للمسكن، والسياسة التي تحفظ النظام ليُقام بالثلاث الأخرى في أمن. وكل صناعة أخرى إما خادمة لإحداها وإما مكمّلة لها. يبدأ الدرس التمهيدي من هنا: تحتاج مستوطنتك إلى الأربع كلها قبل أن تنشأ سوق، فالسوق تقوم على الإنتاج وعلى من يحفظ النظام."
+    },
+    "quote": {
+      "lang": "ar",
+      "text": "أحدها أصول لا قوام للعالم دونها وهي أربعة: الزراعة وهي للمطعم، والحياكة وهي للملبس، والبناء وهو للمسكن، والسياسة وهي للتأليف والاجتماع والتعاون على أسباب المعيشة وضبطها",
+      "status": "verified-dar-al-marifa",
+      "translation": {
+        "en": "One kind is the roots without which the world cannot stand, and they are four: agriculture, for food; weaving, for clothing; building, for shelter; and governance, for bringing people together, uniting them and helping one another in the means of livelihood, and keeping it in order."
+      }
+    },
+    "example": {
+      "en": "Disaster-relief planners still prioritise the same four: food, shelter, clothing and security.",
+      "ar": "ما زال مخطّطو الإغاثة من الكوارث يقدّمون الأربعة نفسها: الغذاء والمأوى والكساء والأمن."
+    },
+    "mechanic": {
+      "en": "Tutorial goal: farm, weaver, builder's yard and courthouse before the market forms.",
+      "ar": "هدف الدرس: مزرعة ونسّاج وورشة بناء ومحكمة قبل أن تنشأ السوق."
+    },
+    "read": "https://shamela.ws/book/9472/12"
+  },
+  {
+    "id": "markets-from-need",
+    "author": "ghazali",
+    "ref": {
+      "en": "Ihya' 'Ulum al-Din, Book 26 (Condemnation of the World), vol. 3 pp. 227–228",
+      "ar": "إحياء علوم الدين، كتاب ذم الدنيا، ج3 ص227–228"
+    },
+    "title": {
+      "en": "Markets Arise from Need",
+      "ar": "الأسواق تنشأ من الحاجة"
+    },
+    "summary": {
+      "en": "Al-Ghazali tells how exchange begins. The farmer may live in a village with no farming tools, while the smith and the carpenter live where nothing can be grown, so each needs the other. But barter stalls: when the carpenter wants food, the farmer may not need a tool just then, and when the farmer wants a tool, the carpenter may already have food. So people come to keep shops that gather the tools of every craft, and storehouses that buy what farmers bring, and so markets and storehouses appear. Merchants carry food from the villages and tools from the towns for love of gain, and yet, he says, God made of their heedlessness an order for the lands and a benefit for His servants. Then coin is needed, and with it a mint. In the game, markets form once your town has the root crafts.",
+      "ar": "يصف الغزالي كيف تبدأ المبادلة: قد يسكن الفلاح قرية ليس فيها آلة الفلاحة، ويسكن الحداد والنجار قرية لا تمكن فيها الزراعة، فيحتاج كل منهم إلى الآخر. لكن المقايضة تتعثّر: إذا طلب النجار الغذاء ربما لا يحتاج الفلاح آلته في ذلك الوقت، وإذا طلب الفلاح الآلة ربما كان عند النجار طعام. فاضطروا إلى حانوت يجمع آلة كل صناعة، وإلى أبيات يُجمع إليها ما يحمل الفلاحون، فظهرت الأسواق والمخازن. ثم ينقل التجار الأطعمة من القرى والآلات من البلاد حرصًا على جمع المال، ومع ذلك جعل الله في غفلتهم نظامًا للبلاد ومصلحة للعباد. ثم مسّت الحاجة إلى النقود ودار الضرب. في اللعبة تنشأ الأسواق حين تكتمل في مدينتك أصول الصناعات."
+    },
+    "quote": {
+      "lang": "ar",
+      "text": "ثم يحدث من ذلك حاجة البيع فإن الفلاح ربما يسكن قرية ليس فيها آلة الفلاحة والحداد والنجار يسكنان قرية لا يمكن فيها الزراعة فبالضرورة يحتاج الفلاح إليهما ويحتاجان إلى الفلاح فيحتاج أحدهما أن يبذل ما عنده للآخر حتى يأخذ منه غرضه وذلك بطريق المعاوضة إلا أن النجار مثلاً إذا طلب من الفلاح الغذاء بآلته ربما لا يحتاج الفلاح في ذلك الوقت إلى آلته فلا يبيعه والفلاح إذا طلب الآلة من النجار بالطعام ربما كان عنده طعام في ذلك الوقت فلا يحتاج إليه فتتعوق الأغراض فاضطروا إلى حانوت يجمع آلة كل صناعة ليترصد بها صاحبها أرباب الحاجات وإلى أبيات يجمع إليها ما يحمل الفلاحون فيشتريه منهم صاحب الأبيات ليترصد به أرباب الحاجات فظهرت لذلك الأسواق والمخازن … ولكن جعل الله تعالى في غفلتهم وجهلهم نظاماً للبلاد ومصلحة للعباد",
+      "status": "verified-dar-al-marifa",
+      "translation": {
+        "en": "Then the need for sale arises. The farmer may live in a village with no farming tools, while the smith and the carpenter live in a village where farming is impossible; so of necessity the farmer needs them and they need the farmer. Each must give what he has to the other to obtain what he wants, by way of exchange. But when the carpenter asks the farmer for food in return for his tool, the farmer may not need the tool at that time and will not sell; and when the farmer asks the carpenter for the tool in return for food, the carpenter may have food already and not need it, and their purposes are blocked. So they were driven to a shop that gathers the tools of every craft, where its keeper awaits those in need, and to storehouses that gather what the farmers bring, bought by the keeper who awaits those in need; and so markets and storehouses appeared… But God made in their heedlessness and ignorance an order for the lands and a benefit for His servants."
+      }
+    },
+    "example": {
+      "en": "Weekly markets in rural Africa and Asia still form at crossroads between villages that produce different goods.",
+      "ar": "ما زالت الأسواق الأسبوعية في أرياف إفريقيا وآسيا تنعقد عند ملتقى الطرق بين قرى تنتج سلعًا مختلفة."
+    },
+    "mechanic": {
+      "en": "Market squares: town populations count 20% more toward market reach.",
+      "ar": "ساحات الأسواق: يُحتسب سكان المدن أكثر بعشرين في المئة في نطاق السوق."
+    },
+    "read": "https://shamela.ws/book/9472/973"
+  },
+  {
+    "id": "three-needs",
+    "author": "ghazali",
+    "ref": {
+      "en": "al-Mustasfa min 'Ilm al-Usul, ed. 'Abd al-Shafi, p. 174",
+      "ar": "المستصفى من علم الأصول، تحقيق عبد الشافي، ص174"
+    },
+    "title": {
+      "en": "Three Levels of Need",
+      "ar": "مراتب الحاجة الثلاث"
+    },
+    "summary": {
+      "en": "In his work on legal theory, al-Mustasfa, al-Ghazali ranks human interests in three tiers. Necessities (daruriyyat) are what life cannot go on without. Needs (hajiyyat) remove hardship and make life easier. Refinements (tahsiniyyat) add grace and beauty. A just order secures the first tier for everyone before it worries about the third. In the game every good belongs to a tier. Bread, cloth, fuel and housing are necessities, and whether the poor can afford them feeds the Life component of Maslaha.",
+      "ar": "يرتّب الغزالي في كتابه في أصول الفقه «المستصفى» مصالح الناس في ثلاث مراتب: الضروريات التي لا تقوم الحياة بدونها، والحاجيات التي ترفع الحرج وتيسّر العيش، والتحسينات التي تضيف الجمال والكمال. والنظام العادل يؤمّن المرتبة الأولى للجميع قبل أن يُعنى بالثالثة. في اللعبة لكل سلعة مرتبة: الخبز والقماش والوقود والمسكن من الضروريات، وقدرة الفقراء على شرائها تغذّي عنصر «النفس» في مقياس المصلحة."
+    },
+    "quote": {
+      "lang": "ar",
+      "text": "تَنْقَسِمُ إلَى مَا هِيَ فِي رُتْبَةِ الضَّرُورَاتِ وَإِلَى مَا هِيَ فِي رُتْبَةِ الْحَاجَاتِ وَإِلَى مَا يَتَعَلَّقُ بِالتَّحْسِينَاتِ وَالتَّزْيِينَاتِ",
+      "status": "verified-dar-al-marifa",
+      "translation": {
+        "en": "[Maslaha, considered by its own strength,] divides into what is in the rank of necessities, what is in the rank of needs, and what pertains to refinements and embellishments."
+      }
+    },
+    "example": {
+      "en": "Modern poverty lines are built the same way: first the cost of a minimum food basket, then other essentials.",
+      "ar": "تُبنى خطوط الفقر الحديثة بالطريقة نفسها: أولًا كلفة سلة غذاء دنيا، ثم سائر الضروريات."
+    },
+    "mechanic": {
+      "en": "Goods tiers: necessities, comforts, luxuries; necessities are bought first.",
+      "ar": "مراتب السلع: ضروريات وحاجيات وكماليات، وتُشترى الضروريات أولًا."
+    },
+    "read": "https://shamela.ws/book/5459/172"
+  },
+  {
+    "id": "five-protections",
+    "author": "ghazali",
+    "ref": {
+      "en": "al-Mustasfa min 'Ilm al-Usul, ed. 'Abd al-Shafi, p. 174",
+      "ar": "المستصفى من علم الأصول، تحقيق عبد الشافي، ص174"
+    },
+    "title": {
+      "en": "Maslaha: the Five Protections",
+      "ar": "المصلحة: الضروريات الخمس"
+    },
+    "summary": {
+      "en": "Al-Ghazali defines the common good (maslaha) as protecting five things for people: their faith, their life, their intellect, their lineage and their property. Whatever preserves these is a benefit, and whatever destroys them is a harm. The Maslaha meter is built on these five. Faith is measured carefully, as freedom of worship and trust in honest institutions, never as which religion a nation follows. Life means necessities secured. Intellect means literacy. Lineage means stable households. Property means sound money, fair courts and honest markets.",
+      "ar": "يعرّف الغزالي المصلحة بأنها المحافظة على خمسة أشياء للناس: دينهم ونفسهم وعقلهم ونسلهم ومالهم، فكل ما يحفظها مصلحة وكل ما يفوّتها مفسدة. ويقوم مقياس المصلحة على هذه الخمسة. يُقاس الدين بعناية، بوصفه حرية العبادة والثقة بالمؤسسات النزيهة، لا بأي دين تتبع الأمة. والنفس تأمين الضروريات، والعقل القراءة والكتابة، والنسل استقرار الأسر، والمال النقد السليم والمحاكم العادلة والأسواق النزيهة."
+    },
+    "quote": {
+      "lang": "ar",
+      "text": "وَمَقْصُودُ الشَّرْعِ مِنْ الْخَلْقِ خَمْسَةٌ: وَهُوَ أَنْ يَحْفَظَ عَلَيْهِمْ دِينَهُمْ وَنَفْسَهُمْ وَعَقْلَهُمْ وَنَسْلَهُمْ وَمَالَهُمْ، فَكُلُّ مَا يَتَضَمَّنُ حِفْظَ هَذِهِ الْأُصُولِ الْخَمْسَةِ فَهُوَ مَصْلَحَةٌ، وَكُلُّ مَا يُفَوِّتُ هَذِهِ الْأُصُولَ فَهُوَ مَفْسَدَةٌ وَدَفْعُهَا مَصْلَحَةٌ",
+      "status": "verified-dar-al-marifa",
+      "translation": {
+        "en": "The purpose of the Law for creation is five: that it preserve for them their religion, their life, their intellect, their lineage and their property. Whatever secures the preservation of these five foundations is maslaha; whatever destroys them is mafsada, and averting it is maslaha."
+      }
+    },
+    "example": {
+      "en": "The UN Human Development Index likewise combines income with health and education, rather than counting income alone.",
+      "ar": "يجمع مؤشر التنمية البشرية للأمم المتحدة كذلك بين الدخل والصحة والتعليم بدل الاكتفاء بالدخل."
+    },
+    "mechanic": {
+      "en": "Maslaha = 20% each of life, intellect, lineage, property, faith & ethics.",
+      "ar": "المصلحة = 20% لكل من النفس والعقل والنسل والمال والدين والأخلاق."
+    },
+    "read": "https://shamela.ws/book/5459/172"
+  },
+  {
+    "id": "ihtikar",
+    "author": "ghazali",
+    "ref": {
+      "en": "Ihya' 'Ulum al-Din, Book 13 (Earning and Living), vol. 2 p. 72",
+      "ar": "إحياء علوم الدين، كتاب آداب الكسب والمعاش، ج2 ص72"
+    },
+    "title": {
+      "en": "Hoarding Food (Ihtikar)",
+      "ar": "الاحتكار"
+    },
+    "summary": {
+      "en": "In the Book of Earning and Living, al-Ghazali condemns the trader who buys up staple food and holds it back so that its price will climb. Doing this when people are in need harms everyone to enrich one person. Smith takes a different view of grain dealers. Storing grain in plenty and selling in scarcity, he argues, spreads a short harvest over the year and so softens famine. The game sets these views against each other in famine events: leave the dealers alone, send the market inspector, or seize the barns. Each choice has real costs.",
+      "ar": "يذمّ الغزالي في «كتاب آداب الكسب والمعاش» التاجرَ الذي يشتري الأقوات ويحبسها لترتفع أسعارها، فإن فعل ذلك والناس في حاجة أضرّ بالجميع ليغتني واحد. ويرى سميث تجّار القمح رأيًا مختلفًا: يقول إن خزن القمح في الرخاء وبيعه في الشدة يوزّع الحصاد القليل على السنة فيخفّف المجاعة. وتضع اللعبة الرأيين في مواجهة في أحداث المجاعة: اترك التجار، أو أرسل المحتسب، أو صادر المخازن، ولكل خيار كلفة حقيقية."
+    },
+    "quote": {
+      "lang": "ar",
+      "text": "النوع الْأَوَّلُ الِاحْتِكَارُ فَبَائِعُ الطَّعَامِ يَدَّخِرُ الطَّعَامَ يَنْتَظِرُ بِهِ غَلَاءَ الْأَسْعَارِ وَهُوَ ظُلْمٌ عَامٌّ وَصَاحِبُهُ مذموم في الشرع",
+      "status": "verified-dar-al-marifa",
+      "translation": {
+        "en": "The first kind is hoarding (ihtikar): the food seller who stores food, waiting with it for prices to rise. It is a general injustice, and the one who does it is condemned by the Law."
+      }
+    },
+    "example": {
+      "en": "During the Bengal famine of 1943, speculation and wartime hoarding made a short harvest far deadlier.",
+      "ar": "في مجاعة البنغال سنة 1943 جعلت المضاربة والاحتكار في زمن الحرب الحصادَ القليل أشدّ فتكًا بكثير."
+    },
+    "mechanic": {
+      "en": "Grain hoarders event: hisba crackdown, free market, or seizure.",
+      "ar": "حدث المحتكرين: حملة المحتسب، أو السوق الحرة، أو المصادرة."
+    },
+    "read": "https://shamela.ws/book/9472/432"
+  },
+  {
+    "id": "honest-trade",
+    "author": "ghazali",
+    "ref": {
+      "en": "Ihya' 'Ulum al-Din, Book 13 (Earning and Living), vol. 2 pp. 75, 79",
+      "ar": "إحياء علوم الدين، كتاب آداب الكسب والمعاش، ج2 ص75، 79"
+    },
+    "title": {
+      "en": "Justice in Trade",
+      "ar": "العدل في المعاملة"
+    },
+    "summary": {
+      "en": "Al-Ghazali sets out the ethics of the market. Give full weight and measure. Do not hide a defect in what you sell. Do not praise goods falsely, and do not deceive the buyer about the price. Beyond this justice lies benevolence (ihsan): giving more than is owed, such as easing terms for a struggling debtor. Fraud harms more than the buyer who is cheated, because it teaches a whole market to distrust. In the game, fraud raises the cost of every trade and lowers Money Trust and both Maslaha components that depend on honest markets.",
+      "ar": "يفصّل الغزالي آداب السوق: أن يوفي الكيل والميزان، وألا يكتم عيبًا في السلعة، وألا يمدح سلعته بالباطل، وألا يغشّ المشتري في السعر. وفوق هذا العدل الإحسان: أن يعطي فوق ما يجب، كالتيسير على المدين المعسر. والغش لا يضرّ المغشوش وحده، بل يعلّم السوق كلها الريبة. في اللعبة يرفع الغش كلفة كل معاملة، ويُنقص الثقة بالنقد وعنصرَي المصلحة اللذين يقومان على نزاهة الأسواق."
+    },
+    "quote": {
+      "lang": "ar",
+      "text": "وقد أَمَرَ اللَّهُ تَعَالَى بِالْعَدْلِ وَالْإِحْسَانِ جَمِيعًا وَالْعَدْلُ سَبَبُ النَّجَاةِ فَقَطْ وَهُوَ يَجْرِي مِنَ التِّجَارَةِ مجرى رَأْسِ الْمَالِ وَالْإِحْسَانُ سَبَبُ الْفَوْزِ وَنَيْلِ السَّعَادَةِ وَهُوَ يَجْرِي مِنَ التِّجَارَةِ مَجْرَى الرِّبْحِ",
+      "status": "verified-dar-al-marifa",
+      "translation": {
+        "en": "God has commanded justice and benevolence together. Justice is the cause of salvation only; in trade it plays the part of capital. Benevolence is the cause of success and of attaining happiness; in trade it plays the part of profit."
+      }
+    },
+    "example": {
+      "en": "Public weights and measures offices exist in almost every country; the metre and kilogram were standardised in 1875.",
+      "ar": "توجد مكاتب للموازين والمكاييل العامة في كل بلد تقريبًا، وقد وُحّد المتر والكيلوغرام سنة 1875."
+    },
+    "mechanic": {
+      "en": "Fraud level: falls with justice, courts and the hisba office; raises transport costs and harms trust.",
+      "ar": "مستوى الغش: ينخفض بالعدل والمحاكم والحسبة، ويرفع كلفة النقل ويضرّ الثقة."
+    },
+    "read": "https://shamela.ws/book/9472/439"
+  },
+  {
+    "id": "hisba",
+    "author": "ghazali",
+    "ref": {
+      "en": "Ihya' 'Ulum al-Din, Book 19 (Commanding Right and Forbidding Wrong), vol. 2 pp. 325, 338",
+      "ar": "إحياء علوم الدين، كتاب الأمر بالمعروف والنهي عن المنكر، ج2 ص325، 338"
+    },
+    "title": {
+      "en": "The Market Inspector (Hisba)",
+      "ar": "الحسبة والمحتسب"
+    },
+    "summary": {
+      "en": "Medieval Islamic cities had a public officer, the muhtasib, who walked the markets checking weights and measures, the quality of goods, fair dealing and public order. Ghazali devotes a book of the Ihya to the duty behind this office: commanding what is right and forbidding what is wrong. He also discusses its limits, warning against spying on people and overreach. In the game the Hisba office lowers fraud and can break grain hoarders. Combining it with heavy price controls slows the market.",
+      "ar": "كان في المدن الإسلامية في العصور الوسطى موظف عام هو المحتسب، يطوف الأسواق ليراقب الموازين والمكاييل وجودة السلع ونزاهة التعامل والنظام العام. ويخصّص الغزالي كتابًا من الإحياء للواجب الذي يقوم عليه هذا المنصب، الأمر بالمعروف والنهي عن المنكر، ويناقش حدوده ويحذّر من التجسس على الناس والتجاوز. في اللعبة يخفّض ديوان الحسبة الغش ويقدر على كسر احتكار القمح، لكن الجمع بينه وبين تسعير ثقيل يبطئ السوق."
+    },
+    "quote": {
+      "lang": "ar",
+      "text": "الشرط الثالث أن يكون المنكر ظاهراً للمحتسب بِغَيْرِ تَجَسُّسٍ فَكُلُّ مَنْ سَتَرَ مَعْصِيَةً فِي داره وأغلق بابه لا يجوز أَنْ يُتَجَسَّسَ عَلَيْهِ",
+      "status": "verified-dar-al-marifa",
+      "translation": {
+        "en": "The third condition is that the wrong be apparent to the muhtasib without spying. Whoever conceals a sin in his house and locks his door may not be spied upon."
+      }
+    },
+    "example": {
+      "en": "Food-safety and trading-standards inspectors are the modern descendants of the market inspector.",
+      "ar": "مفتشو سلامة الغذاء ومعايير التجارة هم الورثة المعاصرون للمحتسب."
+    },
+    "mechanic": {
+      "en": "Hisba office: fraud −3.5% per turn; unlocks inspector choices in events.",
+      "ar": "ديوان الحسبة: الغش −3.5% كل جولة، ويتيح خيارات المحتسب في الأحداث."
+    },
+    "read": "https://shamela.ws/book/9472/685"
+  }
+]
