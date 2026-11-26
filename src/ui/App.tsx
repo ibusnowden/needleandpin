@@ -49,6 +49,9 @@ function useHotkeys() {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement)?.closest("input, textarea, select")) return;
       const s = game.state;
+      if (e.key === " " && s && !game.ui.modal) { e.preventDefault(); game.setSpeed(game.ui.speed ? 0 : 1); return; }
+      if (e.key === "." && s) { game.setSpeed(Math.min(4, Math.max(1, game.ui.speed * 2))); return; }
+      if (e.key === "," && s) { game.setSpeed(game.ui.speed <= 1 ? 0 : game.ui.speed / 2); return; }
       if (e.key === "Escape") { game.setUi(game.ui.modal && !["title", "event", "reckoning", "ending"].includes(game.ui.modal.kind) ? { modal: null } : { tool: { kind: "inspect" }, selected: null }); return; }
       if (!s || (game.ui.modal && game.ui.modal.kind !== "codex")) return;
       const k = e.key.toLowerCase();
@@ -58,7 +61,7 @@ function useHotkeys() {
       else if (k === "i") game.setUi({ modal: { kind: "institutions" } });
       else if (k === "c") game.setUi({ modal: game.ui.modal?.kind === "codex" ? null : { kind: "codex" } });
       else if (k === "o") {
-        const order: Overlay[] = ["none", "reach", "prices", "wages", "mood"];
+        const order: Overlay[] = ["none", "traffic", "reach", "prices", "wages", "mood"];
         game.setUi({ overlay: order[(order.indexOf(game.ui.overlay) + 1) % order.length] });
       } else if (/^[1-9]$/.test(k)) {
         const tools = toolList(s);
@@ -95,7 +98,8 @@ function TopBar({ s }: { s: GameState }) {
         <span className="brand-mark">✒</span>
         <span>{t("app.title")}</span>
       </div>
-      <div className="stat"><small>{t("top.year")}</small><b>{s.scenario === "needle" ? fmt(s.year) : s.year}</b><small>{t("top.chapter", { n: s.chapter + 1, total: def.chapters.length })}</small></div>
+      <div className="stat"><small>{t(`time.month.${Math.floor(s.day / 30)}`)}</small><b>{s.scenario === "needle" ? fmt(s.year) : s.year}</b><small>{t("top.chapter", { n: s.chapter + 1, total: def.chapters.length })}</small></div>
+      <TimeControls />
       <div className="stat" title={t("top.turnsCover", { n: cover })}><small>{t("top.treasury")}</small><b>{fmt(s.treasury)}</b><small>{t("top.revenue")} {fmt(s.revenue, 1)}</small></div>
       <div className="stat"><small>{t("top.debt")}</small><b>{fmt(s.debt)}</b><small>{fmt(s.interestRate * 100, 1)}%</small></div>
       <div className={`stat ${s.money.trust < 50 ? "warn" : ""}`}><small>{t("top.trust")}</small><b>{fmt(s.money.trust)}</b><small>{s.money.trust < 50 ? "▼" : ""}</small></div>
@@ -105,6 +109,22 @@ function TopBar({ s }: { s: GameState }) {
       <button className="icon-btn" onClick={() => game.setUi({ modal: { kind: "codex" } })} title={t("menu.codex")}>📖 <span className="count">{s.discovered.length}</span></button>
       <button className="icon-btn" onClick={() => game.setUi({ modal: { kind: "menu" } })} title={t("menu.menu")}>☰</button>
     </header>
+  );
+}
+
+function TimeControls() {
+  const { t } = useTranslation();
+  const { s, ui } = useGame();
+  const speeds = [0, 1, 2, 4];
+  return (
+    <div className="time" role="group" aria-label={t("time.label")}>
+      {speeds.map((v) => (
+        <button key={v} className={ui.speed === v ? "on" : ""} onClick={() => game.setSpeed(v)} title={t(`time.speed${v}`)} aria-pressed={ui.speed === v}>
+          {v === 0 ? "❚❚" : "▶".repeat(Math.min(3, v === 4 ? 3 : v))}
+        </button>
+      ))}
+      <span className="yearbar" title={t("time.progress")}><span style={{ width: `${((s?.day ?? 0) / 360) * 100}%` }} /></span>
+    </div>
   );
 }
 
@@ -159,7 +179,7 @@ function BottomBar({ s }: { s: GameState }) {
       <div className="overlays">
         <small>{t("overlay.label")}</small>
         <select value={ui.overlay} onChange={(e) => game.setUi({ overlay: e.target.value as Overlay })}>
-          {(["none", "reach", "prices", "wages", "mood"] as Overlay[]).map((o) => <option key={o} value={o}>{t(`overlay.${o}`)}</option>)}
+          {(["none", "traffic", "reach", "prices", "wages", "mood"] as Overlay[]).map((o) => <option key={o} value={o}>{t(`overlay.${o}`)}</option>)}
         </select>
       </div>
       <PolicyHand s={s} />
@@ -169,8 +189,8 @@ function BottomBar({ s }: { s: GameState }) {
         <button onClick={() => game.setUi({ modal: { kind: "institutions" } })}>🏛 {t("inst.title")}{s.developing ? " •" : ""}</button>
       </div>
       <button className="end-turn" disabled={ui.busy || s.status !== "playing"} onClick={() => void game.endTurn()}>
-        {ui.busy ? t("top.busy") : s.pendingEvent ? t("event.title") : `${t("common.turn", { n: s.turn + 1 })} ▸`}
-        <small>E</small>
+        {ui.busy ? t("top.busy") : s.pendingEvent ? t("event.title") : `${t("time.skip")} ⏭`}
+        <small>E · {t("time.space")}</small>
       </button>
     </footer>
   );
@@ -217,6 +237,7 @@ function SidePanel({ s }: { s: GameState }) {
             <dt>{t("panel.pop")}</dt><dd>{fmt(town.pop * s.calibration.popScale)}</dd>
             <dt>{t("panel.mood")}</dt><dd>{fmt(town.mood)} {town.mood < 35 ? "▼" : town.mood > 60 ? "▲" : ""}</dd>
           </dl>
+          <TownMarket s={s} townId={town.id} />
         </section>
       )}
       {tile && (
@@ -244,6 +265,8 @@ function BuildingPanel({ s, b }: { s: GameState; b: Building }) {
     <section>
       <h3>{t(`building.${b.type}.name`)} <small className="muted">· {t(`good.${def.good}`)}</small></h3>
       {b.private && <p className="small muted">✦ {t("panel.private")}</p>}
+      <p className={`status status-${b.status}`}>{t(`status.${b.status}`, { good: b.missing ? t(`good.${b.missing}`) : "" })}</p>
+      <Stores b={b} />
       <div className="levels" aria-label={t("panel.levelOf", { level: b.level })}>
         {[1, 2, 3, 4, 5].map((lv) => <span key={lv} className={`lv ${lv <= b.level ? "on" : lv <= b.maxLevel ? "can" : ""}`}>{lv}</span>)}
         <small>{t("panel.levelOf", { level: b.level })} · {t("panel.cap", { max: b.maxLevel })}</small>
@@ -276,9 +299,47 @@ function BuildingPanel({ s, b }: { s: GameState; b: Building }) {
   );
 }
 
+export function Stores({ b }: { b: Building }) {
+  const { t } = useTranslation();
+  const def = BUILDINGS[b.type];
+  const inputs = [...Object.keys(GOODS[def.good!].inputs), ...(GOODS[def.good!].land ? ["tools"] : [])];
+  return (
+    <div className="stores">
+      {inputs.map((g) => (
+        <div key={g} className="store"><span>{t(`good.${g}`)}</span><b>{fmt(b.inBuf[g as keyof typeof b.inBuf] ?? 0, 1)}</b><small className="muted">+{fmt(b.incoming[g as keyof typeof b.incoming] ?? 0)} {t("panel.onTheWay")}</small></div>
+      ))}
+      <div className="store out"><span>{t("panel.outStore")}</span><b>{fmt(b.outBuf, 1)}</b><small className="muted">{t(`good.${def.good}`)}</small></div>
+    </div>
+  );
+}
+
 export function WhyLink({ id }: { id: string }) {
   const { t } = useTranslation();
   return <button className="why" onClick={() => game.setUi({ modal: { kind: "codex", entry: id } })}>{t("panel.why")}</button>;
+}
+
+function TownMarket({ s, townId }: { s: GameState; townId: string }) {
+  const { t } = useTranslation();
+  const m = s.markets.find((x) => x.town === townId);
+  if (!m) return null;
+  return (
+    <table className="market">
+      <caption className="small muted">{t("panel.localMarket")}</caption>
+      <tbody>
+        {GOOD_IDS.map((g) => {
+          const r = m.price[g] / s.goods[g].natural;
+          const short = m.short[g] > 0.05;
+          return (
+            <tr key={g} className={short ? "spike" : ""}>
+              <td>{t(`good.${g}`)}</td>
+              <td className="num">{fmt(m.stock[g])}</td>
+              <td className={`num ${r > 1.15 ? "bad" : r < 0.87 ? "cool" : ""}`}>{r > 1.15 ? "▲" : r < 0.87 ? "▼" : "·"} {fmt(r * 100)}%</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
 }
 
 function Council({ s }: { s: GameState }) {

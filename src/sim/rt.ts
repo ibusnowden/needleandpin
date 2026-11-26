@@ -510,6 +510,8 @@ function prices(s: GameState): void {
       if (g === "bread" && s.policies.breadPriceCap) target = Math.min(target, nat);
       if (g === "pins" && s.policies.pinMonopoly) target = Math.max(target, nat * 1.6);
       m.price[g] += (target - m.price[g]) * 0.05;
+      // A legal price cap is a ceiling, not a tendency.
+      if (g === "bread" && s.policies.breadPriceCap) m.price[g] = Math.min(m.price[g], nat);
     }
   }
 }
@@ -638,6 +640,7 @@ function monthlyNatural(s: GameState): void {
       st += m.stock[g];
     }
     s.goods[g].price = pop > 0 ? p / pop : s.goods[g].price;
+    if (g === "bread" && s.policies.breadPriceCap) s.goods[g].price = Math.min(s.goods[g].price, s.goods[g].natural);
     s.goods[g].stock = st;
   }
 }

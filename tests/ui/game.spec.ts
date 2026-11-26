@@ -42,13 +42,23 @@ test("Britain: turns advance, events are answered, screens open", async ({ page 
   await open(page);
   await page.getByRole("button", { name: /Britain, 1776/ }).click();
   await expect(page.locator(".topbar")).toContainText("1776");
+  // The game runs in real time; Space pauses it.
+  await page.keyboard.press(" ");
+  expect(await page.evaluate(() => (globalThis as any).needleAndPin.ui.speed)).toBe(0);
+  const answer = () => page.evaluate(() => {
+    const g = (globalThis as any).needleAndPin;
+    for (let k = 0; k < 4 && g.state.pendingEvent; k++) g.command({ type: "eventChoice", eventId: g.state.pendingEvent.id, choice: k });
+    if (g.state.status === "reckoning") g.command({ type: "reform", id: "none" });
+  });
   for (let i = 0; i < 4; i++) {
+    await answer();
     await page.keyboard.press("e");
-    const choice = page.locator(".dialog.event .choice:not([disabled])").first();
-    await page.waitForTimeout(400);
-    if (await choice.count()) await choice.click();
+    await page.waitForTimeout(500);
   }
-  await expect(page.locator(".topbar")).not.toContainText("1776");
+  await answer();
+  await page.waitForFunction(() => (globalThis as any).needleAndPin.state.year > 1776, null, { timeout: 15000 });
+  await page.evaluate(() => (globalThis as any).needleAndPin.setSpeed(0));
+  await answer();
   await expect(page.locator(".ghost-mini")).toContainText("of history");
   await page.keyboard.press("t");
   await expect(page.getByRole("dialog")).toContainText("Equality");
@@ -57,7 +67,7 @@ test("Britain: turns advance, events are answered, screens open", async ({ page 
   await expect(page.getByRole("dialog")).toContainText("Defence");
   await page.keyboard.press("Escape");
   await page.locator(".meter-opulence").click();
-  await expect(page.getByRole("dialog")).toContainText("Real wage of the lowest laborer");
+  await expect(page.locator(".dialog.meter-dialog")).toContainText("Real wage of the lowest laborer");
 });
 
 test("policy cards: debasing the coin collapses Money Trust", async ({ page }) => {
@@ -87,4 +97,14 @@ test("saves survive a reload", async ({ page }) => {
   await page.waitForFunction(() => (globalThis as any).needleAndPin.state !== null);
   const edu = await page.evaluate(() => (globalThis as any).needleAndPin.state.budget.education);
   expect(edu).toBeCloseTo(0.2, 5);
+});
+
+test("real time: goods travel as carts and the calendar advances", async ({ page }) => {
+  await open(page);
+  await page.getByRole("button", { name: /Britain, 1776/ }).click();
+  await page.evaluate(() => (globalThis as any).needleAndPin.setSpeed(4));
+  await page.waitForTimeout(3000);
+  const st = await page.evaluate(() => { const s = (globalThis as any).needleAndPin.state; return { day: s.day, carts: s.carts.length, year: s.year }; });
+  expect(st.day + (st.year - 1776) * 360).toBeGreaterThan(20);
+  expect(st.carts).toBeGreaterThan(5);
 });

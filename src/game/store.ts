@@ -2,7 +2,7 @@
 // The simulation core stays pure; this layer adds UI state, the worker bridge, snapshots for
 // counterfactual replay, and saves (§12: IndexedDB in the browser, export/import as a file).
 import {
-  applyCommand, endTurn as endTurnSync, newGame as newGameSync, replay as replaySync, setGhostData,
+  advanceDays, applyCommand, endTurn as endTurnSync, newGame as newGameSync, replay as replaySync, setGhostData,
   type BuildingType, type Command, type Decision, type GameState, type Infra, type Replay, type ScenarioId,
 } from "../sim/index.ts";
 import { ghostForEndings } from "./ghost.ts";
@@ -17,7 +17,7 @@ export type Tool =
   | { kind: "demolish" }
   | { kind: "foundTown" };
 
-export type Overlay = "none" | "reach" | "prices" | "wages" | "mood";
+export type Overlay = "none" | "traffic" | "reach" | "prices" | "wages" | "mood";
 
 export type Modal =
   | { kind: "title" }
@@ -48,6 +48,8 @@ export interface UiState {
   lastTurnMs: number;
   textScale: number;
   whatIf: Replay | null;
+  /** Game speed: 0 paused, 1 = one year per minute, 2, 4. */
+  speed: number;
 }
 
 export interface Snapshot { turn: number; state: GameState }
@@ -58,8 +60,13 @@ class Controller {
   state: GameState | null = null;
   ui: UiState = {
     tool: { kind: "inspect" }, overlay: "none", selected: null, hover: null, modal: { kind: "title" },
-    toasts: [], busy: false, lastTurnMs: 0, textScale: 1, whatIf: null,
+    toasts: [], busy: false, lastTurnMs: 0, textScale: 1, whatIf: null, speed: 0,
   };
+  /** Days simulated per real second at 1× (one 360-day year per minute). */
+  static DAYS_PER_SECOND = 6;
+  private carry = 0;
+  private lastFrame = 0;
+  private lastEmit = 0;
   /** State at the start of each recent turn (before its commands) — for "What if?" (§9). */
   snapshots: Snapshot[] = [];
   private listeners = new Set<Listener>();
@@ -80,7 +87,42 @@ class Controller {
     } catch {
       this.worker = null; // fall back to the main thread
     }
+    if (typeof requestAnimationFrame !== "undefined") requestAnimationFrame(this.frame);
   }
+
+  /** Real-time loop: run whole days as real time passes; pause for events, Reckonings, endings. */
+  private frame = (now: number) => {
+    requestAnimationFrame(this.frame);
+    const dt = this.lastFrame ? Math.min(0.25, (now - this.lastFrame) / 1000) : 0;
+    this.lastFrame = now;
+    const s = this.state;
+    if (!s || this.ui.speed === 0 || this.ui.modal || s.status !== "playing" || s.pendingEvent) return;
+    this.carry += dt * Controller.DAYS_PER_SECOND * this.ui.speed;
+    const n = Math.floor(this.carry);
+    if (n <= 0) return;
+    this.carry -= n;
+    const turnBefore = s.turn;
+    advanceDays(s, n);
+    if (s.turn !== turnBefore) this.afterYear(s);
+    if (now - this.lastEmit > 200) { this.lastEmit = now; this.emit(); }
+  };
+
+  /** Fraction of the current day elapsed (for smooth cart motion). */
+  dayFraction() { return this.ui.speed ? Math.min(1, this.carry) : 0; }
+
+  private afterYear(s: GameState) {
+    this.state = { ...s };
+    this.snapshots.push({ turn: s.turn, state: structuredClone(s) });
+    if (this.snapshots.length > 16) this.snapshots.shift();
+    this.flushDiscoveries();
+    const st = this.state;
+    const modal: Modal = st.status === "ended" ? { kind: "ending" } : st.status === "reckoning" ? { kind: "reckoning" } : st.pendingEvent ? { kind: "event" } : null;
+    this.ui = { ...this.ui, modal };
+    this.emit();
+    void this.autosave();
+  }
+
+  setSpeed(speed: number) { this.setUi({ speed }); }
 
   subscribe = (l: Listener) => { this.listeners.add(l); return () => this.listeners.delete(l); };
   getVersion = () => this.version;
@@ -102,7 +144,7 @@ class Controller {
   newGame(scenario: ScenarioId, seed = Math.floor(Math.random() * 1e9)) {
     this.state = newGameSync(scenario, seed);
     this.snapshots = [{ turn: 0, state: this.state }];
-    this.setUi({ modal: null, selected: null, tool: { kind: "inspect" }, whatIf: null });
+    this.setUi({ modal: null, selected: null, tool: { kind: "inspect" }, whatIf: null, speed: 1 });
     void this.autosave();
   }
 
@@ -136,6 +178,7 @@ class Controller {
     });
   }
 
+  /** Skip to the end of the year (fast-forward). */
   async endTurn() {
     const s = this.state;
     if (!s || this.ui.busy) return;
@@ -145,25 +188,15 @@ class Controller {
     const t = performance.now();
     let next: GameState;
     try {
-      if (this.worker) {
-        const r = await this.call<{ ok: boolean; state?: GameState; error?: string }>({ kind: "endTurn", state: s });
-        if (!r.ok || !r.state) throw new Error(r.error);
-        next = r.state;
-      } else {
-        next = endTurnSync(s);
-      }
+      next = endTurnSync(s);
     } catch (e) {
       this.setUi({ busy: false });
       this.toast("error", "error.sim", { msg: String((e as Error).message) });
       return;
     }
     this.state = next;
-    this.snapshots.push({ turn: next.turn, state: next });
-    if (this.snapshots.length > 16) this.snapshots.shift();
-    this.flushDiscoveries();
-    const modal: Modal = next.status === "ended" ? { kind: "ending" } : next.status === "reckoning" ? { kind: "reckoning" } : next.pendingEvent ? { kind: "event" } : null;
-    this.setUi({ busy: false, lastTurnMs: performance.now() - t, modal });
-    void this.autosave();
+    this.ui = { ...this.ui, busy: false, lastTurnMs: performance.now() - t };
+    this.afterYear(next);
   }
 
   /** "What if?" — rerun from the snapshot ~10 turns back with one decision reversed (§9). */

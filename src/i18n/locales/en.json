@@ -187,7 +187,10 @@
     "goods": "Market",
     "why": "Why?",
     "markets": "Prices this turn",
-    "stock": "in store"
+    "stock": "in store",
+    "onTheWay": "on the way",
+    "outStore": "Ready to ship",
+    "localMarket": "This town's market: stock and price against natural"
   },
   "overlay": {
     "label": "Overlay",
@@ -195,7 +198,8 @@
     "reach": "Market reach",
     "prices": "Prices",
     "wages": "Wages",
-    "mood": "Class mood"
+    "mood": "Class mood",
+    "traffic": "Traffic and jams"
   },
   "policy": {
     "title": "Policy cards",
@@ -737,5 +741,36 @@
   },
   "a11y": {
     "map": "Map of your nation. Use the arrow keys to pan and the side panel to inspect."
+  },
+  "time": {
+    "label": "Game speed",
+    "speed0": "Pause (Space)",
+    "speed1": "Normal: one year a minute",
+    "speed2": "Fast",
+    "speed4": "Fastest",
+    "progress": "Progress through the year",
+    "skip": "Skip to year end",
+    "space": "Space pauses",
+    "month": {
+      "0": "January",
+      "1": "February",
+      "2": "March",
+      "3": "April",
+      "4": "May",
+      "5": "June",
+      "6": "July",
+      "7": "August",
+      "8": "September",
+      "9": "October",
+      "10": "November",
+      "11": "December"
+    }
+  },
+  "status": {
+    "working": "Working",
+    "starved": "Waiting for {good}",
+    "blocked": "No buyers: goods pile up at the door",
+    "idle": "No workers",
+    "civic": "Public building"
   }
 }

@@ -2,7 +2,7 @@
 // glowing market catchment, and overlays. Phaser draws; all game state comes from the controller.
 import * as Phaser from "phaser";
 import {
-  BUILDINGS, SIM, buildGraph, canPlace, costsFrom, key, pathBetween,
+  BUILDINGS, SIM, buildGraph, canPlace, costsFrom, ctxFor, key,
   type Building, type GameState,
 } from "../sim/index.ts";
 import { game } from "../game/store.ts";
@@ -43,7 +43,6 @@ function hexPoints(cx: number, cy: number, size = SIZE, lift = 0): Phaser.Math.V
   return pts;
 }
 
-interface Mover { path: { x: number; y: number }[]; t: number; speed: number; color: number; size: number; ship?: boolean }
 
 export class MapScene extends Phaser.Scene {
   private ground!: Phaser.GameObjects.Graphics;
@@ -55,7 +54,6 @@ export class MapScene extends Phaser.Scene {
   private drawnKey = "";
   private drawnState: GameState | null = null;
   private stateSerial = 0;
-  private movers: Mover[] = [];
   private smoke: { x: number; y: number; age: number }[] = [];
   private dragging = false;
   private userMoved = false;
@@ -168,7 +166,6 @@ export class MapScene extends Phaser.Scene {
       const scenarioChanged = !this.drawnState || !s || this.drawnState.seed !== s.seed || this.drawnState.scenario !== s.scenario;
       this.drawnState = s;
       this.stateSerial++;
-      if (s) this.buildMovers(s);
       if (scenarioChanged) { this.userMoved = false; this.centre(); }
     }
   }
@@ -184,7 +181,7 @@ export class MapScene extends Phaser.Scene {
     if (!s) { this.ground.clear(); this.things.clear(); this.live.clear(); return; }
     // Static layers redraw only when the game state, overlay or selection changes (not on hover).
     const sel = game.ui.selected;
-    const k = `${this.stateSerial}|${game.ui.overlay}|${sel ? `${sel.q},${sel.r}` : ""}`;
+    const k = `${this.stateSerial}|${s.netVersion}|${s.turn}|${Math.floor(s.day / 30)}|${s.buildings.length}|${game.ui.overlay}|${sel ? `${sel.q},${sel.r}` : ""}`;
     if (k !== this.drawnKey) {
       this.drawnKey = k;
       this.drawStatic(s);
@@ -356,8 +353,8 @@ export class MapScene extends Phaser.Scene {
         g.fillStyle(i < b.level ? PALETTE.gold : PALETTE.paperDark, 1).fillRect(c.x - 9 + i * 4, c.y - 27, 3, 3);
         g.lineStyle(0.6, PALETTE.ink, 0.7).strokeRect(c.x - 9 + i * 4, c.y - 27, 3, 3);
       }
-      if (b.inputFill < 0.7) this.badge(c.x - 15, c.y - 22, "!", PALETTE.bad);
-      else if (b.sold < 0.6 && b.output > 0) this.badge(c.x - 15, c.y - 22, "✕", PALETTE.muted);
+      if (b.status === "starved") this.badge(c.x - 15, c.y - 22, "!", PALETTE.bad);
+      else if (b.status === "blocked") this.badge(c.x - 15, c.y - 22, "✕", PALETTE.muted);
       else if (b.level < b.maxLevel) this.badge(c.x + 15, c.y - 26, "↑", PALETTE.good);
     }
     this.things.setDepth(9000);
@@ -372,66 +369,47 @@ export class MapScene extends Phaser.Scene {
   }
 
   // ---------------------------------------------------------------- moving goods
-  private buildMovers(s: GameState) {
-    const gr = buildGraph(s);
-    const movers: Mover[] = [];
-    const towns = s.towns;
-    for (const b of s.buildings) {
-      const def = BUILDINGS[b.type];
-      if (!def.good || b.output <= 0.1 || !towns.length) continue;
-      const nearest = towns.reduce((a, t) => (Math.abs(t.q - b.q) + Math.abs(t.r - b.r) < Math.abs(a.q - b.q) + Math.abs(a.r - b.r) ? t : a));
-      const idx = pathBetween(gr, gr.index.get(key(b))!, gr.index.get(key(nearest))!);
-      if (idx.length < 2) continue;
-      const path = idx.map((i) => this.surface(s, s.tiles[i].q, s.tiles[i].r));
-      const value = b.output * s.goods[def.good].price;
-      const count = Math.max(1, Math.min(4, Math.round(Math.sqrt(value) / 2)));
-      for (let k = 0; k < count; k++) {
-        movers.push({ path, t: k / count, speed: 0.00012 * (s.infra[key(b)] ? 2 : 1) * (6 / path.length + 0.4), color: PALETTE.goods[def.good] ?? PALETTE.ink, size: 2.6 });
-      }
-    }
-    // Ships leave the ports for the open sea.
-    for (const b of s.buildings.filter((x) => x.type === "port")) {
-      const start = this.surface(s, b.q, b.r);
-      const seaN = s.tiles.filter((t) => t.terrain === "sea" && Math.abs(t.q - b.q) + Math.abs(t.r - b.r) <= 2)[0];
-      if (!seaN) continue;
-      const mid = this.surface(s, seaN.q, seaN.r);
-      const out = { x: mid.x + (mid.x - start.x) * 6, y: mid.y + (mid.y - start.y) * 6 };
-      const trade = s.goods.spices.imported + Object.values(s.goods).reduce((a, g) => a + g.exported, 0);
-      const ships = Math.max(1, Math.min(3, Math.round(trade / 20)));
-      for (let k = 0; k < ships; k++) movers.push({ path: [start, mid, out], t: k / ships, speed: 0.00006, color: PALETTE.ink, size: 4, ship: true });
-    }
-    this.movers = movers.slice(0, 500); // §12: 500 moving units at 60 fps
-  }
-
   private drawLive(s: GameState, delta: number) {
     const g = this.live;
     g.clear();
-    // Carts, camel caravans (the Caravan era) and dhows, drawn from the illustrated set.
-    while (this.moverImgs.length < this.movers.length) this.moverImgs.push(this.add.image(0, 0, "v-cart").setScale(1 / K).setOrigin(0.5, 0.9));
-    this.moverImgs.forEach((im, i) => im.setVisible(i < this.movers.length));
+    // The simulation's own carts, barges and ships, on the tiles where they really are.
+    const ctx = ctxFor(s);
+    const carts = s.carts.length > 600 ? s.carts.slice(0, 600) : s.carts;
+    while (this.moverImgs.length < carts.length) this.moverImgs.push(this.add.image(0, 0, "v-cart").setScale(1 / K).setOrigin(0.5, 0.9));
+    this.moverImgs.forEach((im, i) => im.setVisible(i < carts.length));
     const land = s.scenario === "needle" ? "v-camel" : "v-cart";
-    this.movers.forEach((m, idx) => {
-      m.t = (m.t + m.speed * delta) % 1;
-      const n = m.path.length - 1;
-      const f = m.t * n;
-      const i = Math.min(n - 1, Math.floor(f));
-      const a = m.path[i], b = m.path[i + 1];
-      const x = a.x + (b.x - a.x) * (f - i), y = a.y + (b.y - a.y) * (f - i);
+    const frac = game.dayFraction();
+    carts.forEach((c, idx) => {
+      const ti = c.path[c.seg], tn = c.path[Math.min(c.seg + 1, c.path.length - 1)];
+      const ta = s.tiles[ti], tb = s.tiles[tn];
+      const a = this.surface(s, ta.q, ta.r), b = this.surface(s, tb.q, tb.r);
+      const cost = ctx.g.enter[tn] || 1;
+      const f = Math.min(1, (c.acc + frac) / cost);
+      const x = a.x + (b.x - a.x) * f, y = a.y + (b.y - a.y) * f;
+      const inf = s.infra[`${ta.q},${ta.r}`];
+      const tex = ta.terrain === "sea" ? "v-ship" : inf === "canal" || (ta.river && !inf) ? "v-barge" : land;
       const im = this.moverImgs[idx];
-      const tex = m.ship ? "v-ship" : land;
       if (im.texture.key !== tex) im.setTexture(tex);
-      im.setPosition(x, y).setDepth(10002 + y).setFlipX(b.x < a.x).setAlpha(m.ship ? 1 - m.t * 0.8 : 1);
-      if (!m.ship) {
-        // A bale of the cargo's colour rides on top.
-        g.fillStyle(m.color, 1).fillRect(x - 2.5, y - 9, 5, 3);
-      }
+      im.setPosition(x, y).setDepth(10002 + y).setFlipX(b.x < a.x).setTint(c.waited > 0 && s.jam[tn] > 0.5 ? 0xff9a7a : 0xffffff);
+      if (tex !== "v-ship") g.fillStyle(PALETTE.goods[c.good] ?? PALETTE.ink, 1).fillRect(x - 2.5, y - 9, 5, 3);
     });
+    // Traffic: roads glow with flow and turn red where carts queue.
+    if (game.ui.overlay === "traffic") {
+      s.tiles.forEach((t, i) => {
+        if (s.flow[i] < 0.05 && s.jam[i] < 0.2) return;
+        const c = this.surface(s, t.q, t.r);
+        const cap = ctx.cap[i] >= 1e8 ? 50 : ctx.cap[i];
+        const load = Math.min(1, s.flow[i] / cap + s.jam[i] / 3);
+        g.fillStyle(load > 0.75 ? PALETTE.bad : load > 0.4 ? PALETTE.warn : PALETTE.good, 0.25 + 0.5 * load);
+        g.fillCircle(c.x, c.y, 4 + 8 * load);
+      });
+    }
     // Workers at work: two-frame animation; idle shops stand still.
     this.animClock += delta;
     const frame = Math.floor(this.animClock / 380) % 2;
     for (const w of this.workers) {
       const bld = s.buildings.find((x) => x.id === w.b);
-      const busy = bld && bld.output > 0 && bld.inputFill > 0.3;
+      const busy = bld && bld.status === "working" && game.ui.speed > 0;
       w.img.setTexture(`w-${w.role}-${busy ? frame : 0}`);
     }
     // Smoke from busy, specialised workshops.

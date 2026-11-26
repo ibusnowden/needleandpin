@@ -271,3 +271,15 @@ small { font-size: 0.82em; }
   .tutorial { max-width: calc(100% - 20px); }
   .slider { grid-template-columns: 1fr; }
 }
+
+/* real-time controls and logistics panels */
+.time { display: flex; align-items: center; gap: 2px; }
+.time button { padding: 0.15em 0.5em; font-size: 0.8em; letter-spacing: -0.1em; }
+.time button.on { background: var(--ink); color: var(--paper); }
+.yearbar { width: 64px; height: 6px; margin-inline-start: 6px; border: 1px solid var(--ink-2); border-radius: 3px; overflow: hidden; display: inline-block; position: relative; }
+.yearbar > span { position: absolute; inset-block: 0; inset-inline-start: 0; background: var(--gold); }
+.status { font-weight: 600; margin: 0.2em 0; }
+.status-working { color: var(--good); } .status-starved { color: var(--bad); } .status-blocked { color: var(--warn); } .status-idle { color: var(--muted); }
+.stores { display: grid; gap: 2px; margin: 0.3em 0; }
+.store { display: grid; grid-template-columns: 1fr auto auto; gap: 0.5em; align-items: baseline; font-size: 0.88em; padding: 1px 4px; background: var(--paper-2); border-radius: 3px; }
+.store.out { background: #f8eecb; }
