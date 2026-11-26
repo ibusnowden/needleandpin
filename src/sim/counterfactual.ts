@@ -3,6 +3,7 @@
 import { applyCommand } from "./commands.ts";
 import { EVENT_BY_ID, choiceAvailable } from "./events.ts";
 import { endTurn } from "./turn.ts";
+import { stepDay } from "./rt.ts";
 import type { Command, GameState, TurnRecord } from "./types.ts";
 
 export interface Decision {
@@ -16,7 +17,7 @@ export function reversibleDecisions(s: GameState, fromTurn: number): Decision[] 
   const out: Decision[] = [];
   for (const entry of s.log) {
     if (entry.turn < fromTurn) continue;
-    entry.commands.forEach((c, index) => {
+    entry.commands.forEach(({ cmd: c }, index) => {
       if (c.type === "policy" || c.type === "debase" || c.type === "tax" || c.type === "budget") out.push({ turn: entry.turn, index, command: c });
       if (c.type === "eventChoice") {
         const e = EVENT_BY_ID.get(c.eventId);
@@ -56,18 +57,7 @@ export interface Replay { actual: TurnRecord[]; alternative: TurnRecord[]; descr
 export function replay(snapshot: GameState, actual: GameState, d: Decision): Replay {
   let s = structuredClone(snapshot);
   const lastTurn = actual.turn;
-  for (let turn = snapshot.turn; turn < lastTurn && s.status !== "ended"; turn++) {
-    const entry = actual.log.find((l) => l.turn === turn);
-    const cmds = entry ? entry.commands : [];
-    for (let i = 0; i < cmds.length; i++) {
-      let c: Command | null = cmds[i];
-      if (turn === d.turn && i === d.index) c = reverse(c, s);
-      if (!c) continue;
-      if (c.type === "reform" && s.status !== "reckoning") continue;
-      if (c.type === "eventChoice" && (!s.pendingEvent || s.pendingEvent.id !== c.eventId)) continue;
-      const r = applyCommand(s, c);
-      if (r.ok) s = r.state;
-    }
+  const resolveYearStart = () => {
     if (s.pendingEvent) {
       const e = EVENT_BY_ID.get(s.pendingEvent.id)!;
       const choice = Math.max(0, e.choices.findIndex((ch) => choiceAvailable(s, ch)));
@@ -78,7 +68,23 @@ export function replay(snapshot: GameState, actual: GameState, d: Decision): Rep
       const r = applyCommand(s, { type: "reform", id: actual.reckonings.find((x) => x.turn === s.turn)?.chosen ?? "none" });
       if (r.ok) s = r.state;
     }
-    if (s.status === "playing") s = endTurn(s);
+  };
+  for (let turn = snapshot.turn; turn < lastTurn && s.status !== "ended"; turn++) {
+    const entry = actual.log.find((l) => l.turn === turn);
+    const cmds = entry ? entry.commands : [];
+    for (let i = 0; i < cmds.length; i++) {
+      // Replay the year day by day up to the moment the decision was made.
+      while (s.day < cmds[i].day && s.status === "playing") stepDay(s);
+      let c: Command | null = cmds[i].cmd;
+      if (turn === d.turn && i === d.index) c = reverse(c, s);
+      if (!c) continue;
+      if (c.type === "reform" && s.status !== "reckoning") continue;
+      if (c.type === "eventChoice" && (!s.pendingEvent || s.pendingEvent.id !== c.eventId)) continue;
+      const r = applyCommand(s, c);
+      if (r.ok) s = r.state;
+    }
+    resolveYearStart();
+    if (s.status === "playing" && !s.pendingEvent) s = endTurn(s);
   }
   const from = snapshot.turn;
   return {

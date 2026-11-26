@@ -4,9 +4,8 @@ import {
   type BuildingType, type GoodId, type InstitutionId,
 } from "./defs.ts";
 import { runDiscoveries } from "./discovery.ts";
-import {
-  moveLabor, realNaturalPrices, runMarket, totalPop, updateNaturalPrices, updateReachAndLevels, capacity,
-} from "./economy.ts";
+import { realNaturalPrices, totalPop, capacity, type MarketResult } from "./economy.ts";
+import { emptyAcc, initBuilding, initMarkets, newMarket, stepDay, sumRec } from "./rt.ts";
 import { applyEffects, currentEra, drawEvent, EVENT_BY_ID } from "./events.ts";
 import { distance, key, neighbors } from "./hex.ts";
 import { computeMeters, marketAccess } from "./meters.ts";
@@ -47,6 +46,7 @@ export function makeBuilding(s: GameState, type: BuildingType, q: number, r: num
     id: `b${s.nextId++}`, type, q, r, workers, level: 1, maxLevel: 1, reach: 0,
     capital: BUILDINGS[type].good ? 2 : 0, wage: s.labor.avgWage || 1, output: 0, inputFill: 1, sold: 1,
     profit: 0, built: s.turn, private: priv || undefined,
+    inBuf: {}, incoming: {}, outBuf: 0, status: BUILDINGS[type].good ? "idle" : "civic", cycle: 0, mRev: 0, mCost: 0,
   };
 }
 
@@ -91,6 +91,8 @@ export function newGame(scenario: ScenarioId, seed: number): GameState {
     calibration: { gdpScale: 1, wageScale: 1, popScale: 1, capital0: 1, trade0: 0.01 },
     nextId: 1, report: emptyReport(),
     tutorial: def.tutorial ? { step: 0, marketFormed: false } : undefined,
+    day: 0, markets: [], carts: [], netVersion: 0, entries: [], flow: [], jam: [], acc: emptyAcc(),
+    mInc: { laborers: 0, merchants: 0, landlords: 0 }, nextCart: 1,
   };
   if (!def.coinage) delete s.institutions.coinage;
   const real = realNaturalPrices(s);
@@ -105,12 +107,16 @@ export function newGame(scenario: ScenarioId, seed: number): GameState {
   s.classes.landlords.income = s.classes.laborers.income * 0.15;
   s.revenue = nominalGdp(s) * 0.08;
   s.debt = def.debtRatio * nominalGdp(s);
-  // Burn-in: let prices, wages and labour settle before the player's first turn.
+  initMarkets(s);
+  // Burn-in: let goods, prices, wages and labour settle on the roads before the player's first year.
   s.flags.burnIn = 1;
-  // Run at least `burnIn` turns, then until no workshop has reorganised for six turns.
   let quiet = 0;
-  for (let i = 0; i < 120 && (i < def.burnIn || quiet < 6); i++) {
-    simulate(s);
+  for (let i = 0; i < 40 && (i < def.burnIn || quiet < 3); i++) {
+    while (!stepDay(s)) { /* a year of days */ }
+    closeYear(s);
+    s.day = 0;
+    s.acc = emptyAcc();
+    s.flags.mmSettled = 0;
     s.turn += 1; // keeps per-turn parity rules (e.g. guild delays) moving during burn-in
     quiet = s.report.levelUps.length ? 0 : quiet + 1;
   }
@@ -127,6 +133,8 @@ export function newGame(scenario: ScenarioId, seed: number): GameState {
   s.report = emptyReport();
   for (const b of s.buildings) b.built = -10;
   calibrate(s);
+  s.acc = emptyAcc();
+  s.day = 0;
   s.history.push(record(s));
   return s;
 }
@@ -179,8 +187,11 @@ function placeStartingEconomy(s: GameState): void {
     let left = n - counts.reduce((a, v) => a + v, 0);
     const order = quotas.map((q, i) => ({ i, r: q - Math.floor(q) })).sort((a, b) => b.r - a.r);
     for (const { i } of order) { if (left <= 0) break; counts[i]++; left--; }
+    // Every sizeable town in 1776 could feed, warm, clothe and house itself locally.
+    const basic = ["farm", "bakery", "lumber", "builder", "weaver"].includes(type);
     s.towns.forEach((town, i) => {
-      for (let k = 0; k < counts[i]; k++) place(type, town.q, town.r, type === "lumber" || type === "pasture" ? 5 : 3, 0.85);
+      const k0 = basic && town.pop >= 25 ? Math.max(1, counts[i]) : counts[i];
+      for (let k = 0; k < k0; k++) place(type, town.q, town.r, type === "lumber" || type === "pasture" ? 5 : 3, 0.85);
     });
   }
   // Smith's own pin factory: one in the capital.
@@ -286,23 +297,44 @@ function record(s: GameState) {
   };
 }
 
-// ---------------------------------------------------------------- one turn of simulation
-function simulate(s: GameState): void {
-  const report = emptyReport();
-  s.report = report;
-  const step = chapterOf(s).step;
+// ---------------------------------------------------------------- the yearly close
+/** Turn the year's physical flows (s.acc) into the national accounts the annual systems use. */
+function yearAccounts(s: GameState): MarketResult {
+  const a = s.acc;
+  let realGdp = 0;
+  for (const g of GOOD_IDS) realGdp += (a.produced[g] - a.inputsUsed[g]) * s.goods[g].basePrice;
+  realGdp += a.hhBought.spices * s.goods.spices.basePrice * 0.15;
+  for (const g of GOOD_IDS) {
+    const gs = s.goods[g];
+    gs.produced = a.produced[g];
+    gs.sold = a.hhBought[g];
+    gs.imported = a.imported[g];
+    gs.exported = a.exported[g];
+    gs.demand = s.markets.reduce((x, m) => x + m.want[g] + m.draw[g], 0) * 360;
+    gs.supply = gs.produced + gs.imported;
+    gs.util = a.capacity[g] > 0 ? a.produced[g] / a.capacity[g] : 1;
+  }
+  return {
+    laborerIncome: s.classes.laborers.income, merchantIncome: s.classes.merchants.income, landlordIncome: s.classes.landlords.income,
+    wageBill: a.wages, rents: a.rents, profits: a.profits, importValue: a.importValue, exportValue: a.exportValue,
+    customs: a.customs, exciseNec: a.exciseNec, exciseLux: a.exciseLux, landTax: a.landTax, investment: a.invested, realGdp,
+    necessityFill: a.necNeed > 0 ? a.necGot / a.necNeed : 1,
+    foodFill: a.foodNeed > 0 ? a.foodGot / a.foodNeed : 1,
+    housingFill: a.housingNeed > 0 ? a.housingGot / a.housingNeed : 1,
+  };
+}
+
+function closeYear(s: GameState): void {
+  const report = s.report;
+  const step = 1;
   // Delayed consequences come due ("the bill arrives ten turns later").
   const due = s.delayed.filter((d) => d.turn <= s.turn);
   s.delayed = s.delayed.filter((d) => d.turn > s.turn);
   for (const d of due) applyEffects(s, d.effects, d.source);
-
   const graph = buildGraph(s);
-  const idx = tileIndex(s);
-  const prevMax = new Map(s.buildings.map((b) => [b.id, b.maxLevel]));
-  updateReachAndLevels(s, graph, report);
-  moveLabor(s);
-  updateNaturalPrices(s);
-  const m = runMarket(s, idx, report);
+  const prevMax = new Map<string, number>();
+  const m = yearAccounts(s);
+
   s.flags.realGdp = m.realGdp;
   runTreasury(s, m);
   // Income tax (1799 event): a light, proportional tax on profit and rent.
@@ -313,6 +345,8 @@ function simulate(s: GameState): void {
     s.revenueBreakdown.incomeTax = t;
   }
   runMoney(s, step);
+  for (const mk of s.markets) for (const g of GOOD_IDS) mk.price[g] *= s.money.priceLevel / (s.flags.lastPriceLevel || s.money.priceLevel);
+  s.flags.lastPriceLevel = s.money.priceLevel;
   const basketCost = (Object.entries(BASKET) as [GoodId, number][]).reduce((a, [g, q]) => a + q * s.goods[g].price, 0);
   const rw = laborerRealWage(s, basketCost) * s.calibration.wageScale;
   const realWageRel = rw / SCENARIOS[s.scenario].start.realWage;
@@ -404,6 +438,7 @@ function privateInvestment(s: GameState, report: TurnReport): void {
       if (!site) continue;
       const b = makeBuilding(s, pick.type, site.q, site.r, 0, true);
       s.buildings.push(b);
+      s.netVersion++;
       s.flags.privatePool -= cost;
       report.privateBuilds.push(b.id);
       placed = true;
@@ -443,6 +478,7 @@ function privateInvestment(s: GameState, report: TurnReport): void {
         const c = per[k] * def.costScale;
         if (pool < c) break;
         s.infra[key(t)] = k as "road" | "canal" | "rail";
+        s.netVersion++;
         pool -= c;
       }
       s.flags.privatePool = pool;
@@ -457,15 +493,39 @@ export function endTurn(prev: GameState): GameState {
   if (prev.status !== "playing") throw new Error("not playing");
   if (prev.pendingEvent) throw new Error("answer the pending event first");
   const s: GameState = structuredClone(prev);
+  while (!stepDay(s)) { /* the rest of the year */ }
+  return finishYear(s);
+}
+
+/** Real-time play: advance up to `n` days in place. Stops at the year's end (closing it) and
+ *  returns the number of days actually run. Pauses itself for events, Reckonings and endings. */
+export function advanceDays(s: GameState, n: number): number {
+  let ran = 0;
+  while (ran < n && s.status === "playing" && !s.pendingEvent) {
+    ran++;
+    if (stepDay(s)) {
+      const next = finishYear(s);
+      Object.assign(s, next);
+      break;
+    }
+  }
+  return ran;
+}
+
+function finishYear(s: GameState): GameState {
   s.log.push({ turn: s.turn, commands: s.pending });
   s.pending = [];
   s.newDiscoveries = [];
-  simulate(s);
+  closeYear(s);
+  s.day = 0;
+  s.acc = emptyAcc();
+  s.flags.mmSettled = 0;
+  s.report = emptyReport();
   // Advance the calendar.
   const def = SCENARIOS[s.scenario];
   const ch = chapterOf(s);
   s.turn += 1;
-  s.year += ch.step;
+  s.year += 1;
   s.policyChangesThisTurn = 0;
   s.history.push(record(s));
   tutorialProgress(s);
@@ -477,7 +537,7 @@ export function endTurn(prev: GameState): GameState {
     if (s.chapter >= def.chapters.length - 1) return finish(s, endingFor(s));
     // Reckoning (§2 era loop).
     s.status = "reckoning";
-    s.reckonings.push({ chapter: s.chapter, turn: s.turn, year: s.year - ch.step, reforms: reformOptions(s) });
+    s.reckonings.push({ chapter: s.chapter, turn: s.turn, year: s.year - 1, reforms: reformOptions(s) });
     s.year = def.chapters[s.chapter + 1].start;
     discoverNow(s, "five-protections");
     return s;
@@ -597,4 +657,4 @@ export function eraOf(s: GameState): number { return currentEra(s); }
 
 export function eventDef(id: string) { return EVENT_BY_ID.get(id); }
 
-export const _internals = { simulate, calibrate, indicators, record, BUDGET_LINES, neighbors };
+export const _internals = { closeYear, calibrate, indicators, record, BUDGET_LINES, neighbors, initBuilding, newMarket, sumRec };

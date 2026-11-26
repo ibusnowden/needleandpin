@@ -17,6 +17,7 @@ export interface DiscoveryCtx {
 
 export function runDiscoveries(s: GameState, ctx: DiscoveryCtx): void {
   const r = s.report;
+  if (r.levelUps.some((l) => l.to >= 2)) discover(s, "extent-of-market");
   if (r.levelUps.length) {
     discover(s, "division-of-labour");
     if (s.scenario === "needle") discover(s, "needle-hands");

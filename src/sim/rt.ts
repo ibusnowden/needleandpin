@@ -331,7 +331,7 @@ function merchants(s: GameState, ctx: Ctx): void {
     if (g === "housing") continue;
     const ms = [...s.markets].filter((m) => m.stock[g] >= 3);
     if (!ms.length) continue;
-    for (let k = 0; k < 2; k++) {
+    for (let k = 0; k < 5; k++) {
       const a = rng.pick(ms);
       let best: { m: Market; to: number; gain: number } | null = null;
       const from = ctx.marketTile.get(a.town)!;
@@ -344,10 +344,12 @@ function merchants(s: GameState, ctx: Ctx): void {
         if (gain > s.goods[g].natural * 0.06 && (!best || gain > best.gain)) best = { m, to, gain };
       }
       if (!best) continue;
-      a.stock[g] -= 1;
-      a.draw[g] += 0.05;
-      s.acc.merchantMargin += a.price[g];
-      spawn(s, { good: g, qty: 1, kind: "merchant", path: pathTo(ctx, from, best.to), dest: `m:${best.m.town}`, paid: a.price[g] });
+      // Wider gaps justify bigger lots.
+      const qty = Math.max(1, Math.min(Math.floor(a.stock[g] / 3), Math.round(best.gain / Math.max(1e-6, s.goods[g].natural * 0.1))));
+      a.stock[g] -= qty;
+      a.draw[g] += 0.05 * qty;
+      s.acc.merchantMargin += a.price[g] * qty;
+      spawn(s, { good: g, qty, kind: "merchant", path: pathTo(ctx, from, best.to), dest: `m:${best.m.town}`, paid: a.price[g] * qty });
     }
   }
 }
@@ -418,6 +420,7 @@ function deliver(s: GameState, c: Cart): void {
     // The merchant sells into the storehouse: his gain is the price difference less carriage.
     s.acc.merchantMargin -= buy;
     s.mInc.merchants += buy - c.paid - carriers;
+    return;
   }
 }
 
@@ -707,7 +710,7 @@ export function stepDay(s: GameState): boolean {
   produce(s);
   shipOutputs(s, ctx);
   orderInputs(s, ctx);
-  if (s.day % 2 === 0) merchants(s, ctx);
+  merchants(s, ctx);
   if (s.day % 5 === 0) imports(s, ctx);
   moveCarts(s, ctx);
   consume(s);

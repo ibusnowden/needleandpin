@@ -9,6 +9,7 @@ import { applyEffects, choiceAvailable, currentEra, EVENT_BY_ID } from "./events
 import { distance, key } from "./hex.ts";
 import { SCENARIOS } from "./scenarios.ts";
 import { applyReform, canPlace, makeBuilding, tileIndex } from "./turn.ts";
+import { newMarket, reroute } from "./rt.ts";
 import type { Command, GameState } from "./types.ts";
 
 export type CommandResult = { ok: true; state: GameState } | { ok: false; error: string };
@@ -58,7 +59,12 @@ export function applyCommand(prev: GameState, cmd: Command): CommandResult {
   const s: GameState = structuredClone(prev);
   const err = run(s, cmd);
   if (err) return { ok: false, error: err };
-  s.pending.push(cmd);
+  s.pending.push({ day: s.day, cmd });
+  // Physical network changed: invalidate paths and reroute carts in flight.
+  if (cmd.type === "build" || cmd.type === "infra" || cmd.type === "demolish" || cmd.type === "foundTown") {
+    s.netVersion++;
+    reroute(s);
+  }
   return { ok: true, state: s };
 }
 
@@ -111,7 +117,9 @@ function run(s: GameState, cmd: Command): string | null {
       const settlers = Math.min(10, biggest.pop * 0.1);
       biggest.pop -= settlers;
       s.treasury -= cost;
-      s.towns.push({ id: `t${s.nextId++}`, name: cmd.name, q: t.q, r: t.r, pop: settlers, mood: 55, founded: s.turn });
+      const id = `t${s.nextId++}`;
+      s.towns.push({ id, name: cmd.name, q: t.q, r: t.r, pop: settlers, mood: 55, founded: s.turn });
+      s.markets.push(newMarket(s, id, 0.02));
       return null;
     }
     case "policy": {

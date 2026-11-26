@@ -2,6 +2,8 @@
 export * from "./defs.ts";
 export * from "./types.ts";
 export * from "./hex.ts";
+export { advanceDays } from "./turn.ts";
+export { tradeCapacity, travelDays, yearRate, ctxFor } from "./rt.ts";
 export { newGame, endTurn, canPlace, indicators, chapterOf, eraOf, eventDef, ghostRatio, setGhostData, REFORMS, tileIndex } from "./turn.ts";
 export { applyCommand, buildCost, infraCost, institutionAvailable, FOUND_TOWN_COST } from "./commands.ts";
 export { EVENTS, EVENT_BY_ID, choiceAvailable, currentEra, type EventDef, type EventChoice, type Text } from "./events.ts";
