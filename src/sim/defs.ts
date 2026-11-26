@@ -209,3 +209,13 @@ export const CLASS_POP_SHARE: Record<ClassId, number> = { laborers: 0.85, mercha
 export type AdvisorId = "scotsman" | "scholar";
 export const ADVISOR_IDS: AdvisorId[] = ["scotsman", "scholar"];
 
+// ---------------------------------------------------------------- real-time logistics
+export const DAYS_PER_YEAR = 360;
+/** Carts that may enter a hex per day, by what is laid on it (a road jams; a railway rarely). */
+export const HEX_CAPACITY = { land: 3, river: 8, road: 14, canal: 24, rail: 48, free: 1e9 };
+/** Cost of carrying one unit for one day, in reference-wage units (paid to carriers). */
+export const CARRY_COST = 0.012;
+/** Share of the market price a producer receives when the storehouse buys (the rest is the merchant's margin). */
+export const STOREHOUSE_BUY = 0.92;
+/** Raw-material workers wear out tools: units of tools per worker-year. Without tools they work at 60%. */
+export const TOOL_WEAR = 0.25;

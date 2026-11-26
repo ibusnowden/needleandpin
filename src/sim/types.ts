@@ -51,6 +51,86 @@ export interface Building {
   private?: boolean;
   /** Natural-language breakdown of the last output figure (§11 "everything explains itself"). */
   explain?: OutputExplain;
+  // ---- physical logistics (real-time mode)
+  /** Input store, by good (units). */
+  inBuf: Partial<Record<GoodId, number>>;
+  /** Units on the way to this workshop, by good. */
+  incoming: Partial<Record<GoodId, number>>;
+  /** Finished goods waiting for a cart (units). */
+  outBuf: number;
+  /** What the workshop is doing right now. */
+  status: BuildingStatus;
+  /** Which input is missing when starved. */
+  missing?: GoodId;
+  /** Production cycle progress 0–1 (drives the animation). */
+  cycle: number;
+  /** Month-to-date accounts. */
+  mRev: number;
+  mCost: number;
+}
+
+export type BuildingStatus = "working" | "starved" | "blocked" | "idle" | "civic";
+
+/** A town's market and storehouses (Ghazali: "and so markets and storehouses appeared"). */
+export interface Market {
+  town: string;
+  stock: Record<GoodId, number>;
+  price: Record<GoodId, number>;
+  /** Household and investor demand, units per day (set monthly from incomes). */
+  want: Record<GoodId, number>;
+  /** Smoothed units per day taken from this market by every buyer (for pricing). */
+  draw: Record<GoodId, number>;
+  /** Smoothed unmet demand, units per day. */
+  short: Record<GoodId, number>;
+}
+
+/** One cart, barge, train or ship carrying goods across the map. */
+export interface Cart {
+  id: number;
+  good: GoodId;
+  qty: number;
+  kind: "goods" | "supply" | "merchant" | "import" | "export";
+  /** Tile indices from origin to destination. */
+  path: number[];
+  /** Index of the tile the cart is on. */
+  seg: number;
+  /** Days spent toward entering the next tile. */
+  acc: number;
+  /** Destination: "m:<townId>", "b:<buildingId>" or "abroad". */
+  dest: string;
+  /** Building that shipped it (goods/export) — paid on delivery. */
+  from?: string;
+  /** Price already paid (merchant/supply/import carts). */
+  paid: number;
+  waited: number;
+}
+
+export interface YearAcc {
+  produced: Record<GoodId, number>;
+  inputsUsed: Record<GoodId, number>;
+  hhBought: Record<GoodId, number>;
+  hhSpend: Record<GoodId, number>;
+  imported: Record<GoodId, number>;
+  exported: Record<GoodId, number>;
+  importValue: number;
+  exportValue: number;
+  customs: number;
+  wages: number;
+  rents: number;
+  profits: number;
+  carriers: number;
+  merchantMargin: number;
+  necNeed: number;
+  necGot: number;
+  foodNeed: number;
+  foodGot: number;
+  housingNeed: number;
+  housingGot: number;
+  invested: number;
+  capacity: Record<GoodId, number>;
+  exciseNec: number;
+  exciseLux: number;
+  landTax: number;
 }
 
 export interface OutputExplain {
@@ -211,9 +291,11 @@ export type Command =
   | { type: "borrow"; amount: number }
   | { type: "repay"; amount: number };
 
+export interface TimedCommand { day: number; cmd: Command }
+
 export interface TurnLog {
   turn: number;
-  commands: Command[];
+  commands: TimedCommand[];
 }
 
 export type EndingId = "golden" | "gilded" | "pious" | "decline" | "collapse";
@@ -271,7 +353,7 @@ export interface GameState {
   history: TurnRecord[];
   chronicle: ChronicleEntry[];
   log: TurnLog[];
-  pending: Command[];
+  pending: TimedCommand[];
   reckonings: Reckoning[];
   reforms: string[];
   calibration: { gdpScale: number; wageScale: number; popScale: number; capital0: number; trade0: number };
@@ -281,6 +363,23 @@ export interface GameState {
   nextId: number;
   /** Last end-of-turn report, for UI summaries. */
   report: TurnReport;
+  // ---- real-time logistics
+  /** Day of the year, 0–359. */
+  day: number;
+  markets: Market[];
+  carts: Cart[];
+  /** Bumped whenever buildings or infrastructure change (invalidates cached paths). */
+  netVersion: number;
+  /** Carts that entered each tile today (index = tile index). */
+  entries: number[];
+  /** Smoothed carts per day through each tile (for the congestion overlay). */
+  flow: number[];
+  /** Smoothed carts per day turned back by a full tile. */
+  jam: number[];
+  acc: YearAcc;
+  /** Month-to-date class incomes. */
+  mInc: { laborers: number; merchants: number; landlords: number };
+  nextCart: number;
   tutorial?: { step: number; marketFormed: boolean };
 }
 
