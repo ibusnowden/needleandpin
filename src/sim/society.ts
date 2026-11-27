@@ -67,8 +67,9 @@ export function runTreasury(s: GameState, m: MarketResult): void {
   } else {
     s.flags.deficitTurns = 0;
   }
-  const debtRatio = s.debt / Math.max(1, nominalGdp(s));
-  s.interestRate = clamp(SCENARIOS[s.scenario].interestRate + 0.02 * Math.max(0, debtRatio - 1.2) + Math.max(0, 80 - s.money.trust) / 1200 - (s.flags.debtConsolidation ? 0.008 : 0), 0.02, 0.2);
+  // Lenders judge debt against revenue (the ability to service it): premium beyond 14 years' revenue.
+  const debtYears = s.debt / Math.max(1e-6, net);
+  s.interestRate = clamp(SCENARIOS[s.scenario].interestRate + 0.002 * Math.max(0, debtYears - 14) + Math.max(0, 80 - s.money.trust) / 1200 - (s.flags.debtConsolidation ? 0.008 : 0), 0.02, 0.2);
   // State bankruptcy: interest swallowing revenue, turn after turn (§8 Collapse).
   if (interest > 0.75 * Math.max(1e-6, net)) s.flags.fiscalCrisis = (s.flags.fiscalCrisis ?? 0) + 1;
   else s.flags.fiscalCrisis = 0;
@@ -156,7 +157,7 @@ export function runSociety(s: GameState, m: MarketResult, step: number, realWage
   if (so.granary > 0 && famine > 0) famine *= 0.7;
   so.famineDeaths = famine;
   // Malthus: births respond to real wages and housing; growth absorbs much of any wage gain.
-  const growth = (0.006 * Math.min(1, m.housingFill + 0.3) + 0.009 * clamp(realWageRel - 1, -1, 1)) * step - famine;
+  const growth = (0.007 * Math.min(1, m.housingFill + 0.3) + 0.012 * clamp(realWageRel - 1, -1, 1)) * step - famine;
   let emigr = 0;
   if (s.classes.laborers.satisfaction < 30) emigr = 0.008 * step * (30 - s.classes.laborers.satisfaction) / 30;
   if (s.meters.opulence.value - s.meters.maslaha.value > 25) emigr += 0.003 * step; // rich and brittle

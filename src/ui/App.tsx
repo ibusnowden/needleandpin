@@ -8,7 +8,7 @@ import { GHOSTS, ghostAt } from "../game/ghost.ts";
 import { fmt, tx } from "../i18n/index.ts";
 import { mountMap } from "../map/MapScene.ts";
 import {
-  BUILDINGS, GOODS, GOOD_IDS, POLICIES, POLICY_IDS, SCENARIOS, buildCost, capacity, chapterOf, indicators, infraCost,
+  BUILDINGS, GOODS, GOOD_IDS, POLICIES, POLICY_IDS, SCENARIOS, buildCost, capacity, chapterOf, explainShortage, indicators, infraCost,
   type Building, type BuildingType, type GameState, type Infra,
 } from "../sim/index.ts";
 import { scholarLine, scotsmanLine } from "./advisors.ts";
@@ -266,6 +266,7 @@ function BuildingPanel({ s, b }: { s: GameState; b: Building }) {
       <h3>{t(`building.${b.type}.name`)} <small className="muted">· {t(`good.${def.good}`)}</small></h3>
       {b.private && <p className="small muted">✦ {t("panel.private")}</p>}
       <p className={`status status-${b.status}`}>{t(`status.${b.status}`, { good: b.missing ? t(`good.${b.missing}`) : "" })}</p>
+      <WhyShort s={s} b={b} />
       <Stores b={b} />
       <div className="levels" aria-label={t("panel.levelOf", { level: b.level })}>
         {[1, 2, 3, 4, 5].map((lv) => <span key={lv} className={`lv ${lv <= b.level ? "on" : lv <= b.maxLevel ? "can" : ""}`}>{lv}</span>)}
@@ -299,7 +300,23 @@ function BuildingPanel({ s, b }: { s: GameState; b: Building }) {
   );
 }
 
-export function Stores({ b }: { b: Building }) {
+export /** The bottleneck explainer: the upstream cause of a shortage, in one sentence, with a jump link. */
+function WhyShort({ s, b }: { s: GameState; b: Building }) {
+  const { t } = useTranslation();
+  const e = explainShortage(s, b);
+  if (!e) return null;
+  const v: Record<string, string | number> = { ...e.vars };
+  for (const k of ["good", "upstream"]) if (typeof v[k] === "string") v[k] = t(`good.${v[k]}`);
+  if (typeof v.building === "string") v.building = t(`building.${v.building}.name`);
+  return (
+    <p className="why-short">
+      ⚠ {t(e.key, v)}{" "}
+      {e.focus && <button className="link" onClick={() => game.setUi({ selected: e.focus! })}>{t("why.show")}</button>}
+    </p>
+  );
+}
+
+function Stores({ b }: { b: Building }) {
   const { t } = useTranslation();
   const def = BUILDINGS[b.type];
   const inputs = [...Object.keys(GOODS[def.good!].inputs), ...(GOODS[def.good!].land ? ["tools"] : [])];

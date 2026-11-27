@@ -1,6 +1,6 @@
 // The market economy (GDD §4, §13). Mutates a working copy of the state; called from turn.ts.
 import {
-  BASKET, BUILDINGS, GOODS, GOOD_IDS, SIM,
+  SPEC_BASE, BASKET, BUILDINGS, GOODS, GOOD_IDS, SIM,
   type GoodId, type ClassId,
 } from "./defs.ts";
 import { key } from "./hex.ts";
@@ -8,7 +8,8 @@ import { SCENARIOS } from "./scenarios.ts";
 import { buildGraph, costsFrom, maxLevelFor, reachFrom, type Graph } from "./transport.ts";
 import type { Building, GameState, TurnReport } from "./types.ts";
 
-export const specMult = (s: number) => Math.pow(SIM.specBase, s - 1);
+/** m(s) for a craft; without a good, the pin-factory (manufacturing) rate. */
+export const specMult = (s: number, g?: GoodId) => Math.pow(g ? SPEC_BASE[g] : SIM.specBase, s - 1);
 export const capacity = (level: number) => Math.round(SIM.maxWorkersPerLevel * level) + 2;
 
 const PRODUCTION_ORDER: GoodId[] = ["grain", "wool", "timber", "ore", "bread", "cloth", "tools", "housing", "pins"];
@@ -21,10 +22,11 @@ const SPEND: Record<ClassId, Partial<Record<GoodId, number>>> = {
 };
 const SAVINGS: Record<ClassId, number> = { laborers: 0.04, merchants: 0.38, landlords: 0.1 };
 
-export function landShare(b: Building): number {
+export function landShare(b: Building, pressure = 1): number {
   const def = BUILDINGS[b.type];
   if (!def.good) return 0;
-  if (GOODS[def.good].land) return SIM.rentShare;
+  // Ricardian rent: as population presses on the land, landlords take a growing share.
+  if (GOODS[def.good].land) return Math.min(0.4, SIM.rentShare * Math.pow(Math.max(0.5, pressure), 0.8));
   return b.type === "builder" ? 0.25 : 0;
 }
 
@@ -178,8 +180,8 @@ export function produce(s: GameState, tileIdx: Map<string, number>): Record<Good
       let other = tech * (s.institutions.factoryActs ? 0.96 : 1);
       if (g === "pins" && s.policies.pinMonopoly) other *= 0.7; // the monopolist restricts supply
       const tm = terrainMult(s, b, tileIdx);
-      const y = b.workers * def.baseOutput * specMult(b.level) * capMult * tm * other;
-      b.explain = { workers: b.workers, base: def.baseOutput, specMult: specMult(b.level), capitalMult: capMult, terrainMult: tm, inputFill: 1, other };
+      const y = b.workers * def.baseOutput * specMult(b.level, g) * capMult * tm * other;
+      b.explain = { workers: b.workers, base: def.baseOutput, specMult: specMult(b.level, g), capitalMult: capMult, terrainMult: tm, inputFill: 1, other };
       return y;
     });
     // Producers read last turn's market (§4.4): a price at or above natural says "make more";

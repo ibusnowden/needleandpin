@@ -106,7 +106,7 @@ export function newGame(scenario: ScenarioId, seed: number): GameState {
   s.classes.merchants.income = s.classes.laborers.income * 0.25;
   s.classes.landlords.income = s.classes.laborers.income * 0.15;
   s.revenue = nominalGdp(s) * 0.08;
-  s.debt = def.debtRatio * nominalGdp(s);
+  s.debt = 0;
   initMarkets(s);
   // Burn-in: let goods, prices, wages and labour settle on the roads before the player's first year.
   s.flags.burnIn = 1;
@@ -121,7 +121,7 @@ export function newGame(scenario: ScenarioId, seed: number): GameState {
     quiet = s.report.levelUps.length ? 0 : quiet + 1;
   }
   delete s.flags.burnIn;
-  s.debt = def.debtRatio * nominalGdp(s);
+  s.debt = def.debtYears * s.revenue;
   s.treasury = def.tutorial ? 150 : def.treasury * s.revenue;
   s.turn = 0;
   s.year = def.chapters[0].start;
@@ -132,6 +132,7 @@ export function newGame(scenario: ScenarioId, seed: number): GameState {
   s.delayed = [];
   s.report = emptyReport();
   for (const b of s.buildings) b.built = -10;
+  s.flags.pop0 = totalPop(s);
   calibrate(s);
   s.acc = emptyAcc();
   s.day = 0;

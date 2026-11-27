@@ -28,7 +28,8 @@ export interface ScenarioDef {
   /** Starting treasury in years of revenue. */
   foreign: { pop: number; seaCost: number };
   treasury: number;
-  debtRatio: number;
+  /** Starting national debt in years of revenue (Britain 1775: about £127m against about £11m of revenue). */
+  debtYears: number;
   interestRate: number;
   trust: number;
   literacy: number;
@@ -56,7 +57,7 @@ export const SCENARIOS: Record<ScenarioId, ScenarioDef> = {
     costScale: 1,
     foreign: { pop: 160, seaCost: 3 },
     treasury: 2.5,
-    debtRatio: 0,
+    debtYears: 0,
     interestRate: 0.05,
     trust: 70,
     literacy: 0.08,
@@ -87,7 +88,7 @@ export const SCENARIOS: Record<ScenarioId, ScenarioDef> = {
     costScale: 1.5,
     foreign: { pop: 900, seaCost: 2.5 },
     treasury: 0.8,
-    debtRatio: 1.0,
+    debtYears: 11.5,
     interestRate: 0.035,
     trust: 75,
     literacy: 0.45,

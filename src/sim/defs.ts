@@ -219,3 +219,14 @@ export const CARRY_COST = 0.012;
 export const STOREHOUSE_BUY = 0.92;
 /** Raw-material workers wear out tools: units of tools per worker-year. Without tools they work at 60%. */
 export const TOOL_WEAR = 0.25;
+
+/** Gain in output per worker for each specialisation level, by craft (§4.2 m(s) = base^(s-1)).
+ *  Smith, Book I ch. 1: "The nature of agriculture does not admit of so many subdivisions of
+ *  labour, nor of so complete a separation of one business from another, as manufactures."
+ *  So the full pin-factory gain applies to manufactures; farming and extraction gain least. */
+export const SPEC_BASE: Record<GoodId, number> = {
+  grain: 1.12, wool: 1.12, timber: 1.15, ore: 1.2,
+  bread: 1.22, housing: 1.25,
+  cloth: 1.5, tools: 1.55, pins: 1.6,
+  spices: 1,
+};

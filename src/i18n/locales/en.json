@@ -772,5 +772,16 @@
     "blocked": "No buyers: goods pile up at the door",
     "idle": "No workers",
     "civic": "Public building"
+  },
+  "why": {
+    "noMaker": "Nobody makes {good}. Build a {building}.",
+    "jam": "{n, plural, one {A cart} other {# carts}} of {good} {n, plural, one {is} other {are}} stuck in a traffic jam on the way. Widen the road, or lay a canal or railway.",
+    "noRoad": "No road links this workshop to any market. Build a road to the nearest town.",
+    "upstream": "No market has {good}: {n} of the {total} workshops that make it are themselves waiting for {upstream}. Fix that first.",
+    "makersCut": "No market has {good}: {n} of its makers cannot sell, so they have cut back. Better roads to the towns will help.",
+    "notEnough": "Every market has sold out of {good}: its {total} workshops cannot keep up. Build another.",
+    "far": "The nearest {good} for sale is {days} days away. Build a maker nearby, or a faster road.",
+    "waiting": "{good} has been ordered and is on its way.",
+    "show": "Show me"
   }
 }

@@ -162,9 +162,17 @@ export function yearRate(s: GameState, b: Building): number {
   const terrainMult = def.terrainBonus?.[t.terrain] ?? 1;
   let other = s.society.technology * (s.institutions.factoryActs ? 0.96 : 1);
   if (g === "pins" && s.policies.pinMonopoly) other *= 0.7;
-  const rate = b.workers * GOODS[g].baseOutput * specMult(b.level) * capMult * terrainMult * other;
-  b.explain = { workers: b.workers, base: GOODS[g].baseOutput, specMult: specMult(b.level), capitalMult: capMult, terrainMult, inputFill: 1, other };
+  // Ricardo's diminishing returns: more people on the same land means poorer land brought in.
+  if (GOODS[g].land && g !== "ore") other *= Math.pow(Math.max(0.5, landPressure(s)), -0.3);
+  const rate = b.workers * GOODS[g].baseOutput * specMult(b.level, g) * capMult * terrainMult * other;
+  b.explain = { workers: b.workers, base: GOODS[g].baseOutput, specMult: specMult(b.level, g), capitalMult: capMult, terrainMult, inputFill: 1, other };
   return rate;
+}
+
+/** Population relative to the scenario's start: the pressure on land (1 at start). */
+export function landPressure(s: GameState): number {
+  const p0 = s.flags.pop0 || totalPop(s);
+  return totalPop(s) / p0;
 }
 
 const usesTools = (b: Building) => !!BUILDINGS[b.type].good && GOODS[BUILDINGS[b.type].good!].land;
@@ -509,7 +517,8 @@ function prices(s: GameState): void {
       let target = nat * Math.min(3.5, Math.max(0.4, Math.pow(Math.max(0.01, cover), -0.45)));
       if (g === "bread" && s.policies.breadPriceCap) target = Math.min(target, nat);
       if (g === "pins" && s.policies.pinMonopoly) target = Math.max(target, nat * 1.6);
-      m.price[g] += (target - m.price[g]) * 0.05;
+      // Low gain: a high gain makes prices oscillate in boom-bust cycles that players read as random.
+      m.price[g] += (target - m.price[g]) * 0.035;
       // A legal price cap is a ceiling, not a tendency.
       if (g === "bread" && s.policies.breadPriceCap) m.price[g] = Math.min(m.price[g], nat);
     }
@@ -532,7 +541,7 @@ function month(s: GameState, ctx: Ctx): void {
     const def = BUILDINGS[b.type];
     if (!def.good) continue;
     const va = b.mRev - b.mCost;
-    const rent = Math.max(0, va * landShare(b));
+    const rent = Math.max(0, va * landShare(b, landPressure(s)));
     const target = b.workers > 0.01 ? Math.max(0, (SIM.laborShare * va * 12) / b.workers) : 0;
     b.wage = b.wage > 0 ? b.wage + 0.25 * (target - b.wage) : target;
     const bill = (b.wage * b.workers) / 12;
@@ -741,3 +750,44 @@ export function travelDays(s: GameState, a: number, b: number): number {
 }
 
 export { sumRec };
+
+// ---------------------------------------------------------------- bottleneck explainer
+/** Why is this workshop short? Traces the cause upstream instead of blaming the stalled building
+ *  (simgrammar: "starvation far upstream is hard to diagnose without flow statistics"). */
+export interface Explanation { key: string; vars: Record<string, string | number>; focus?: { q: number; r: number } }
+
+export function explainShortage(s: GameState, b: Building): Explanation | null {
+  if (b.status !== "starved" || !b.missing) return null;
+  const g = b.missing;
+  const ctx = ctxFor(s);
+  const here = ctx.g.index.get(key(b))!;
+  const makers = s.buildings.filter((x) => BUILDINGS[x.type].good === g);
+  if (!makers.length) {
+    const type = Object.values(BUILDINGS).find((d) => d.good === g)?.type ?? "";
+    return { key: "why.noMaker", vars: { good: g, building: type } };
+  }
+  // On the way but held up in traffic?
+  const enRoute = s.carts.filter((c) => c.dest === `b:${b.id}` && c.good === g);
+  const stuck = enRoute.filter((c) => c.waited > 2);
+  if (stuck.length) {
+    const c = stuck[0];
+    const t = s.tiles[c.path[Math.min(c.seg + 1, c.path.length - 1)]];
+    return { key: "why.jam", vars: { good: g, n: stuck.length }, focus: { q: t.q, r: t.r } };
+  }
+  const reachable = s.markets.filter((m) => Number.isFinite(days(ctx, ctx.marketTile.get(m.town)!, here)));
+  const withStock = reachable.filter((m) => m.stock[g] >= 1);
+  if (!reachable.length) return { key: "why.noRoad", vars: { good: g } };
+  if (!withStock.length) {
+    const starved = makers.filter((x) => x.status === "starved");
+    if (starved.length) {
+      const up = starved[0];
+      return { key: "why.upstream", vars: { good: g, upstream: up.missing ?? "tools", n: starved.length, total: makers.length }, focus: { q: up.q, r: up.r } };
+    }
+    const blocked = makers.filter((x) => x.status === "blocked");
+    if (blocked.length) return { key: "why.makersCut", vars: { good: g, n: blocked.length }, focus: { q: blocked[0].q, r: blocked[0].r } };
+    return { key: "why.notEnough", vars: { good: g, total: makers.length } };
+  }
+  const best = Math.min(...withStock.map((m) => days(ctx, ctx.marketTile.get(m.town)!, here)));
+  if (best > 12) return { key: "why.far", vars: { good: g, days: Math.round(best) } };
+  return { key: "why.waiting", vars: { good: g, n: enRoute.length } };
+}

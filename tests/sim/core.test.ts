@@ -45,6 +45,9 @@ describe("formulas (§13)", () => {
   it("m(s) = 1.6^(s-1): level 5 is ~6.5× level 1", () => {
     expect(specMult(1)).toBe(1);
     expect(specMult(5)).toBeCloseTo(6.5536, 3);
+    expect(specMult(5, "pins")).toBeCloseTo(6.5536, 3);
+    // Smith I.1: agriculture "does not admit of so many subdivisions of labour".
+    expect(specMult(5, "grain")).toBeLessThan(specMult(5, "cloth"));
   });
   it("each doubling of reach unlocks one more level, capped at 5", () => {
     expect(maxLevelFor(50, 100)).toBe(1);
@@ -171,3 +174,28 @@ describe("performance (§12: end of turn under 200 ms)", () => {
   });
 });
 
+
+describe("real-time logistics", () => {
+  it("goods travel as carts and a year closes after 360 days", () => {
+    let s = newGame("britain1776", 3);
+    expect(s.day).toBe(0);
+    expect(s.carts.length).toBeGreaterThan(0);
+    s = firstAvailable(endTurn(s));
+    expect(s.year).toBe(1777);
+  });
+  it("the bottleneck explainer traces a shortage upstream (no mine → no ore → idle pin workshop)", async () => {
+    const { advanceDays } = await import("../../src/sim/turn.ts");
+    const { explainShortage } = await import("../../src/sim/rt.ts");
+    let s = newGame("needle", 4);
+    const town = s.towns[0];
+    const t = s.tiles.find((x) => canPlace(s, "pinworks", x) === null && Math.abs(x.q - town.q) + Math.abs(x.r - town.r) <= 3)!;
+    s = run(s, { type: "build", building: "pinworks", q: t.q, r: t.r });
+    const b = s.buildings.find((x) => x.type === "pinworks")!;
+    b.workers = 4;
+    advanceDays(s, 20);
+    const bb = s.buildings.find((x) => x.id === b.id)!;
+    expect(bb.status).toBe("starved");
+    expect(bb.missing).toBe("ore");
+    expect(explainShortage(s, bb)?.key).toBe("why.noMaker");
+  });
+});

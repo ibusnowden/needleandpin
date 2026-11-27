@@ -283,3 +283,5 @@ small { font-size: 0.82em; }
 .stores { display: grid; gap: 2px; margin: 0.3em 0; }
 .store { display: grid; grid-template-columns: 1fr auto auto; gap: 0.5em; align-items: baseline; font-size: 0.88em; padding: 1px 4px; background: var(--paper-2); border-radius: 3px; }
 .store.out { background: #f8eecb; }
+
+.why-short { background: #fbe3d6; border-inline-start: 3px solid var(--bad); padding: 0.3em 0.5em; font-size: 0.88em; }

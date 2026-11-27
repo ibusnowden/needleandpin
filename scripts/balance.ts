@@ -7,7 +7,6 @@ import { BOT_IDS, playGame, setGhostData, type BotId } from "../src/sim/index.ts
 type Pt = [number, number, string];
 const series = (name: "gdppc" | "realWage") => (ghost.series[name].points as Pt[]).map((p) => [p[0], p[1]] as [number, number]);
 setGhostData({ britain1776: { gdppc: series("gdppc"), realWage: series("realWage") } });
-const at = (pts: [number, number][], y: number) => pts.reduce((b, p) => (Math.abs(p[0] - y) < Math.abs(b[0] - y) ? p : b))[1];
 
 const mode = process.argv[2] ?? "autopilot";
 if (mode === "autopilot") {
@@ -17,18 +16,24 @@ if (mode === "autopilot") {
   const finals: { op: number; ma: number }[] = [];
   for (let seed = 1; seed <= seeds; seed++) {
     const { state } = playGame("britain1776", "historical", seed);
+    // Compare 5-year means (y-4 … y): single years mostly measure where the cycle happens to be.
+    const mean5 = (pts: { year: number; v: number }[], y: number) => {
+      const w = pts.filter((p) => p.year > y - 5 && p.year <= y);
+      return w.length ? w.reduce((a, p) => a + p.v, 0) / w.length : NaN;
+    };
     const row = years.map((y) => {
-      const h = state.history.reduce((b, p) => (Math.abs(p.year - y) < Math.abs(b.year - y) ? p : b));
-      const g = h.gdppc / at(series("gdppc"), y), w = h.realWage / at(series("realWage"), y);
+      const you = (k: "gdppc" | "realWage") => mean5(state.history.map((h) => ({ year: h.year, v: h[k] })), y);
+      const hist = (k: "gdppc" | "realWage") => mean5(series(k).map(([year, v]) => ({ year, v })), y);
+      const g = you("gdppc") / hist("gdppc"), w = you("realWage") / hist("realWage");
       (ratios[y] ??= { g: [], w: [] }).g.push(g);
       ratios[y].w.push(w);
-      return `${y}: gdp ${h.gdppc.toFixed(0)} (${(g * 100).toFixed(0)}%) wage ${h.realWage.toFixed(2)} (${(w * 100).toFixed(0)}%)`;
+      return `${y}: gdp ${(g * 100).toFixed(0)}% wage ${(w * 100).toFixed(0)}%`;
     });
     finals.push({ op: state.meters.opulence.value, ma: state.meters.maslaha.value });
     console.log(`seed ${seed} [${state.ending ?? state.status}${state.collapseReason ? ":" + state.collapseReason : ""}] op ${state.meters.opulence.value.toFixed(0)} ma ${state.meters.maslaha.value.toFixed(0)} | ${row.join(" | ")}`);
   }
   const mean = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;
-  console.log("\nmean ratio to history (target: within ±15% by 1850):");
+  console.log("\nmean ratio to history, 5-year averages (target: within ±15% by 1850):");
   for (const y of years) console.log(`  ${y}: GDP per capita ${(mean(ratios[y].g) * 100).toFixed(0)}%, real wage ${(mean(ratios[y].w) * 100).toFixed(0)}%`);
   console.log(`  final meters: opulence ${mean(finals.map((f) => f.op)).toFixed(1)}, maslaha ${mean(finals.map((f) => f.ma)).toFixed(1)}`);
   const g1850 = mean(ratios[1850].g), w1850 = mean(ratios[1850].w);
