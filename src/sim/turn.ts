@@ -121,7 +121,14 @@ export function newGame(scenario: ScenarioId, seed: number): GameState {
     quiet = s.report.levelUps.length ? 0 : quiet + 1;
   }
   delete s.flags.burnIn;
-  s.debt = def.debtYears * s.revenue;
+  // Measure an ordinary year's revenue (burn-in years differ) before setting the historical debt.
+  if (def.debtYears > 0) {
+    const probe: GameState = structuredClone(s);
+    probe.debt = 0;
+    while (!stepDay(probe)) { /* one ordinary year */ }
+    closeYear(probe);
+    s.debt = def.debtYears * probe.revenue;
+  } else s.debt = 0;
   s.treasury = def.tutorial ? 150 : def.treasury * s.revenue;
   s.turn = 0;
   s.year = def.chapters[0].start;

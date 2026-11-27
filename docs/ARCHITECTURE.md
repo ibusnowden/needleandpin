@@ -46,6 +46,7 @@ with **i18next + ICU**.
 | `meters.ts` | Opulence and Maslaha with per-component breakdowns (§8). |
 | `events.ts` | Event engine: conditions, a weighted draw, effect interpreter. |
 | `discovery.ts` | "Play first, name second" (§9): detects when an idea has been met in play. |
+| `rt.ts` | Real-time logistics: daily production, carts on the network with per-tile capacity, town markets, merchants, imports and exports, monthly accounts, the bottleneck explainer ([REALTIME.md](REALTIME.md)). |
 | `turn.ts` | `newGame` (with burn-in and calibration), the end-of-turn pipeline, private investment, invention, chapters, Reckonings, reforms, endings. |
 | `commands.ts` | Every player decision, validated, logged and judged by the council. |
 | `counterfactual.ts` | "What if?" replay. |
@@ -99,3 +100,12 @@ No account is needed (§12).
 | First load < 5 MB | ≈ 0.6 MB gzipped (Phaser chunk 357 KB, app 211 KB) |
 | End-of-turn < 200 ms | 8–15 ms for Britain (≈ 400 hexes, 45–60 buildings) on a laptop; enforced by a Vitest test |
 | 60 fps, 500 moving units | Movers capped at 500; static layers are not redrawn per frame |
+
+## Real time and art (added)
+
+- **The clock.** `src/game/store.ts` runs a `requestAnimationFrame` loop that calls `advanceDays(state, n)` (6 days per
+  second × speed) and pauses for events, Reckonings and endings. `endTurn` now means "skip to year end".
+- **The sprites.** `src/art/sprites.ts` draws the illustrated set as SVG, with watercolour turbulence filters and paper
+  grain, at 2× resolution. Phaser loads the sprites as textures in `preload()`. Terrain tiles are created once per map.
+  Buildings, towns and workers redraw when the network or month changes. Carts are a pooled set of images updated
+  every frame from `state.carts`.

@@ -47,28 +47,31 @@ function chooseEvent(s: GameState, bot: BotId): number {
 }
 
 function setTaxesAndPolicies(s: GameState, bot: BotId): GameState {
+  // Set the strategy's stance once (policies re-checked every 5 years); taxes are then managed
+  // year by year by balanceBudget, as a sensible player would.
   if (s.turn !== 0 && s.turn % 5 !== 0) return s;
+  const firstYear = s.turn === 0;
   switch (bot) {
     case "mercantilist":
-      s = tryCmd(s, { type: "tax", taxes: { customs: 0.38, exciseNecessities: 0.1 } });
+      if (firstYear) s = tryCmd(s, { type: "tax", taxes: { customs: 0.38, exciseNecessities: 0.1 } });
       for (const id of ["cornLaw", "navigationActs"] as const) s = tryCmd(s, { type: "policy", id, on: true });
       if (s.turn > 3) s = tryCmd(s, { type: "policy", id: "pinMonopoly", on: true });
       s = tryCmd(s, { type: "budget", line: "defense", value: 0.4 });
       break;
     case "freeTrader":
-      s = tryCmd(s, { type: "tax", taxes: { customs: 0.04, exciseNecessities: 0.05, land: 0.22 } });
+      if (firstYear) s = tryCmd(s, { type: "tax", taxes: { customs: 0.08, exciseNecessities: 0.08, exciseLuxuries: 0.2, land: 0.25 } });
       for (const id of ["cornLaw", "navigationActs", "internalTolls", "guildRules"] as const) s = tryCmd(s, { type: "policy", id, on: false });
       s = tryCmd(s, { type: "budget", line: "works", value: 0.15 });
       break;
     case "piousSteward":
-      s = tryCmd(s, { type: "tax", taxes: { exciseNecessities: 0.03, exciseLuxuries: 0.22, customs: 0.15 } });
+      if (firstYear) s = tryCmd(s, { type: "tax", taxes: { exciseNecessities: 0.05, exciseLuxuries: 0.24, customs: 0.18, land: 0.24 } });
       for (const [line, v] of [["relief", 0.12], ["education", 0.12], ["justice", 0.12], ["defense", 0.18]] as const) s = tryCmd(s, { type: "budget", line, value: v });
       for (const id of ["testActs", "internalTolls"] as const) s = tryCmd(s, { type: "policy", id, on: false });
       break;
     case "debaser":
       break;
     case "balanced":
-      s = tryCmd(s, { type: "tax", taxes: { customs: 0.1, exciseNecessities: 0.05, exciseLuxuries: 0.16, land: 0.22 } });
+      if (firstYear) s = tryCmd(s, { type: "tax", taxes: { customs: 0.14, exciseNecessities: 0.07, exciseLuxuries: 0.2, land: 0.24 } });
       for (const id of ["internalTolls", "guildRules", "cornLaw", "testActs", "navigationActs"] as const) s = tryCmd(s, { type: "policy", id, on: false });
       for (const [line, v] of [["defense", 0.18], ["justice", 0.1], ["works", 0.12], ["education", 0.1], ["relief", 0.07]] as const) s = tryCmd(s, { type: "budget", line, value: v });
       break;
@@ -179,6 +182,13 @@ function balanceBudget(s: GameState, bot: BotId): GameState {
   if (bot === "debaser") return s;
   const deficit = (s.flags.deficitTurns ?? 0) > 0;
   const t = s.taxes;
+  // Persistent deficits: trim discretionary spending (never below a working floor).
+  if ((s.flags.deficitTurns ?? 0) >= 2) {
+    for (const line of ["defense", "justice", "works", "education", "relief"] as const) {
+      const floor = line === "defense" ? 0.12 : 0.03;
+      if (s.budget[line] > floor) s = tryCmd(s, { type: "budget", line, value: Math.max(floor, s.budget[line] * 0.9) });
+    }
+  }
   if (deficit) {
     // Historically: excise first, then the land tax (and the 1799 income tax, an event).
     const nec = bot === "piousSteward" || bot === "balanced" ? t.exciseNecessities : Math.min(0.25, t.exciseNecessities + 0.02);
@@ -203,7 +213,7 @@ export function botTurn(state: GameState, bot: BotId): GameState {
   if (s.pendingEvent) s = tryCmd(s, { type: "eventChoice", eventId: s.pendingEvent.id, choice: chooseEvent(s, bot) });
   if (s.status !== "playing") return s;
   s = setTaxesAndPolicies(s, bot);
-  if (s.turn % 2 === 1) s = balanceBudget(s, bot);
+  s = balanceBudget(s, bot);
   s = develop(s, bot);
   s = build(s, bot);
   s = connect(s, bot);

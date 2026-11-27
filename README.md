@@ -12,6 +12,14 @@ thought from the *Ihya' 'Ulum al-Din* (c. 1100), and it races you against real h
 
 ## What's in the game
 
+- **Pausable real time (Factorio-style logistics).** Every unit of grain, cloth or tools travels as a cart, barge
+  or dhow along your roads, rivers, canals, railways and sea lanes. Roads jam, and workshops starve or pile up
+  goods. A bottleneck explainer tells you the real cause upstream. Speeds are pause, 1×, 2× and 4× (one year per
+  minute at 1×). See [docs/REALTIME.md](docs/REALTIME.md).
+- **Illustrated art inspired by Arabic and Islamic art.** Watercolour terrain, a Persian-miniature landscape, and
+  buildings and towns in the manner of al-Wasiti's Maqamat: domes, arches, mashrabiya screens and Iznik tile bands.
+  Animated workers, camel caravans and dhows.
+
 - **Two scenarios.** *The Needle* is a 15-minute tutorial: Ghazali's four root crafts, the division of labour, the
   extent of the market. *Britain, 1776* is the flagship, 1776–1850 in four chapters, raced against Maddison GDP and
   Robert Allen's London real wages.
@@ -87,6 +95,7 @@ docs/           GDD, architecture, simulation model, content guide, data, balanc
 
 - [docs/GDD.md](docs/GDD.md): the game design document (source of truth).
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): layers, turn pipeline, rendering, saves, localisation, performance.
+- [docs/REALTIME.md](docs/REALTIME.md): the real-time logistics model (daily loop, carts, capacity, local markets, bottleneck explainer).
 - [docs/SIMULATION.md](docs/SIMULATION.md): every equation and constant, and where it lives in the code.
 - [docs/CONTENT.md](docs/CONTENT.md): writing event cards and codex entries; accuracy rules; translation.
 - [docs/DATA.md](docs/DATA.md): the real-data pipeline and sources.
