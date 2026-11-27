@@ -409,7 +409,7 @@ function inventMachines(s: GameState, step: number): void {
   const workers = producers.reduce((a, b) => a + b.workers, 0) || 1;
   const specialised = producers.filter((b) => b.level >= 4).reduce((a, b) => a + b.workers, 0) / workers;
   const middling = producers.filter((b) => b.level === 3).reduce((a, b) => a + b.workers, 0) / workers;
-  const rate = 0.0014 * (0.4 + 3 * specialised + 1 * middling) * (0.4 + s.society.literacy) * (s.institutions.learnedSocieties ? 1.5 : 1);
+  const rate = 0.0017 * (0.4 + 3 * specialised + 1 * middling) * (0.4 + s.society.literacy) * (s.institutions.learnedSocieties ? 1.5 : 1);
   s.society.technology += s.society.technology * rate * step;
 }
 

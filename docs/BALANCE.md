@@ -1,5 +1,20 @@
 # Balancing and calibration
 
+> **Real-time model (current, branch `realtime-logistics`).** Historical autopilot, 8 seeds, comparing 5-year means
+> against history's 5-year means (in the daily model a single year mostly measures where the inventory cycle is):
+>
+> | Checkpoint | GDP per capita | Real wage |
+> | --- | --- | --- |
+> | 1790 | 106% | 97% |
+> | 1800 | 98% | 94% |
+> | 1820 | 104% | 99% |
+> | 1835 | 97% | 86% |
+> | **1850** | **89%** | **97%** |
+>
+> Both 1850 values are **inside the ±15% band**, and every checkpoint is within 15%. The levers added for the real-time
+> model are listed in [REALTIME.md](REALTIME.md#calibration-levers-added-for-real-time). The bot results and targets
+> are in the "Real-time bots" section at the end. The turn-based figures below are kept for the record.
+
 The method follows [GDD §13](GDD.md#13-simulation-math-and-balancing). Everything runs headless on the simulation core:
 
 ```sh
@@ -70,3 +85,28 @@ Britain targets: **Opulence 79, Maslaha 86** (`src/sim/scenarios.ts`).
 These need real players: median session length, the turn of the first "Discovered" toast (target under 5 minutes; the
 tutorial fires its first in turn 1–2), and the share of players who open at least one "Why?" button (target over 50%).
 The game doesn't send telemetry yet. That needs a privacy decision first.
+
+## Real-time bots (current)
+
+Five strategies × 12 seeded Britain games on the final real-time code (`npm run balance -- bots 12`). The harness saves
+every game (`scripts/.balance-britain1776.json`) and searches for the most demanding target pair that meets §13:
+
+| Bot | Win rate at targets 65 / 83 | §13 target |
+| --- | --- | --- |
+| Balanced | 58% | ≈ 60% |
+| Pious Steward | 50% | ≤ 75% |
+| Free Trader | 17% (mostly Gilded Age) | ≤ 75% |
+| Mercantilist | 0% (Decline) | < 15% |
+| Debaser | 0% (a quarter go bankrupt) | < 5% |
+
+Britain targets: **Opulence 65, Maslaha 83**. Caveat: the targets were chosen in-sample from these 12 games per
+strategy. Confirm them on a larger, independent seed set (`npm run balance -- bots 100`) before launch.
+
+**Design finding.** In the real-time model the Pious Steward (relief, schooling, justice, partnership finance) gives
+up almost no Opulence to the Balanced player: 66 vs 64 mean. GDD §8 intends "High Maslaha, low Opulence" to mean
+"rivals outgrow you". Rivals are out of MVP scope, so that pressure is missing. When rival nations arrive (version 1),
+re-check this strategy.
+
+The bots were also made realistic: they set their tax stance once and then manage deficits yearly by raising taxes and
+trimming discretionary spending. Without that, every strategy went bankrupt under Britain's 1776 debt of about 11.5
+years of revenue.

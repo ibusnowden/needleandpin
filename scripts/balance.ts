@@ -46,12 +46,18 @@ if (mode === "autopilot") {
   // §13: Balanced ≈ 60%, Mercantilist < 15%, Debaser < 5%, no strategy above 75%.
   const targets: Record<BotId, [number, number]> = { balanced: [0.45, 0.75], mercantilist: [0, 0.15], debaser: [0, 0.05], freeTrader: [0, 0.75], piousSteward: [0, 0.75], historical: [0, 1] };
   let pass = true;
+  const all: Record<string, { op: number; ma: number; ratio: number; ending: string }[]> = {};
   for (const bot of BOT_IDS) {
     const tally: Record<string, number> = {};
     let op = 0, ma = 0;
     for (let seed = 1; seed <= games; seed++) {
-      const { result } = playGame(scenario, bot, 1000 + seed);
+      const { result, state } = playGame(scenario, bot, 1000 + seed);
       tally[result.ending] = (tally[result.ending] ?? 0) + 1;
+      const g = ghost.series.gdppc.points as Pt[], w = ghost.series.realWage.points as Pt[];
+      const y = state.history[state.history.length - 1].year;
+      const near = (pts: Pt[]) => pts.reduce((b, p) => (Math.abs(p[0] - y) < Math.abs(b[0] - y) ? p : b))[1];
+      const ratio = scenario === "britain1776" ? (result.gdppc / near(g) + result.realWage / near(w)) / 2 : 1;
+      (all[bot] ??= []).push({ op: result.opulence, ma: result.maslaha, ratio, ending: result.ending });
       op += result.opulence; ma += result.maslaha;
     }
     const win = (tally.golden ?? 0) / games;
@@ -60,5 +66,25 @@ if (mode === "autopilot") {
     pass &&= ok;
     console.log(`${bot.padEnd(13)} win ${(win * 100).toFixed(0).padStart(3)}% [target ${lo * 100}–${hi * 100}%] ${ok ? "ok " : "OFF"} op ${(op / games).toFixed(0)} ma ${(ma / games).toFixed(0)} ${JSON.stringify(tally)}`);
   }
+  // Save every game and search the target pair that best meets §13 (Balanced ~60%, none > 75%,
+  // Mercantilist < 15%, Debaser < 5%). Endings: golden needs both meters and history beaten.
+  const fs = await import("node:fs");
+  fs.writeFileSync(`scripts/.balance-${scenario}.json`, JSON.stringify(all));
+  const winRate = (bot: string, o: number, m: number) => {
+    const r = all[bot] ?? [];
+    return r.filter((x) => x.ending !== "collapse" && x.op >= o && x.ma >= m && x.ratio >= 1).length / Math.max(1, r.length);
+  };
+  let best: { o: number; m: number; score: number } | null = null;
+  for (let o = 30; o <= 90; o++) for (let m = 40; m <= 95; m++) {
+    const b = winRate("balanced", o, m);
+    const worst = Math.max(...BOT_IDS.map((x) => winRate(x, o, m)));
+    const ok = worst <= 0.75 && winRate("mercantilist", o, m) <= 0.15 && winRate("debaser", o, m) <= 0.05;
+    if (!ok) continue;
+    // Closest to Balanced ≈ 60%; among ties, the most demanding targets (meters must mean something).
+    const score = -Math.abs(b - 0.6) * 1000 + o + m;
+    if (!best || score > best.score) best = { o, m, score };
+  }
+  if (best) console.log(`suggested targets: opulence ${best.o}, maslaha ${best.m} -> ` + BOT_IDS.map((x) => `${x} ${(winRate(x, best!.o, best!.m) * 100).toFixed(0)}%`).join(", "));
+  else console.log("no target pair meets the §13 constraints with these strategies");
   process.exitCode = pass ? 0 : 1;
 }

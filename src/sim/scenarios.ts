@@ -78,7 +78,8 @@ export const SCENARIOS: Record<ScenarioId, ScenarioDef> = {
       { start: 1800, end: 1824, step: 2, era: 4 },
       { start: 1826, end: 1850, step: 2, era: 4 },
     ],
-    targets: { opulence: 79, maslaha: 86 },
+    // Set by the bot harness (§13): Balanced ≈ 60%, no strategy above 75%, Mercantilist < 15%, Debaser < 5%.
+    targets: { opulence: 65, maslaha: 83 },
     ghost: "britain1776",
     // Log-scale ranges: 0 at the low end, 100 at the high end (scenario units, §10 honesty rules).
     norms: { realWage: [0.8, 2.6], gdppc: [2000, 7000], capital: [0.5, 4], trade: [0.5, 6] },
