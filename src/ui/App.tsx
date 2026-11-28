@@ -14,6 +14,35 @@ import {
 import { scholarLine, scotsmanLine } from "./advisors.ts";
 import { useGame } from "./hooks.ts";
 import { LineChart } from "./LineChart.tsx";
+import { iconUrl } from "../art/icons.ts";
+import { buildingSprite, svgDataUrl } from "../art/sprites.ts";
+
+const bUrlCache = new Map<string, string>();
+export const buildingUrl = (type: string) => {
+  let u = bUrlCache.get(type);
+  if (!u) { u = svgDataUrl(buildingSprite(type).svg); bUrlCache.set(type, u); }
+  return u;
+};
+
+/** An inventory slot: icon, count in the corner, optional hotkey and price tag. */
+export function Slot({ icon, count, keyHint, tag, title, onClick, on, className }: {
+  icon: string; count?: string; keyHint?: string; tag?: { text: string; kind: "up" | "down" | "flat" }; title?: string;
+  onClick?: () => void; on?: boolean; className?: string;
+}) {
+  const inner = (
+    <>
+      <img src={icon} alt="" />
+      {keyHint && <span className="key">{keyHint}</span>}
+      {count !== undefined && <span className="count">{count}</span>}
+      {tag && <span className={`tag ${tag.kind}`}>{tag.text}</span>}
+    </>
+  );
+  return onClick
+    ? <button className={`slot ${on ? "on" : ""} ${className ?? ""}`} title={title} aria-label={title} onClick={onClick}>{inner}</button>
+    : <span className={`slot ${className ?? ""}`} title={title}>{inner}</span>;
+}
+
+const short = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(1)}k` : n >= 10 ? Math.round(n).toString() : n.toFixed(1));
 import { Modals } from "./Modals.tsx";
 
 const CODEX = new Map(codex.map((c) => [c.id, c]));
@@ -35,6 +64,7 @@ export function App() {
         <div className="map" ref={mapRef} aria-label={useTranslation().t("a11y.map")} role="application" />
         {s && <SidePanel s={s} />}
         {s && <GhostMini s={s} />}
+        {s && <Alerts s={s} />}
         {s?.tutorial && <TutorialPanel s={s} />}
       </div>
       {s && <BottomBar s={s} />}
@@ -53,12 +83,13 @@ function useHotkeys() {
       if (e.key === "." && s) { game.setSpeed(Math.min(4, Math.max(1, game.ui.speed * 2))); return; }
       if (e.key === "," && s) { game.setSpeed(game.ui.speed <= 1 ? 0 : game.ui.speed / 2); return; }
       if (e.key === "Escape") { game.setUi(game.ui.modal && !["title", "event", "reckoning", "ending"].includes(game.ui.modal.kind) ? { modal: null } : { tool: { kind: "inspect" }, selected: null }); return; }
-      if (!s || (game.ui.modal && game.ui.modal.kind !== "codex")) return;
+      if (!s || (game.ui.modal && game.ui.modal.kind !== "codex" && game.ui.modal.kind !== "stats")) return;
       const k = e.key.toLowerCase();
       if (k === "e") void game.endTurn();
       else if (k === "b") game.setUi({ modal: { kind: "budget" } });
       else if (k === "t") game.setUi({ modal: { kind: "tax" } });
       else if (k === "i") game.setUi({ modal: { kind: "institutions" } });
+      else if (k === "p") game.setUi({ modal: game.ui.modal?.kind === "stats" ? null : { kind: "stats" } });
       else if (k === "c") game.setUi({ modal: game.ui.modal?.kind === "codex" ? null : { kind: "codex" } });
       else if (k === "o") {
         const order: Overlay[] = ["none", "traffic", "reach", "prices", "wages", "mood"];
@@ -164,11 +195,13 @@ function BottomBar({ s }: { s: GameState }) {
                 const i = tools.indexOf(x);
                 const afford = x.cost === undefined || s.treasury >= x.cost;
                 return (
-                  <button key={i} className={`tool ${sameTool(ui.tool, x.tool) ? "on" : ""} ${afford ? "" : "dim"}`}
+                  <button key={i} className={`tool slot ${sameTool(ui.tool, x.tool) ? "on" : ""} ${afford ? "" : "dim"}`}
                     onClick={() => game.setUi({ tool: x.tool })}
                     title={`${t(x.label)}${x.cost !== undefined ? ` — ${t("tool.cost", { c: fmt(x.cost) })}` : ""}${x.tool.kind === "build" ? `\n${t(`building.${x.tool.building}.desc`)}` : ""}${i < 9 ? ` [${i + 1}]` : ""}`}
                     aria-label={t(x.label)}>
-                    <span aria-hidden>{x.icon}</span>
+                    {x.tool.kind === "build" ? <img src={buildingUrl(x.tool.building)} alt="" /> : <span aria-hidden>{x.icon}</span>}
+                    {i < 9 && <span className="key">{i + 1}</span>}
+                    {x.cost !== undefined && <span className="count">{short(x.cost)}</span>}
                   </button>
                 );
               })}
@@ -187,6 +220,7 @@ function BottomBar({ s }: { s: GameState }) {
         <button onClick={() => game.setUi({ modal: { kind: "budget" } })}>⚖ {t("budget.title")}</button>
         <button onClick={() => game.setUi({ modal: { kind: "tax" } })}>✎ {t("tax.title")}</button>
         <button onClick={() => game.setUi({ modal: { kind: "institutions" } })}>🏛 {t("inst.title")}{s.developing ? " •" : ""}</button>
+        <button onClick={() => game.setUi({ modal: { kind: "stats" } })}>📈 {t("stats.title")} <small>P</small></button>
       </div>
       <button className="end-turn" disabled={ui.busy || s.status !== "playing"} onClick={() => void game.endTurn()}>
         {ui.busy ? t("top.busy") : s.pendingEvent ? t("event.title") : `${t("time.skip")} ⏭`}
@@ -263,11 +297,16 @@ function BuildingPanel({ s, b }: { s: GameState; b: Building }) {
   const nextHands = 3 * (b.level + 1);
   return (
     <section>
-      <h3>{t(`building.${b.type}.name`)} <small className="muted">· {t(`good.${def.good}`)}</small></h3>
-      {b.private && <p className="small muted">✦ {t("panel.private")}</p>}
-      <p className={`status status-${b.status}`}>{t(`status.${b.status}`, { good: b.missing ? t(`good.${b.missing}`) : "" })}</p>
+      <div className="entity-head">
+        <img src={buildingUrl(b.type)} alt="" />
+        <div>
+          <h3>{t(`building.${b.type}.name`)}</h3>
+          <p className={`status status-${b.status}`}>● {t(`status.${b.status}`, { good: b.missing ? t(`good.${b.missing}`) : "" })}</p>
+          {b.private && <p className="small muted">✦ {t("panel.private")}</p>}
+        </div>
+      </div>
+      <Recipe b={b} />
       <WhyShort s={s} b={b} />
-      <Stores b={b} />
       <div className="levels" aria-label={t("panel.levelOf", { level: b.level })}>
         {[1, 2, 3, 4, 5].map((lv) => <span key={lv} className={`lv ${lv <= b.level ? "on" : lv <= b.maxLevel ? "can" : ""}`}>{lv}</span>)}
         <small>{t("panel.levelOf", { level: b.level })} · {t("panel.cap", { max: b.maxLevel })}</small>
@@ -316,19 +355,37 @@ function WhyShort({ s, b }: { s: GameState; b: Building }) {
   );
 }
 
-function Stores({ b }: { b: Building }) {
+/** Inputs → progress → output, as slots (the entity window of a factory game). */
+function Recipe({ b }: { b: Building }) {
   const { t } = useTranslation();
   const def = BUILDINGS[b.type];
-  const inputs = [...Object.keys(GOODS[def.good!].inputs), ...(GOODS[def.good!].land ? ["tools"] : [])];
+  const g = def.good!;
+  const inputs = [...Object.keys(GOODS[g].inputs), ...(GOODS[g].land ? ["tools"] : [])];
+  const rate = b.output / 360;
   return (
-    <div className="stores">
-      {inputs.map((g) => (
-        <div key={g} className="store"><span>{t(`good.${g}`)}</span><b>{fmt(b.inBuf[g as keyof typeof b.inBuf] ?? 0, 1)}</b><small className="muted">+{fmt(b.incoming[g as keyof typeof b.incoming] ?? 0)} {t("panel.onTheWay")}</small></div>
-      ))}
-      <div className="store out"><span>{t("panel.outStore")}</span><b>{fmt(b.outBuf, 1)}</b><small className="muted">{t(`good.${def.good}`)}</small></div>
-    </div>
+    <>
+      <div className="recipe">
+        {inputs.map((ig) => {
+          const have = b.inBuf[ig as keyof typeof b.inBuf] ?? 0, coming = b.incoming[ig as keyof typeof b.incoming] ?? 0;
+          return <Slot key={ig} icon={iconUrl(ig)} count={short(have)} className={b.missing === ig ? "short" : have < 0.5 ? "empty" : ""}
+            title={`${t(`good.${ig}`)}: ${fmt(have, 1)} · +${fmt(coming)} ${t("panel.onTheWay")}`} />;
+        })}
+        <div className="arrow">
+          <small className="muted">{fmt(rate * 30, 1)} / {t("time.monthShort")}</small>
+          <div className={`progress ${b.status === "starved" ? "starved" : ""}`}><span style={{ width: `${Math.round((b.status === "working" ? b.cycle : b.inputFill) * 100)}%` }} /></div>
+        </div>
+        <Slot icon={iconUrl(g)} count={short(b.outBuf)} title={`${t("panel.outStore")}: ${fmt(b.outBuf, 1)} ${t(`good.${g}`)}`} />
+      </div>
+      <div className="workers" title={`${t("panel.workers")}: ${fmt(b.workers, 1)} / ${capacity(b.level)}`}>
+        {Array.from({ length: capacity(b.level) }, (_, i) => (
+          <i key={i} style={{ background: i < Math.round(b.workers) ? ROLE_CSS[i % b.level] : "transparent", opacity: i < Math.round(b.workers) ? 1 : 0.35 }} />
+        ))}
+      </div>
+    </>
   );
 }
+
+const ROLE_CSS = ["#c8553d", "#2c5d8f", "#c89b2c", "#4fa3a5", "#8a5aa8"];
 
 export function WhyLink({ id }: { id: string }) {
   const { t } = useTranslation();
@@ -340,22 +397,17 @@ function TownMarket({ s, townId }: { s: GameState; townId: string }) {
   const m = s.markets.find((x) => x.town === townId);
   if (!m) return null;
   return (
-    <table className="market">
-      <caption className="small muted">{t("panel.localMarket")}</caption>
-      <tbody>
+    <>
+      <small className="muted">{t("panel.localMarket")}</small>
+      <div className="slots">
         {GOOD_IDS.map((g) => {
           const r = m.price[g] / s.goods[g].natural;
-          const short = m.short[g] > 0.05;
-          return (
-            <tr key={g} className={short ? "spike" : ""}>
-              <td>{t(`good.${g}`)}</td>
-              <td className="num">{fmt(m.stock[g])}</td>
-              <td className={`num ${r > 1.15 ? "bad" : r < 0.87 ? "cool" : ""}`}>{r > 1.15 ? "▲" : r < 0.87 ? "▼" : "·"} {fmt(r * 100)}%</td>
-            </tr>
-          );
+          return <Slot key={g} icon={iconUrl(g)} count={short(m.stock[g])} className={m.short[g] > 0.05 ? "short" : m.stock[g] < 0.5 ? "empty" : ""}
+            tag={{ text: `${Math.round(r * 100)}`, kind: r > 1.15 ? "up" : r < 0.87 ? "down" : "flat" }}
+            title={`${t(`good.${g}`)} · ${fmt(m.stock[g], 1)} · ${fmt(r * 100)}% ${t("panel.natural", { p: "" })}`} />;
         })}
-      </tbody>
-    </table>
+      </div>
+    </>
   );
 }
 
@@ -402,25 +454,48 @@ function Market({ s }: { s: GameState }) {
   const { t } = useTranslation();
   return (
     <section>
-      <h4>{t("panel.markets")}</h4>
-      <table className="market">
-        <tbody>
-          {GOOD_IDS.map((g) => {
-            const gs = s.goods[g];
-            const r = gs.price / gs.natural;
-            const arrow = r > 1.15 ? "▲" : r < 0.87 ? "▼" : "·";
-            return (
-              <tr key={g} className={r > 1.4 ? "spike" : ""}>
-                <td>{t(`good.${g}`)} <small className="muted">{t(`tier.${GOODS[g].need ?? GOODS[g].tier}`)}</small></td>
-                <td className="num">{fmt(gs.price, 3)}</td>
-                <td className={`num ${r > 1.15 ? "bad" : r < 0.87 ? "cool" : ""}`}>{arrow} {fmt(r * 100)}%</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <p className="small muted">{t("panel.natural", { p: "= 100%" })} <WhyLink id="natural-price" /></p>
+      <h4>{t("panel.markets")} <WhyLink id="natural-price" /></h4>
+      <div className="slots">
+        {GOOD_IDS.map((g) => {
+          const gs = s.goods[g];
+          const r = gs.price / gs.natural;
+          return <Slot key={g} icon={iconUrl(g)} count={short(gs.stock)}
+            tag={{ text: `${Math.round(r * 100)}`, kind: r > 1.15 ? "up" : r < 0.87 ? "down" : "flat" }}
+            title={`${t(`good.${g}`)} (${t(`tier.${GOODS[g].need ?? GOODS[g].tier}`)}) · ${fmt(gs.price, 3)} · ${fmt(r * 100)}%`} />;
+        })}
+      </div>
+      <p className="small muted">{t("panel.slotLegend")}</p>
     </section>
+  );
+}
+
+// ---------------------------------------------------------------- alerts (click to cycle through them)
+function Alerts({ s }: { s: GameState }) {
+  const { t } = useTranslation();
+  const starved = s.buildings.filter((b) => b.status === "starved");
+  const blocked = s.buildings.filter((b) => b.status === "blocked");
+  const jamTiles = s.tiles.map((tile, i) => ({ tile, j: s.jam[i] ?? 0 })).filter((x) => x.j > 1).sort((a, b) => b.j - a.j);
+  const shortTowns = s.towns.filter((tw) => { const m = s.markets.find((x) => x.town === tw.id); return m && (m.short.bread > 0.05 || m.stock.bread < 0.5); });
+  const rows: { kind: string; icon: string; n: number; list: { q: number; r: number }[]; overlay?: Overlay }[] = [
+    { kind: "starved", icon: "⚠", n: starved.length, list: starved },
+    { kind: "blocked", icon: "✕", n: blocked.length, list: blocked },
+    { kind: "jam", icon: "⛔", n: jamTiles.length, list: jamTiles.map((x) => x.tile), overlay: "traffic" as Overlay },
+    { kind: "short", icon: "🍞", n: shortTowns.length, list: shortTowns },
+  ].filter((r) => r.n > 0);
+  if (!rows.length) return null;
+  const cycle = (r: (typeof rows)[number]) => {
+    const i = (Number(game.flags[r.kind] ?? -1) + 1) % r.list.length;
+    game.flags[r.kind] = i;
+    game.setUi({ selected: { q: r.list[i].q, r: r.list[i].r }, ...(r.overlay ? { overlay: r.overlay } : {}) });
+  };
+  return (
+    <div className="alerts" role="list" aria-label={t("alerts.label")}>
+      {rows.map((r) => (
+        <button key={r.kind} className={`a-${r.kind}`} onClick={() => cycle(r)} title={t(`alerts.${r.kind}`, { n: r.n })}>
+          <span aria-hidden>{r.icon}</span><span>{r.n}</span>
+        </button>
+      ))}
+    </div>
   );
 }
 

@@ -31,6 +31,7 @@ export type Modal =
   | { kind: "meter"; meter: "opulence" | "maslaha" }
   | { kind: "policy"; id: string }
   | { kind: "ghost" }
+  | { kind: "stats" }
   | { kind: "menu" }
   | { kind: "help" }
   | null;
@@ -69,6 +70,8 @@ class Controller {
   private lastEmit = 0;
   /** State at the start of each recent turn (before its commands) — for "What if?" (§9). */
   snapshots: Snapshot[] = [];
+  /** Small UI bookkeeping (e.g. which alert was last focused). */
+  flags: Record<string, number> = {};
   private listeners = new Set<Listener>();
   private version = 0;
   private worker: Worker | null = null;

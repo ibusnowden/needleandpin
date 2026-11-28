@@ -143,6 +143,9 @@ export function newGame(scenario: ScenarioId, seed: number): GameState {
   calibrate(s);
   s.acc = emptyAcc();
   s.day = 0;
+  // Production statistics start with the game, not the warm-up years.
+  s.stats = [];
+  s.mStat = undefined;
   s.history.push(record(s));
   return s;
 }

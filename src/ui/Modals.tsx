@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import codex from "../content/codex.json" with { type: "json" };
+import model from "../content/model.json" with { type: "json" };
+import { iconUrl } from "../art/icons.ts";
+import { GOOD_IDS } from "../sim/index.ts";
 import { game } from "../game/store.ts";
 import { GHOSTS, ghostAt } from "../game/ghost.ts";
 import { LANGUAGES, fmt, setLanguage, tx, type Lang } from "../i18n/index.ts";
@@ -52,6 +55,7 @@ export function Modals() {
     case "meter": return <MeterBreakdown s={s} meter={m.meter} />;
     case "policy": return <PolicyCard s={s} id={m.id} />;
     case "ghost": return <GhostScreen s={s} />;
+    case "stats": return <ProdStats s={s} />;
   }
   return null;
 }
@@ -373,9 +377,15 @@ function Codex({ entry }: { entry?: string }) {
   const discovered = new Set(s?.discovered ?? codex.map((c) => c.id)); // title screen: browse all
   const [sel, setSel] = useState<string>(entry ?? (s?.discovered[s.discovered.length - 1] ?? codex[0].id));
   const [showOriginal, setShowOriginal] = useState(true);
+  const [tab, setTab] = useState<"ideas" | "model">(entry === "model" ? "model" : "ideas");
   const c = CODEX.get(sel) as CodexEntry | undefined;
   return (
     <Dialog title={t("codex.title")} onClose={() => game.setUi({ modal: game.state ? null : { kind: "title" } })} wide className="codex">
+      <div className="codex-tabs">
+        <button className={tab === "ideas" ? "on" : ""} onClick={() => setTab("ideas")}>{t("codex.tabIdeas")}</button>
+        <button className={tab === "model" ? "on" : ""} onClick={() => setTab("model")}>{t("codex.tabModel")}</button>
+      </div>
+      {tab === "model" ? <ModelPage /> : <>
       <p className="small muted">{t("codex.intro", { n: discovered.size, total: codex.length })}</p>
       <div className="codex-grid">
         <ul className="codex-list">
@@ -415,6 +425,64 @@ function Codex({ entry }: { entry?: string }) {
           </article>
         )}
       </div>
+      </>}
+    </Dialog>
+  );
+}
+
+/** "How the model works": every formula, where it comes from, and which numbers are tuned. */
+function ModelPage() {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <p className="small">{t("model.intro")}</p>
+      <table className="model-table">
+        <thead><tr><th>{t("model.formula")}</th><th>{t("model.source")}</th></tr></thead>
+        <tbody>
+          {model.map((r) => (
+            <tr key={r.id}>
+              <td><b>{tx(r.what)}</b><br /><code dir="ltr">{r.formula}</code><br /><small className="muted" dir="ltr">{r.where}</small></td>
+              <td><span className={`kind kind-${r.kind}`}>{t(`model.kind.${r.kind}`)}</span> {tx(r.source)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="small muted">{t("model.calibration")}</p>
+    </div>
+  );
+}
+
+/** Production statistics: monthly made vs used per good (the factory game's P screen). */
+function ProdStats({ s }: { s: GameState }) {
+  const { t } = useTranslation();
+  const [g, setG] = useState<(typeof GOOD_IDS)[number]>("bread");
+  const st = s.stats ?? [];
+  const x = (m: { year: number; month: number }) => m.year + m.month / 12;
+  const series: Series[] = [
+    { id: "made", label: t("stats.made"), points: st.map((m) => [x(m), m.made[g] * 12]), color: "#3d6b4c" },
+    { id: "used", label: t("stats.used"), points: st.map((m) => [x(m), m.used[g] * 12]), color: "#c8553d", dashed: true },
+  ];
+  const last12 = st.slice(-12);
+  const sum = (k: "made" | "used") => last12.reduce((a, m) => a + m[k][g], 0);
+  return (
+    <Dialog title={t("stats.title")} onClose={close} wide className="prodstats">
+      <p className="small">{t("stats.intro")}</p>
+      <div className="slots">
+        {GOOD_IDS.map((id) => (
+          <button key={id} className={`slot ${g === id ? "on" : ""}`} onClick={() => setG(id)} title={t(`good.${id}`)} aria-label={t(`good.${id}`)}>
+            <img src={iconUrl(id)} alt="" />
+          </button>
+        ))}
+      </div>
+      <h4>{t(`good.${g}`)} · {t("stats.perYear")}</h4>
+      {st.length > 1 ? <LineChart series={series} width={880} height={240} /> : <p className="muted">{t("stats.empty")}</p>}
+      <Legend series={series} />
+      <div className="totals small">
+        <span>{t("stats.made")}: <b>{fmt(sum("made"), 1)}</b></span>
+        <span>{t("stats.used")}: <b>{fmt(sum("used"), 1)}</b></span>
+        <span>{t("stats.balance")}: <b className={sum("made") >= sum("used") ? "good" : "bad"}>{fmt(sum("made") - sum("used"), 1)}</b></span>
+      </div>
+      <p className="small muted">{t("stats.note")}</p>
     </Dialog>
   );
 }

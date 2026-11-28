@@ -43,7 +43,7 @@ const sha = out("git", ["rev-parse", "--short", "HEAD"]) || "working-tree";
 run("git", ["add", FOLDER, ".nojekyll"], SITE);
 const changed = out("git", ["status", "--porcelain", FOLDER, ".nojekyll"], SITE);
 if (!changed) { console.log("› nothing changed"); process.exit(0); }
-run("git", ["commit", "-m", `Deploy The Needle & The Pin (${sha})`], SITE);
+run("git", ["commit", "-m", `Deploy The Needle & The Pin (${sha})\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`], SITE);
 if (push) {
   run("git", ["push"], SITE);
   console.log(`› pushed — GitHub Pages will publish https://ibra-niang.com/${FOLDER}/ in a minute or two`);

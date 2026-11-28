@@ -190,7 +190,8 @@
     "stock": "in store",
     "onTheWay": "on the way",
     "outStore": "Ready to ship",
-    "localMarket": "This town's market: stock and price against natural"
+    "localMarket": "This town's market: stock and price against natural",
+    "slotLegend": "Number in the corner: stock in all storehouses. Tag: price as % of natural (red dear, blue cheap)."
   },
   "overlay": {
     "label": "Overlay",
@@ -629,7 +630,9 @@
     "ghazali": "al-Ghazali",
     "both": "Smith & Ghazali",
     "verifiedMarifa": "Quoted from the Arabic (Dar al-Ma'rifa edition, via al-Maktaba al-Shamila), checked automatically against the cited page. Translation ours.",
-    "verifiedEdition": "Quoted from the Arabic and checked against the Dar al-Minhaj critical edition. Translation ours."
+    "verifiedEdition": "Quoted from the Arabic and checked against the Dar al-Minhaj critical edition. Translation ours.",
+    "tabIdeas": "Ideas",
+    "tabModel": "How the model works"
   },
   "toast": {
     "discovered": "Discovered: {title}",
@@ -764,7 +767,8 @@
       "9": "October",
       "10": "November",
       "11": "December"
-    }
+    },
+    "monthShort": "month"
   },
   "status": {
     "working": "Working",
@@ -783,5 +787,34 @@
     "far": "The nearest {good} for sale is {days} days away. Build a maker nearby, or a faster road.",
     "waiting": "{good} has been ordered and is on its way.",
     "show": "Show me"
+  },
+  "stats": {
+    "title": "Production statistics",
+    "intro": "How much of each good the nation makes and uses, month by month (annualised). Where use runs above production, stores are draining: a bottleneck is coming.",
+    "made": "Made",
+    "used": "Used",
+    "balance": "Balance, last 12 months",
+    "perYear": "units per year",
+    "empty": "Statistics appear after the first month.",
+    "note": "Used = bought by households and investors, plus consumed by workshops as inputs."
+  },
+  "alerts": {
+    "label": "Alerts",
+    "starved": "{n, plural, one {# workshop is} other {# workshops are}} waiting for inputs: click to visit each",
+    "blocked": "{n, plural, one {# workshop has} other {# workshops have}} no buyers",
+    "jam": "{n, plural, one {# road is} other {# roads are}} jammed",
+    "short": "{n, plural, one {# town is} other {# towns are}} short of bread"
+  },
+  "model": {
+    "intro": "Every formula in the simulation, where it comes from, and which numbers were tuned so that replaying Britain's real policies tracks the historical record within ±15%. Smith and Ghazali wrote no equations: these are modern translations of their ideas.",
+    "formula": "Formula",
+    "source": "Where it comes from",
+    "kind": {
+      "gdd": "Design document",
+      "econ": "Standard economics",
+      "source": "Thinker's idea, our rule",
+      "tuned": "Tuned to history"
+    },
+    "calibration": "Calibration: historical autopilot over 8 maps, 5-year means. 1850: GDP per head 89% and real wages 97% of the Maddison and Allen series. Details in docs/BALANCE.md."
   }
 }

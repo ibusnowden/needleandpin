@@ -208,12 +208,14 @@ function produce(s: GameState): void {
     for (const [ig, c] of needs(b)) {
       b.inBuf[ig] = Math.max(0, (b.inBuf[ig] ?? 0) - q * c);
       s.acc.inputsUsed[ig] += q * c;
+      stat(s).used[ig] += q * c;
     }
     b.outBuf += q;
     b.output = q * D;
     b.inputFill = full > 0 ? q / full : 0;
     if (b.explain) b.explain.inputFill = b.inputFill;
     s.acc.produced[g] += q;
+    stat(s).made[g] += q;
     s.acc.capacity[g] += full;
     b.cycle = (b.cycle + (q / Math.max(1e-6, full)) * 0.25) % 1;
     b.status = fill < 0.5 ? "starved" : toolMult < 1 && fill >= 0.5 ? "starved" : "working";
@@ -474,6 +476,7 @@ function consume(s: GameState): void {
       const want = m.want[g];
       const got = Math.min(m.stock[g], want);
       m.stock[g] -= got;
+      stat(s).used[g] += got;
       m.draw[g] += (want - m.draw[g]) * 0.05;
       m.short[g] = m.short[g] * 0.95 + (want - got) * 0.05;
       if (g === "tools" && s.flags.investToolsDay) {
@@ -573,6 +576,11 @@ function month(s: GameState, ctx: Ctx): void {
     s.classes[c].income = s.classes[c].income > 0 ? s.classes[c].income * 0.5 + annual * 0.5 : annual;
   }
   s.mInc = { laborers: 0, merchants: 0, landlords: 0 };
+  // Production statistics: one entry per month, ten years kept.
+  const st = stat(s);
+  (s.stats ??= []).push({ year: s.year, month: Math.floor((s.day - 1) / 30), made: st.made, used: st.used });
+  if (s.stats.length > 120) s.stats.shift();
+  s.mStat = { made: zero(), used: zero() };
   monthlyLabor(s);
   monthlyNatural(s);
   monthlyDemand(s);
@@ -707,6 +715,10 @@ function monthlyDemand(s: GameState): void {
       s.society.granary += buy;
     }
   }
+}
+
+function stat(s: GameState) {
+  return (s.mStat ??= { made: zero(), used: zero() });
 }
 
 function sumRec(r: Record<GoodId, number>): number {

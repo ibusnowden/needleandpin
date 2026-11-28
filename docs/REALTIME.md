@@ -134,3 +134,21 @@ A coloured bale shows each cart's cargo. Workers animate only while their worksh
 A Britain year (360 days with 60–180 buildings and up to a few hundred carts) simulates in about 0.15 s, so 1×–4× play
 uses a small fraction of a frame. The real-time loop runs on the main thread in whole-day steps. The Web Worker is
 still used for "What if?" replays. Shortest-path trees are cached per network version.
+
+## Interface: factory-game conventions, original content
+
+The chrome borrows the *grammar* of factory games and keeps the game's own ideas, art and texts. The reference was the
+look of Factorio's UI (studied from the "Breaking PRNG" save and its repository); no assets, layouts or code were copied.
+
+| Convention | Here |
+| --- | --- |
+| Dark metal panels, bevelled buttons | Iron panels with brass bevels and a khatam (eight-point star) inlay band; reading surfaces (codex, events, dialogs) stay on parchment |
+| Inventory slots with a count in the corner | Every good has an inked icon (`src/art/icons.ts`). The market shows stock as the count and price vs natural as a tag (red dear, blue cheap) |
+| Numbered hotbar | Build tools show the illustrated building, its hotkey (1–9) and cost |
+| Entity window: inputs → progress → output | A workshop shows input slots (red ring = the missing one), a progress bar, the output slot, the worker roster and level pips, then the bottleneck explainer |
+| Alerts column | Top-left of the map: workshops waiting for inputs, workshops with no buyers, jammed roads, towns short of bread. Click to cycle through them on the map |
+| Production statistics (P) | Monthly made vs used per good, annualised, for the last ten years (`s.stats`, recorded in `rt.ts › month`) |
+
+The codex has a second tab, **How the model works** (`src/content/model.json`): every formula, where it lives in the
+code, where it comes from, and whether it is from the GDD, standard economics, a thinker's idea turned into our rule,
+or tuned to history.

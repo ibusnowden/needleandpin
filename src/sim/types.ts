@@ -105,6 +105,13 @@ export interface Cart {
   waited: number;
 }
 
+export interface MonthStat {
+  year: number;
+  month: number;
+  made: Record<GoodId, number>;
+  used: Record<GoodId, number>;
+}
+
 export interface YearAcc {
   produced: Record<GoodId, number>;
   inputsUsed: Record<GoodId, number>;
@@ -380,6 +387,10 @@ export interface GameState {
   /** Month-to-date class incomes. */
   mInc: { laborers: number; merchants: number; landlords: number };
   nextCart: number;
+  /** Month-to-date production and consumption, by good (for production statistics). */
+  mStat?: { made: Record<GoodId, number>; used: Record<GoodId, number> };
+  /** Monthly production statistics, newest last (kept for 10 years). */
+  stats?: MonthStat[];
   tutorial?: { step: number; marketFormed: boolean };
 }
 
