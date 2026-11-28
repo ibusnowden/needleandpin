@@ -32,6 +32,7 @@ export type Modal =
   | { kind: "policy"; id: string }
   | { kind: "ghost" }
   | { kind: "stats" }
+  | { kind: "laws" }
   | { kind: "menu" }
   | { kind: "help" }
   | null;

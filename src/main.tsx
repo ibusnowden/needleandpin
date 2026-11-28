@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { applyDirection, i18n } from "./i18n/index.ts";
 import { App } from "./ui/App.tsx";
 import "./ui/styles.css";
+import "./ui/hud.css";
 
 applyDirection(i18n.language);
 createRoot(document.getElementById("root")!).render(

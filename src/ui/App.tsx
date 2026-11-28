@@ -1,6 +1,6 @@
 // Screen layout (GDD §11): map in the centre, top bar, right panel, bottom bar with policy cards
 // and End turn, ghost chart in the corner, pop-ups for events, Reckonings and the codex.
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import codex from "../content/codex.json" with { type: "json" };
 import { game, type Overlay, type Tool } from "../game/store.ts";
@@ -16,6 +16,7 @@ import { useGame } from "./hooks.ts";
 import { LineChart } from "./LineChart.tsx";
 import { iconUrl } from "../art/icons.ts";
 import { buildingSprite, svgDataUrl } from "../art/sprites.ts";
+import { Icon, type IconName } from "./Icon.tsx";
 
 const bUrlCache = new Map<string, string>();
 export const buildingUrl = (type: string) => {
@@ -62,13 +63,18 @@ export function App() {
       {s && <TopBar s={s} />}
       <div className="middle">
         <div className="map" ref={mapRef} aria-label={useTranslation().t("a11y.map")} role="application" />
-        {s && <SidePanel s={s} />}
-        {s && <GhostMini s={s} />}
-        {s && <Alerts s={s} />}
+        {s && (
+          <div className="hud-left">
+            <GoalPanel s={s} />
+            <Alerts s={s} />
+          </div>
+        )}
         {s?.tutorial && <TutorialPanel s={s} />}
+        {s && <GhostMini s={s} />}
+        <Toasts />
+        {s && <SidePanel s={s} />}
       </div>
       {s && <BottomBar s={s} />}
-      <Toasts />
       <Modals />
     </div>
   );
@@ -79,18 +85,16 @@ function useHotkeys() {
     const onKey = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement)?.closest("input, textarea, select")) return;
       const s = game.state;
-      if (e.key === " " && s && !game.ui.modal) { e.preventDefault(); game.setSpeed(game.ui.speed ? 0 : 1); return; }
+      const win = isToolWindow(game.ui.modal?.kind);
+      if (e.key === " " && s && (!game.ui.modal || win)) { e.preventDefault(); game.setSpeed(game.ui.speed ? 0 : 1); return; }
       if (e.key === "." && s) { game.setSpeed(Math.min(4, Math.max(1, game.ui.speed * 2))); return; }
       if (e.key === "," && s) { game.setSpeed(game.ui.speed <= 1 ? 0 : game.ui.speed / 2); return; }
       if (e.key === "Escape") { game.setUi(game.ui.modal && !["title", "event", "reckoning", "ending"].includes(game.ui.modal.kind) ? { modal: null } : { tool: { kind: "inspect" }, selected: null }); return; }
-      if (!s || (game.ui.modal && game.ui.modal.kind !== "codex" && game.ui.modal.kind !== "stats")) return;
+      if (!s || (game.ui.modal && !win)) return;
       const k = e.key.toLowerCase();
+      const gov = GOV.find((x) => x.key.toLowerCase() === k);
       if (k === "e") void game.endTurn();
-      else if (k === "b") game.setUi({ modal: { kind: "budget" } });
-      else if (k === "t") game.setUi({ modal: { kind: "tax" } });
-      else if (k === "i") game.setUi({ modal: { kind: "institutions" } });
-      else if (k === "p") game.setUi({ modal: game.ui.modal?.kind === "stats" ? null : { kind: "stats" } });
-      else if (k === "c") game.setUi({ modal: game.ui.modal?.kind === "codex" ? null : { kind: "codex" } });
+      else if (gov) toggleWindow(gov.kind);
       else if (k === "o") {
         const order: Overlay[] = ["none", "traffic", "reach", "prices", "wages", "mood"];
         game.setUi({ overlay: order[(order.indexOf(game.ui.overlay) + 1) % order.length] });
@@ -118,27 +122,45 @@ function Meter({ id, value, target }: { id: "opulence" | "maslaha"; value: numbe
   );
 }
 
+function GovNav({ s }: { s: GameState }) {
+  const { t } = useTranslation();
+  const { ui } = useGame();
+  const open = ui.modal?.kind;
+  return (
+    <nav className="gov" aria-label={t("gov.label")}>
+        {GOV.map((g) => {
+          const badge = g.kind === "laws" ? `${s.policyChangesThisTurn}/2` : g.kind === "institutions" && s.developing ? "•" : g.kind === "codex" ? String(s.discovered.length) : "";
+          return (
+            <button key={g.kind} className={open === g.kind ? "on" : ""} aria-pressed={open === g.kind} onClick={() => toggleWindow(g.kind)} title={`${t(g.label)} (${g.key})`}>
+              <Icon name={g.icon} /><span className="gov-label">{t(g.label)}</span>{badge && <span className="badge">{badge}</span>}<kbd>{g.key}</kbd>
+            </button>
+          );
+        })}
+    </nav>
+  );
+}
+
 function TopBar({ s }: { s: GameState }) {
   const { t } = useTranslation();
-  const def = SCENARIOS[s.scenario];
   const spendPerTurn = Math.max(1e-6, s.spending);
   const cover = Math.floor(s.treasury / spendPerTurn);
   return (
     <header className="topbar">
-      <div className="brand" onClick={() => game.setUi({ modal: { kind: "menu" } })} role="button" tabIndex={0}>
-        <span className="brand-mark">✒</span>
+      <div className="brand">
+        <span className="brand-mark" aria-hidden>✒</span>
         <span>{t("app.title")}</span>
       </div>
-      <div className="stat"><small>{t(`time.month.${Math.floor(s.day / 30)}`)}</small><b>{s.scenario === "needle" ? fmt(s.year) : s.year}</b><small>{t("top.chapter", { n: s.chapter + 1, total: def.chapters.length })}</small></div>
-      <TimeControls />
+      <div className="clock">
+        <div className="stat date"><small>{t(`time.month.${Math.floor(s.day / 30)}`)}</small><b>{s.scenario === "needle" ? fmt(s.year) : s.year}</b></div>
+        <TimeControls />
+      </div>
+      <span className="sep" aria-hidden />
       <div className="stat" title={t("top.turnsCover", { n: cover })}><small>{t("top.treasury")}</small><b>{fmt(s.treasury)}</b><small>{t("top.revenue")} {fmt(s.revenue, 1)}</small></div>
       <div className="stat"><small>{t("top.debt")}</small><b>{fmt(s.debt)}</b><small>{fmt(s.interestRate * 100, 1)}%</small></div>
       <div className={`stat ${s.money.trust < 50 ? "warn" : ""}`}><small>{t("top.trust")}</small><b>{fmt(s.money.trust)}</b><small>{s.money.trust < 50 ? "▼" : ""}</small></div>
-      <Meter id="opulence" value={s.meters.opulence.value} target={def.targets.opulence} />
-      <Meter id="maslaha" value={s.meters.maslaha.value} target={def.targets.maslaha} />
-      {s.meters.goodSociety && <span className="badge-good">★ {t("top.goodSociety")}</span>}
-      <button className="icon-btn" onClick={() => game.setUi({ modal: { kind: "codex" } })} title={t("menu.codex")}>📖 <span className="count">{s.discovered.length}</span></button>
-      <button className="icon-btn" onClick={() => game.setUi({ modal: { kind: "menu" } })} title={t("menu.menu")}>☰</button>
+      <span className="spacer" />
+      <GovNav s={s} />
+      <button className="icon-btn" onClick={() => game.setUi({ modal: { kind: "menu" } })} title={t("menu.menu")} aria-label={t("menu.menu")}><Icon name="menu" /></button>
     </header>
   );
 }
@@ -150,8 +172,8 @@ function TimeControls() {
   return (
     <div className="time" role="group" aria-label={t("time.label")}>
       {speeds.map((v) => (
-        <button key={v} className={ui.speed === v ? "on" : ""} onClick={() => game.setSpeed(v)} title={t(`time.speed${v}`)} aria-pressed={ui.speed === v}>
-          {v === 0 ? "❚❚" : "▶".repeat(Math.min(3, v === 4 ? 3 : v))}
+        <button key={v} className={ui.speed === v ? "on" : ""} onClick={() => game.setSpeed(v)} title={`${t(`time.speed${v}`)} (${v === 0 ? t("time.keySpace") : ", ."})`} aria-label={t(`time.speed${v}`)} aria-pressed={ui.speed === v}>
+          <Icon name={v === 0 ? "pause" : v === 1 ? "play" : v === 2 ? "play2" : "play4"} size={14} />
         </button>
       ))}
       <span className="yearbar" title={t("time.progress")}><span style={{ width: `${((s?.day ?? 0) / 360) * 100}%` }} /></span>
@@ -160,23 +182,43 @@ function TimeControls() {
 }
 
 // ---------------------------------------------------------------- bottom bar
-export function toolList(s: GameState): { tool: Tool; label: string; group: string; cost?: number; icon: string }[] {
-  const out: { tool: Tool; label: string; group: string; cost?: number; icon: string }[] = [];
-  const icons: Record<string, string> = { farm: "🌾", pasture: "🐑", lumber: "🪵", mine: "⛏", bakery: "🍞", weaver: "🧵", smithy: "🔨", builder: "🏠", pinworks: "📌", port: "⚓", courthouse: "⚖", school: "📚", granary: "🏺" };
+type ToolEntry = { tool: Tool; label: string; group: string; cost?: number; icon?: IconName };
+export function toolList(s: GameState): ToolEntry[] {
+  const out: ToolEntry[] = [];
   const groups: Record<string, BuildingType[]> = {
     raw: ["farm", "pasture", "lumber", "mine"],
     craft: ["bakery", "weaver", "smithy", "builder", "pinworks"],
     civic: ["courthouse", "school", "granary", "port"],
   };
-  for (const [group, types] of Object.entries(groups)) for (const b of types) out.push({ tool: { kind: "build", building: b }, label: `building.${b}.name`, group, cost: buildCost(s, b), icon: icons[b] });
+  for (const [group, types] of Object.entries(groups)) for (const b of types) out.push({ tool: { kind: "build", building: b }, label: `building.${b}.name`, group, cost: buildCost(s, b) });
   const infra: Infra[] = ["road", ...(s.institutions.canals ? (["canal"] as Infra[]) : []), ...(s.institutions.railways ? (["rail"] as Infra[]) : [])];
-  for (const i of infra) out.push({ tool: { kind: "infra", infra: i }, label: `tool.${i}`, group: "works", cost: infraCost(s, i, "plains"), icon: i === "road" ? "〰" : i === "canal" ? "≋" : "▦" });
-  out.push({ tool: { kind: "foundTown" }, label: "tool.foundTown", group: "works", icon: "🏘" });
-  out.push({ tool: { kind: "demolish" }, label: "tool.demolish", group: "works", icon: "✕" });
+  for (const i of infra) out.push({ tool: { kind: "infra", infra: i }, label: `tool.${i}`, group: "works", cost: infraCost(s, i, "plains"), icon: i });
+  out.push({ tool: { kind: "foundTown" }, label: "tool.foundTown", group: "works", icon: "town" });
+  out.push({ tool: { kind: "demolish" }, label: "tool.demolish", group: "works", icon: "demolish" });
   return out;
 }
 
 const sameTool = (a: Tool, b: Tool) => JSON.stringify(a) === JSON.stringify(b);
+
+/** Management windows: one button each, with its hotkey (recognition over recall). */
+const GOV: { kind: "budget" | "tax" | "laws" | "institutions" | "stats" | "codex"; icon: IconName; label: string; key: string }[] = [
+  { kind: "budget", icon: "budget", label: "budget.title", key: "B" },
+  { kind: "tax", icon: "tax", label: "tax.title", key: "T" },
+  { kind: "laws", icon: "laws", label: "laws.title", key: "L" },
+  { kind: "institutions", icon: "institutions", label: "inst.title", key: "I" },
+  { kind: "stats", icon: "stats", label: "stats.title", key: "P" },
+  { kind: "codex", icon: "codex", label: "menu.codex", key: "C" },
+];
+const TOOL_WINDOWS = new Set(["budget", "tax", "laws", "institutions", "stats", "codex", "meter", "ghost"]);
+export const isToolWindow = (k?: string) => !!k && TOOL_WINDOWS.has(k);
+function toggleWindow(kind: (typeof GOV)[number]["kind"]) {
+  game.setUi({ modal: game.ui.modal?.kind === kind ? null : { kind } });
+}
+
+const OVERLAYS: { id: Overlay; icon: IconName }[] = [
+  { id: "none", icon: "none" }, { id: "traffic", icon: "traffic" }, { id: "reach", icon: "reach" },
+  { id: "prices", icon: "prices" }, { id: "wages", icon: "wages" }, { id: "mood", icon: "mood" },
+];
 
 function BottomBar({ s }: { s: GameState }) {
   const { t } = useTranslation();
@@ -185,11 +227,29 @@ function BottomBar({ s }: { s: GameState }) {
   const groups = ["raw", "craft", "civic", "works"];
   return (
     <footer className="bottombar">
-      <div className="tools" role="toolbar">
-        <button className={`tool ${ui.tool.kind === "inspect" ? "on" : ""}`} onClick={() => game.setUi({ tool: { kind: "inspect" } })} title={t("tool.inspect")}>🔍</button>
+      <div className="dock" role="radiogroup" aria-label={t("overlay.label")}>
+        <small className="dock-label">{t("overlay.label")} <kbd>O</kbd></small>
+        <div className="seg">
+          {OVERLAYS.map((o) => (
+            <button key={o.id} role="radio" aria-checked={ui.overlay === o.id} className={ui.overlay === o.id ? "on" : ""}
+              onClick={() => game.setUi({ overlay: o.id })} title={t(`overlay.${o.id}`)} aria-label={t(`overlay.${o.id}`)}>
+              <Icon name={o.icon} />
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="hotbar" role="toolbar" aria-label={t("tool.label")}>
+        <div className="tool-group">
+          <small className="dock-label">&nbsp;</small>
+          <div>
+            <button className={`tool slot ${ui.tool.kind === "inspect" ? "on" : ""}`} onClick={() => game.setUi({ tool: { kind: "inspect" } })} title={`${t("tool.inspect")} (Esc)`} aria-label={t("tool.inspect")}>
+              <Icon name="inspect" size={20} />
+            </button>
+          </div>
+        </div>
         {groups.map((g) => (
           <div className="tool-group" key={g}>
-            <small>{t(`tool.groups.${g}`)}</small>
+            <small className="dock-label">{t(`tool.groups.${g}`)}</small>
             <div>
               {tools.filter((x) => x.group === g).map((x) => {
                 const i = tools.indexOf(x);
@@ -197,9 +257,9 @@ function BottomBar({ s }: { s: GameState }) {
                 return (
                   <button key={i} className={`tool slot ${sameTool(ui.tool, x.tool) ? "on" : ""} ${afford ? "" : "dim"}`}
                     onClick={() => game.setUi({ tool: x.tool })}
-                    title={`${t(x.label)}${x.cost !== undefined ? ` — ${t("tool.cost", { c: fmt(x.cost) })}` : ""}${x.tool.kind === "build" ? `\n${t(`building.${x.tool.building}.desc`)}` : ""}${i < 9 ? ` [${i + 1}]` : ""}`}
+                    title={`${t(x.label)}${x.cost !== undefined ? ` · ${t("tool.cost", { c: fmt(x.cost) })}` : ""}${!afford ? ` · ${t("tool.cantAfford")}` : ""}${x.tool.kind === "build" ? `\n${t(`building.${x.tool.building}.desc`)}` : ""}${i < 9 ? ` (${i + 1})` : ""}`}
                     aria-label={t(x.label)}>
-                    {x.tool.kind === "build" ? <img src={buildingUrl(x.tool.building)} alt="" /> : <span aria-hidden>{x.icon}</span>}
+                    {x.tool.kind === "build" ? <img src={buildingUrl(x.tool.building)} alt="" /> : <Icon name={x.icon!} size={20} />}
                     {i < 9 && <span className="key">{i + 1}</span>}
                     {x.cost !== undefined && <span className="count">{short(x.cost)}</span>}
                   </button>
@@ -209,42 +269,32 @@ function BottomBar({ s }: { s: GameState }) {
           </div>
         ))}
       </div>
-      <div className="overlays">
-        <small>{t("overlay.label")}</small>
-        <select value={ui.overlay} onChange={(e) => game.setUi({ overlay: e.target.value as Overlay })}>
-          {(["none", "traffic", "reach", "prices", "wages", "mood"] as Overlay[]).map((o) => <option key={o} value={o}>{t(`overlay.${o}`)}</option>)}
-        </select>
-      </div>
-      <PolicyHand s={s} />
-      <div className="gov-buttons">
-        <button onClick={() => game.setUi({ modal: { kind: "budget" } })}>⚖ {t("budget.title")}</button>
-        <button onClick={() => game.setUi({ modal: { kind: "tax" } })}>✎ {t("tax.title")}</button>
-        <button onClick={() => game.setUi({ modal: { kind: "institutions" } })}>🏛 {t("inst.title")}{s.developing ? " •" : ""}</button>
-        <button onClick={() => game.setUi({ modal: { kind: "stats" } })}>📈 {t("stats.title")} <small>P</small></button>
-      </div>
-      <button className="end-turn" disabled={ui.busy || s.status !== "playing"} onClick={() => void game.endTurn()}>
-        {ui.busy ? t("top.busy") : s.pendingEvent ? t("event.title") : `${t("time.skip")} ⏭`}
-        <small>E · {t("time.space")}</small>
+      <button className="end-turn" disabled={ui.busy || s.status !== "playing"} onClick={() => void game.endTurn()} title={`${t("time.skip")} (E)`}>
+        <span>{ui.busy ? t("top.busy") : s.pendingEvent ? t("event.title") : t("time.skip")}</span>
+        <Icon name="skip" size={16} />
+        <kbd>E</kbd>
       </button>
     </footer>
   );
 }
 
-function PolicyHand({ s }: { s: GameState }) {
+export function PolicyHand({ s }: { s: GameState }) {
   const { t } = useTranslation();
   return (
     <div className="hand">
-      <small>{t("policy.title")} · {t("policy.limit", { n: s.policyChangesThisTurn })}</small>
+      <p className="small">{t("policy.limit", { n: s.policyChangesThisTurn })}</p>
       <div className="cards">
         {POLICY_IDS.map((id) => (
-          <button key={id} className={`card ${s.policies[id] ? "active" : ""}`} onClick={() => game.setUi({ modal: { kind: "policy", id } })} title={t(`policy.${id}.desc`)}>
+          <button key={id} className={`card ${s.policies[id] ? "active" : ""}`} onClick={() => game.setUi({ modal: { kind: "policy", id } })}>
             <span className="card-name">{t(`policy.${id}.name`)}</span>
-            {s.policies[id] && <span className="card-state">{t("policy.active")}</span>}
+            <span className="card-desc">{t(`policy.${id}.desc`)}</span>
+            <span className="card-state">{s.policies[id] ? t("policy.active") : t("policy.inactive")}</span>
           </button>
         ))}
         {s.institutions.coinage && (
-          <button className="card danger" onClick={() => game.setUi({ modal: { kind: "policy", id: "debase" } })} title={t("policy.debase.desc")}>
+          <button className="card danger" onClick={() => game.setUi({ modal: { kind: "policy", id: "debase" } })}>
             <span className="card-name">{t("policy.debase.name")}</span>
+            <span className="card-desc">{t("policy.debase.desc")}</span>
           </button>
         )}
       </div>
@@ -253,6 +303,7 @@ function PolicyHand({ s }: { s: GameState }) {
 }
 
 // ---------------------------------------------------------------- right panel
+type Tab = "sel" | "nation" | "council";
 function SidePanel({ s }: { s: GameState }) {
   const { t } = useTranslation();
   const { ui } = useGame();
@@ -260,28 +311,56 @@ function SidePanel({ s }: { s: GameState }) {
   const tile = sel && s.tiles.find((x) => x.q === sel.q && x.r === sel.r);
   const b = sel && s.buildings.find((x) => x.q === sel.q && x.r === sel.r);
   const town = sel && s.towns.find((x) => x.q === sel.q && x.r === sel.r);
+  const [tab, setTab] = useState<Tab>("nation");
+  const selKey = sel ? `${sel.q},${sel.r}` : "";
+  // Selecting something on the map brings its window forward; clearing the selection returns to the nation.
+  useEffect(() => { setTab(selKey ? "sel" : "nation"); }, [selKey]);
+  // Badge = things that need attention: goods some town is going without, and unhappy classes.
+  const dear = GOOD_IDS.filter((g) => s.markets.some((m) => m.short[g] > 0.05)).length;
+  const unhappy = (["laborers", "merchants", "landlords"] as const).filter((c) => s.classes[c].satisfaction < 35).length;
+  const tabs: { id: Tab; label: string; badge?: string; disabled?: boolean }[] = [
+    { id: "sel", label: b ? t(`building.${b.type}.name`) : town ? t(`town.${town.name}`, { defaultValue: town.name }) : t("tabs.selected"), disabled: !tile },
+    { id: "nation", label: t("tabs.nation"), badge: dear + unhappy ? String(dear + unhappy) : undefined },
+    { id: "council", label: t("tabs.council") },
+  ];
   return (
-    <aside className="sidepanel" aria-live="polite">
-      {!tile && <p className="muted">{t("panel.nothing")}</p>}
-      {b && <BuildingPanel s={s} b={b} />}
-      {town && (
-        <section>
-          <h3>{t(`town.${town.name}`, { defaultValue: town.name })}</h3>
-          <dl>
-            <dt>{t("panel.pop")}</dt><dd>{fmt(town.pop * s.calibration.popScale)}</dd>
-            <dt>{t("panel.mood")}</dt><dd>{fmt(town.mood)} {town.mood < 35 ? "▼" : town.mood > 60 ? "▲" : ""}</dd>
-          </dl>
-          <TownMarket s={s} townId={town.id} />
-        </section>
-      )}
-      {tile && (
-        <p className="muted small">
-          {t(`terrain.${tile.terrain}`)}{tile.river ? ` · ${t("terrain.river")}` : ""}{tile.coast ? ` · ${t("terrain.coast")}` : ""}{tile.deposit ? ` · ${t("terrain.deposit")}` : ""}{s.infra[`${tile.q},${tile.r}`] ? ` · ${t(`infra.${s.infra[`${tile.q},${tile.r}`]}`)}` : ""}
-        </p>
-      )}
-      <Council s={s} />
-      <Classes s={s} />
-      <Market s={s} />
+    <aside className="sidepanel" aria-label={t("tabs.label")}>
+      <div className="tabs" role="tablist">
+        {tabs.map((x) => (
+          <button key={x.id} role="tab" aria-selected={tab === x.id} className={tab === x.id ? "on" : ""} disabled={x.disabled} onClick={() => setTab(x.id)}>
+            <span className="tab-label">{x.label}</span>{x.badge && <span className="badge">{x.badge}</span>}
+          </button>
+        ))}
+      </div>
+      <div className="tab-body" role="tabpanel" aria-live="polite">
+        {tab === "sel" && tile && (
+          <>
+            {b && <BuildingPanel s={s} b={b} />}
+            {town && (
+              <section>
+                <h3>{t(`town.${town.name}`, { defaultValue: town.name })}</h3>
+                <dl>
+                  <dt>{t("panel.pop")}</dt><dd>{fmt(town.pop * s.calibration.popScale)}</dd>
+                  <dt>{t("panel.mood")}</dt><dd>{fmt(town.mood)} {town.mood < 35 ? "▼" : town.mood > 60 ? "▲" : ""}</dd>
+                </dl>
+                <TownMarket s={s} townId={town.id} />
+              </section>
+            )}
+            <p className="muted small terrain-line">
+              {t(`terrain.${tile.terrain}`)}{tile.river ? ` · ${t("terrain.river")}` : ""}{tile.coast ? ` · ${t("terrain.coast")}` : ""}{tile.deposit ? ` · ${t("terrain.deposit")}` : ""}{s.infra[`${tile.q},${tile.r}`] ? ` · ${t(`infra.${s.infra[`${tile.q},${tile.r}`]}`)}` : ""}
+            </p>
+            {!b && !town && <p className="muted small">{t("panel.emptyTile")}</p>}
+          </>
+        )}
+        {tab === "nation" && (
+          <>
+            {!tile && <p className="muted small hint">{t("panel.nothing")}</p>}
+            <Market s={s} />
+            <Classes s={s} />
+          </>
+        )}
+        {tab === "council" && <Council s={s} />}
+      </div>
     </aside>
   );
 }
@@ -469,33 +548,52 @@ function Market({ s }: { s: GameState }) {
   );
 }
 
-// ---------------------------------------------------------------- alerts (click to cycle through them)
+// ---------------------------------------------------------------- goal (what to aim for) and alerts (what is wrong)
+function GoalPanel({ s }: { s: GameState }) {
+  const { t } = useTranslation();
+  const def = SCENARIOS[s.scenario];
+  const ch = def.chapters[s.chapter];
+  return (
+    <section className="hud-card goal" aria-label={t("goal.title")}>
+      <header>
+        <span className="hud-title">{t("goal.title")}</span>
+        <small>{t("top.chapter", { n: s.chapter + 1, total: def.chapters.length })} · {t("goal.until", { y: s.scenario === "needle" ? ch.end : ch.end })}</small>
+      </header>
+      <Meter id="opulence" value={s.meters.opulence.value} target={def.targets.opulence} />
+      <Meter id="maslaha" value={s.meters.maslaha.value} target={def.targets.maslaha} />
+      {s.meters.goodSociety && <span className="badge-good">★ {t("top.goodSociety")}</span>}
+    </section>
+  );
+}
+
 function Alerts({ s }: { s: GameState }) {
   const { t } = useTranslation();
   const starved = s.buildings.filter((b) => b.status === "starved");
   const blocked = s.buildings.filter((b) => b.status === "blocked");
   const jamTiles = s.tiles.map((tile, i) => ({ tile, j: s.jam[i] ?? 0 })).filter((x) => x.j > 1).sort((a, b) => b.j - a.j);
   const shortTowns = s.towns.filter((tw) => { const m = s.markets.find((x) => x.town === tw.id); return m && (m.short.bread > 0.05 || m.stock.bread < 0.5); });
-  const rows: { kind: string; icon: string; n: number; list: { q: number; r: number }[]; overlay?: Overlay }[] = [
-    { kind: "starved", icon: "⚠", n: starved.length, list: starved },
-    { kind: "blocked", icon: "✕", n: blocked.length, list: blocked },
-    { kind: "jam", icon: "⛔", n: jamTiles.length, list: jamTiles.map((x) => x.tile), overlay: "traffic" as Overlay },
-    { kind: "short", icon: "🍞", n: shortTowns.length, list: shortTowns },
-  ].filter((r) => r.n > 0);
-  if (!rows.length) return null;
+  const rows: { kind: "starved" | "blocked" | "jam" | "short"; n: number; list: { q: number; r: number }[]; overlay?: Overlay }[] = [
+    { kind: "short", n: shortTowns.length, list: shortTowns },
+    { kind: "starved", n: starved.length, list: starved },
+    { kind: "jam", n: jamTiles.length, list: jamTiles.map((x) => x.tile), overlay: "traffic" },
+    { kind: "blocked", n: blocked.length, list: blocked },
+  ];
+  const active = rows.filter((r) => r.n > 0);
   const cycle = (r: (typeof rows)[number]) => {
     const i = (Number(game.flags[r.kind] ?? -1) + 1) % r.list.length;
     game.flags[r.kind] = i;
     game.setUi({ selected: { q: r.list[i].q, r: r.list[i].r }, ...(r.overlay ? { overlay: r.overlay } : {}) });
   };
   return (
-    <div className="alerts" role="list" aria-label={t("alerts.label")}>
-      {rows.map((r) => (
-        <button key={r.kind} className={`a-${r.kind}`} onClick={() => cycle(r)} title={t(`alerts.${r.kind}`, { n: r.n })}>
-          <span aria-hidden>{r.icon}</span><span>{r.n}</span>
+    <section className="hud-card alerts" aria-label={t("alerts.label")}>
+      <header><span className="hud-title">{t("alerts.label")}</span></header>
+      {!active.length && <p className="all-clear"><Icon name="ok" size={14} /> {t("alerts.allClear")}</p>}
+      {active.map((r) => (
+        <button key={r.kind} className={`alert-row a-${r.kind}`} onClick={() => cycle(r)} title={t(`alerts.${r.kind}`, { n: r.n })}>
+          <Icon name={r.kind} size={15} /><span>{t(`alerts.short.${r.kind}`)}</span><b>{r.n}</b>
         </button>
       ))}
-    </div>
+    </section>
   );
 }
 

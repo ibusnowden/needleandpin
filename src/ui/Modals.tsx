@@ -11,31 +11,57 @@ import {
   BUDGET_LINES, EVENT_BY_ID, INSTITUTIONS, POLICIES, SCENARIOS, TRACKS, adequacy, choiceAvailable, describe, gradeLetter,
   institutionAvailable, reversibleDecisions, taxGrades, type GameState, type InstitutionId, type PolicyId, type ScenarioId,
 } from "../sim/index.ts";
-import { ghostSeries, WhyLink } from "./App.tsx";
+import { ghostSeries, isToolWindow, PolicyHand, WhyLink } from "./App.tsx";
+import { Icon } from "./Icon.tsx";
 import { useGame } from "./hooks.ts";
 import { Legend, LineChart, type Series } from "./LineChart.tsx";
 
 type CodexEntry = (typeof codex)[number];
 const CODEX = new Map(codex.map((c) => [c.id, c]));
 
+/** Where the player last dragged a tool window to (kept for the session, shared by all windows). */
+const winPos = { x: 0, y: 0 };
+
+/**
+ * Two kinds of window (after the screen/center split of factory-game GUIs):
+ * - decisions (events, Reckonings, endings, menus) are modal and pause play;
+ * - tool windows (budget, taxes, laws, institutions, statistics, codex) float over the map, can be dragged by the
+ *   title bar, leave the map clickable and the clock running, and close with Esc or their hotkey.
+ */
 function Dialog({ title, children, onClose, wide, className }: { title: ReactNode; children: ReactNode; onClose?: () => void; wide?: boolean; className?: string }) {
   const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => { ref.current?.querySelector<HTMLElement>("button, [href], input, select")?.focus(); }, []);
-  return (
-    <div className="backdrop" onClick={(e) => e.target === e.currentTarget && onClose?.()}>
-      <div className={`dialog ${wide ? "wide" : ""} ${className ?? ""}`} role="dialog" aria-modal="true" ref={ref}>
-        <header><h2>{title}</h2>{onClose && <button className="close" onClick={onClose} aria-label={t("common.close")}>×</button>}</header>
-        <div className="dialog-body">{children}</div>
-      </div>
+  const floating = isToolWindow(game.ui.modal?.kind);
+  const [pos, setPos] = useState({ ...winPos });
+  useEffect(() => { if (!floating) ref.current?.querySelector<HTMLElement>("button, [href], input, select")?.focus(); }, [floating]);
+  const startDrag = (e: React.PointerEvent) => {
+    if (!floating || (e.target as HTMLElement).closest("button")) return;
+    const sx = e.clientX - pos.x, sy = e.clientY - pos.y;
+    const move = (ev: PointerEvent) => { winPos.x = ev.clientX - sx; winPos.y = ev.clientY - sy; setPos({ ...winPos }); };
+    const up = () => { window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); };
+    window.addEventListener("pointermove", move); window.addEventListener("pointerup", up);
+  };
+  const box = (
+    <div className={`dialog ${wide ? "wide" : ""} ${floating ? "window" : ""} ${className ?? ""}`} role="dialog" aria-modal={!floating} ref={ref}
+      style={floating ? { transform: `translate(${pos.x}px, ${pos.y}px)` } : undefined}>
+      <header onPointerDown={startDrag} className={floating ? "drag" : ""}>
+        <h2>{title}</h2>
+        {floating && <span className="drag-hint" aria-hidden />}
+        {onClose && <button className="close" onClick={onClose} aria-label={t("common.close")} title={`${t("common.close")} (Esc)`}><Icon name="close" size={16} /></button>}
+      </header>
+      <div className="dialog-body">{children}</div>
     </div>
   );
+  return floating
+    ? <div className="window-layer">{box}</div>
+    : <div className="backdrop" onClick={(e) => e.target === e.currentTarget && onClose?.()}>{box}</div>;
 }
 
 const close = () => game.setUi({ modal: null });
 
 export function Modals() {
   const { s, ui } = useGame();
+  const { t } = useTranslation();
   const m = ui.modal;
   if (!m) return null;
   switch (m.kind) {
@@ -56,6 +82,7 @@ export function Modals() {
     case "policy": return <PolicyCard s={s} id={m.id} />;
     case "ghost": return <GhostScreen s={s} />;
     case "stats": return <ProdStats s={s} />;
+    case "laws": return <Dialog title={t("laws.title")} onClose={close} wide><p className="small">{t("laws.intro")}</p><PolicyHand s={s} /></Dialog>;
   }
   return null;
 }

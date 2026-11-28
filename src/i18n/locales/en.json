@@ -60,7 +60,9 @@
       "craft": "Workshops",
       "civic": "Civic",
       "works": "Public works"
-    }
+    },
+    "label": "Build",
+    "cantAfford": "the treasury can't afford it"
   },
   "building": {
     "farm": {
@@ -186,12 +188,13 @@
     "tile": "Terrain",
     "goods": "Market",
     "why": "Why?",
-    "markets": "Prices this turn",
+    "markets": "Market (all towns)",
     "stock": "in store",
     "onTheWay": "on the way",
     "outStore": "Ready to ship",
     "localMarket": "This town's market: stock and price against natural",
-    "slotLegend": "Number in the corner: stock in all storehouses. Tag: price as % of natural (red dear, blue cheap)."
+    "slotLegend": "Number in the corner: stock in all storehouses. Tag: price as % of natural (red dear, blue cheap).",
+    "emptyTile": "Open land. Pick a building from the bar below to build here."
   },
   "overlay": {
     "label": "Overlay",
@@ -204,7 +207,7 @@
   },
   "policy": {
     "title": "Policy cards",
-    "limit": "{n} of 2 cards played this turn",
+    "limit": "{n} of 2 cards played this year",
     "enact": "Enact",
     "repeal": "Repeal",
     "active": "In force",
@@ -239,7 +242,8 @@
     "debase": {
       "name": "Debase the coin",
       "desc": "Mix base metal into the coin: a large sum for the treasury now, then inflation and a collapse in Money Trust."
-    }
+    },
+    "inactive": "Not in force"
   },
   "budget": {
     "title": "The sovereign's budget",
@@ -768,7 +772,8 @@
       "10": "November",
       "11": "December"
     },
-    "monthShort": "month"
+    "monthShort": "month",
+    "keySpace": "Space"
   },
   "status": {
     "working": "Working",
@@ -803,7 +808,13 @@
     "starved": "{n, plural, one {# workshop is} other {# workshops are}} waiting for inputs: click to visit each",
     "blocked": "{n, plural, one {# workshop has} other {# workshops have}} no buyers",
     "jam": "{n, plural, one {# road is} other {# roads are}} jammed",
-    "short": "{n, plural, one {# town is} other {# towns are}} short of bread"
+    "short": {
+      "short": "Towns short of bread",
+      "starved": "Workshops waiting",
+      "jam": "Jammed roads",
+      "blocked": "No buyers"
+    },
+    "allClear": "All running smoothly"
   },
   "model": {
     "intro": "Every formula in the simulation, where it comes from, and which numbers were tuned so that replaying Britain's real policies tracks the historical record within ±15%. Smith and Ghazali wrote no equations: these are modern translations of their ideas.",
@@ -816,5 +827,22 @@
       "tuned": "Tuned to history"
     },
     "calibration": "Calibration: historical autopilot over 8 maps, 5-year means. 1850: GDP per head 89% and real wages 97% of the Maddison and Allen series. Details in docs/BALANCE.md."
+  },
+  "goal": {
+    "title": "Goal",
+    "until": "chapter ends {y}"
+  },
+  "tabs": {
+    "label": "Details",
+    "selected": "Selected",
+    "nation": "Nation",
+    "council": "Council"
+  },
+  "gov": {
+    "label": "Government"
+  },
+  "laws": {
+    "title": "Laws & charters",
+    "intro": "Each card is a law in force or one you could enact. You may play two cards a year; each opens a debate with your council first."
   }
 }

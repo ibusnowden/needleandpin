@@ -74,6 +74,7 @@ test("policy cards: debasing the coin collapses Money Trust", async ({ page }) =
   await open(page);
   await page.getByRole("button", { name: /Britain, 1776/ }).click();
   const before = await page.evaluate(() => (globalThis as any).needleAndPin.state.money.trust);
+  await page.keyboard.press("l");
   await page.locator(".card.danger").click();
   await page.getByRole("dialog").getByRole("button", { name: "Debase the coin" }).click();
   const after = await page.evaluate(() => (globalThis as any).needleAndPin.state.money.trust);
