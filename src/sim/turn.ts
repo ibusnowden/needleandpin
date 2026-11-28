@@ -97,7 +97,7 @@ export function newGame(scenario: ScenarioId, seed: number): GameState {
   if (!def.coinage) delete s.institutions.coinage;
   const real = realNaturalPrices(s);
   for (const g of GOOD_IDS) {
-    goods[g].price = goods[g].natural = goods[g].basePrice = real[g];
+    goods[g].price = goods[g].natural = goods[g].anchor = goods[g].basePrice = real[g];
   }
   placeStartingEconomy(s);
   const pop = totalPop(s);

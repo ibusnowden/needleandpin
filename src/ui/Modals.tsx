@@ -8,10 +8,10 @@ import { game } from "../game/store.ts";
 import { GHOSTS, ghostAt } from "../game/ghost.ts";
 import { LANGUAGES, fmt, setLanguage, tx, type Lang } from "../i18n/index.ts";
 import {
-  BUDGET_LINES, EVENT_BY_ID, INSTITUTIONS, POLICIES, SCENARIOS, TRACKS, adequacy, choiceAvailable, describe, gradeLetter,
+  BUDGET_LINES, BUILDINGS, EVENT_BY_ID, INSTITUTIONS, POLICIES, SCENARIOS, TRACKS, adequacy, choiceAvailable, describe, gradeLetter,
   institutionAvailable, reversibleDecisions, taxGrades, type GameState, type InstitutionId, type PolicyId, type ScenarioId,
 } from "../sim/index.ts";
-import { ghostSeries, isToolWindow, PolicyHand, WhyLink } from "./App.tsx";
+import { BrandCrest, ghostSeries, isToolWindow, PolicyHand, Slot, WhyLink } from "./App.tsx";
 import { Icon } from "./Icon.tsx";
 import { useGame } from "./hooks.ts";
 import { Legend, LineChart, type Series } from "./LineChart.tsx";
@@ -106,7 +106,7 @@ function Title() {
   return (
     <div className="title-screen">
       <div className="title-card">
-        <div className="ornament" aria-hidden>✦ ❦ ✦</div>
+        <div className="ornament row" aria-hidden><BrandCrest size={42} /></div>
         <h1>{t("app.title")}</h1>
         <p className="tagline">{t("app.tagline")}</p>
         <div className="scenarios">
@@ -483,25 +483,36 @@ function ModelPage() {
 function ProdStats({ s }: { s: GameState }) {
   const { t } = useTranslation();
   const [g, setG] = useState<(typeof GOOD_IDS)[number]>("bread");
-  const st = s.stats ?? [];
+  const [months, setMonths] = useState<12 | 60 | 120>(12);
+  const full = s.stats ?? [];
+  const st = full.slice(-months);
   const x = (m: { year: number; month: number }) => m.year + m.month / 12;
   const series: Series[] = [
     { id: "made", label: t("stats.made"), points: st.map((m) => [x(m), m.made[g] * 12]), color: "#3d6b4c" },
     { id: "used", label: t("stats.used"), points: st.map((m) => [x(m), m.used[g] * 12]), color: "#c8553d", dashed: true },
   ];
-  const last12 = st.slice(-12);
-  const sum = (k: "made" | "used") => last12.reduce((a, m) => a + m[k][g], 0);
+  const last12 = full.slice(-12);
+  const sumFor = (id: (typeof GOOD_IDS)[number], k: "made" | "used") => last12.reduce((a, m) => a + m[k][id], 0);
+  const sum = (k: "made" | "used") => sumFor(g, k);
+  const shops = s.buildings.filter((b) => BUILDINGS[b.type].good === g).length;
   return (
     <Dialog title={t("stats.title")} onClose={close} wide className="prodstats">
       <p className="small">{t("stats.intro")}</p>
       <div className="slots">
-        {GOOD_IDS.map((id) => (
-          <button key={id} className={`slot ${g === id ? "on" : ""}`} onClick={() => setG(id)} title={t(`good.${id}`)} aria-label={t(`good.${id}`)}>
-            <img src={iconUrl(id)} alt="" />
-          </button>
-        ))}
+        {GOOD_IDS.map((id) => {
+          const bal = sumFor(id, "made") - sumFor(id, "used");
+          const tag = last12.length ? { text: bal >= 0 ? `+${Math.round(bal)}` : `${Math.round(bal)}`, kind: (bal >= 0 ? "flat" : "up") as "flat" | "up" } : undefined;
+          return <Slot key={id} icon={iconUrl(id)} on={g === id} tag={tag} onClick={() => setG(id)} title={t(`good.${id}`)} />;
+        })}
       </div>
-      <h4>{t(`good.${g}`)} · {t("stats.perYear")}</h4>
+      <div className="prodstats-head">
+        <h4>{t(`good.${g}`)} · {t("stats.perYear")} <small className="muted">({t("panel.shopsCount", { n: shops })})</small></h4>
+        <div className="range-pills">
+          {([12, 60, 120] as const).map((m, i) => (
+            <button key={m} className={months === m ? "on" : ""} onClick={() => setMonths(m)}>{t(`stats.range${i === 0 ? 1 : i === 1 ? 5 : 10}`)}</button>
+          ))}
+        </div>
+      </div>
       {st.length > 1 ? <LineChart series={series} width={880} height={240} /> : <p className="muted">{t("stats.empty")}</p>}
       <Legend series={series} />
       <div className="totals small">
@@ -600,33 +611,42 @@ function BudgetScreen({ s }: { s: GameState }) {
 // ---------------------------------------------------------------- institutions (§6)
 function Institutions({ s }: { s: GameState }) {
   const { t } = useTranslation();
+  const eras = [1, 2, 3, 4, 5];
   return (
     <Dialog title={t("inst.title")} onClose={close} wide className="institutions">
       <p className="small">{t("inst.intro")}</p>
       {s.developing && <p className="good">{t("inst.developing", { name: t(`inst.${s.developing}.name`), p: fmt(Math.min(100, (s.progress / INSTITUTIONS[s.developing].cost) * 100)) })}</p>}
-      <div className="tree">
-        {TRACKS.map((track) => (
-          <div key={track} className="track">
-            <h4>{t(`inst.track.${track}`)}</h4>
-            {(Object.values(INSTITUTIONS)).filter((d) => d.track === track).sort((a, b) => a.era - b.era).map((d) => {
-              const why = institutionAvailable(s, d.id as InstitutionId);
-              const done = !!s.institutions[d.id];
-              const dev = s.developing === d.id;
-              return (
-                <div key={d.id} className={`inst ${done ? "done" : why ? "locked" : "open"} ${dev ? "dev" : ""}`}>
-                  <div><b>{t(`inst.${d.id}.name`)}</b> <small className="muted">· {d.era}</small></div>
-                  <small>{t(`inst.${d.id}.desc`)}</small>
-                  {done ? <small className="good">✓ {t("inst.done")}</small> : why ? (
-                    <small className="muted">{t(`inst.why.${why}`, { list: d.requires.filter((r) => !s.institutions[r]).map((r) => t(`inst.${r}.name`)).join(", ") })}</small>
-                  ) : (
-                    <button disabled={dev} onClick={() => game.command({ type: "institution", id: d.id as InstitutionId })}>{dev ? "…" : `${t("inst.develop")} (${d.cost})`}</button>
-                  )}
-                  {d.codex && <WhyLink id={d.codex} />}
-                </div>
-              );
-            })}
-          </div>
-        ))}
+      <div className="inst-grid">
+        <div className="inst-colhead" />
+        {TRACKS.map((track) => <div key={track} className="inst-colhead">{t(`inst.track.${track}`)}</div>)}
+        {eras.flatMap((era) => [
+          <div key={`era${era}`} className="inst-era">{era}</div>,
+          ...TRACKS.map((track) => {
+            const list = Object.values(INSTITUTIONS).filter((d) => d.track === track && d.era === era);
+            return (
+              <div key={`${era}-${track}`} className="inst-cell">
+                {list.map((d) => {
+                  const why = institutionAvailable(s, d.id as InstitutionId);
+                  const done = !!s.institutions[d.id];
+                  const dev = s.developing === d.id;
+                  return (
+                    <div key={d.id} className={`inst ${done ? "done" : why ? "locked" : "open"} ${dev ? "dev" : ""} ${d.excludes ? "fork" : ""}`}>
+                      <div><b>{t(`inst.${d.id}.name`)}</b></div>
+                      <small>{t(`inst.${d.id}.desc`)}</small>
+                      {d.requires.length > 0 && !done && <span className="inst-req">↳ {d.requires.map((r) => t(`inst.${r}.name`)).join(", ")}</span>}
+                      {done ? <small className="good">✓ {t("inst.done")}</small> : why ? (
+                        <small className="muted">{t(`inst.why.${why}`, { list: d.requires.filter((r) => !s.institutions[r]).map((r) => t(`inst.${r}.name`)).join(", ") })}</small>
+                      ) : (
+                        <button disabled={dev} onClick={() => game.command({ type: "institution", id: d.id as InstitutionId })}>{dev ? "…" : `${t("inst.develop")} (${d.cost})`}</button>
+                      )}
+                      {d.codex && <WhyLink id={d.codex} />}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          }),
+        ])}
       </div>
     </Dialog>
   );

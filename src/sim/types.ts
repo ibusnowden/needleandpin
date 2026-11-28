@@ -152,7 +152,19 @@ export interface OutputExplain {
 
 export interface GoodState {
   price: number;
+  /**
+   * Smith's natural price (I.7): what it costs to bring the good to market when wages, profit and rent are paid at
+   * their ordinary rates. Inputs at their natural prices, plus labour at the economy-wide ordinary wage divided by
+   * the output a worker actually achieves.
+   */
   natural: number;
+  /** The model's nominal price anchor that town prices are set around (kept from calibration; not shown). */
+  anchor?: number;
+  /** Output per worker actually achieved, smoothed (units a year). */
+  perWorker?: number;
+  /** Carriage paid per unit, smoothed: workshop to market, and market to workshop. */
+  carryOut?: number;
+  carryIn?: number;
   stock: number;
   produced: number;
   supply: number;
@@ -330,7 +342,7 @@ export interface GameState {
   buildings: Building[];
   infra: Record<string, Infra>;
   goods: Record<GoodId, GoodState>;
-  labor: { workforce: number; idle: number; avgWage: number; subsistence: number; moved: number; refWage: number };
+  labor: { workforce: number; idle: number; avgWage: number; subsistence: number; moved: number; refWage: number; /** Ordinary (economy-wide) wage, smoothed. */ ordWage?: number };
   classes: Record<ClassId, ClassState>;
   treasury: number;
   debt: number;

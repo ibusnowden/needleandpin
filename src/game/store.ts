@@ -42,6 +42,7 @@ export interface Toast { id: number; kind: "discovery" | "error" | "info"; key: 
 export interface UiState {
   tool: Tool;
   overlay: Overlay;
+  altMode: boolean;
   selected: { q: number; r: number } | null;
   hover: { q: number; r: number } | null;
   modal: Modal;
@@ -61,9 +62,13 @@ type Listener = () => void;
 class Controller {
   state: GameState | null = null;
   ui: UiState = {
-    tool: { kind: "inspect" }, overlay: "none", selected: null, hover: null, modal: { kind: "title" },
+    tool: { kind: "inspect" }, overlay: "none", altMode: true, selected: null, hover: null, modal: { kind: "title" },
     toasts: [], busy: false, lastTurnMs: 0, textScale: 1, whatIf: null, speed: 0,
   };
+  private mapControls: { zoom: (f: number) => void; centre: () => void } | null = null;
+  registerMap(controls: { zoom: (f: number) => void; centre: () => void } | null) { this.mapControls = controls; }
+  mapZoom(f: number) { this.mapControls?.zoom(f); }
+  mapCentre() { this.mapControls?.centre(); }
   /** Days simulated per real second at 1× (one 360-day year per minute). */
   static DAYS_PER_SECOND = 6;
   private carry = 0;

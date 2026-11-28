@@ -13,6 +13,7 @@ copied.
 | Left column, over the map | **What to aim for, and what is wrong** | Goal card (chapter, Opulence and Maslaha against target), then Alerts (towns short of bread, workshops waiting, jammed roads, workshops with no buyers). Clicking an alert visits each case on the map in turn |
 | Right panel, tabs | **Details of what you are looking at** | *Selected* (the workshop, town or tile you clicked), *Nation* (market slots, class satisfaction), *Council* (the two advisors). Selecting on the map switches to *Selected*. Badges count things needing attention |
 | Bottom bar | **Act on the map** | Map views (overlays), the build hotbar (keys 1–9, cost in the corner, illustrated buildings), and *Skip to year end* |
+| Map controls | **Navigate & toggle details** | Floating bottom-right of the map: Alt-mode workshop badges (`V`), zoom (`+`/`−`), and fit-to-region |
 | Tool windows | **Manage the state** | Budget (B), Taxes (T), Laws & charters (L), Institutions (I), Production statistics (P), Codex (C). They float, drag by the title bar, keep the map clickable and the clock running, and close with Esc or their key |
 | Modal dialogs | **Decide** | Events, Reckonings, endings, policy debates, menus. These pause play and take focus |
 | Corner widgets | **Context without asking** | Ghost of history (bottom-left), toasts (bottom-centre, never over a panel), tutorial card (top-centre) |
@@ -26,8 +27,7 @@ copied.
   the cause (Factorio keeps goals in their own `goal` layer).
 - **Recognition over recall.** Every button shows its hotkey in a `kbd` cap and its tooltip. Alerts are labelled rows,
   not bare icons. Laws show what they do, not just their name.
-- **Visibility of system status.** Speed, year progress, workshop progress bars, input slots with the missing one
-  ringed in red, badges on tabs and on *Laws* (cards played this year).
+- **Visibility of system status.** Speed, year progress, workshop progress bars, input slots with incoming `+N` badges and the missing one ringed in red, dual specialisation readiness bars (Hands vs Market Reach), Phaser Alt-mode recipe pills, live cart route lines for the selected workshop/town, ghost building + catchment hover previews, and badges on tabs and *Laws*.
 - **Non-modal by default.** Management screens no longer block the map or stop the clock. Only real decisions are
   modal.
 - **Fitts's law.** Frequent targets are large and at the edges: the hotbar (42 px), *Skip to year end* (bottom

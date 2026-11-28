@@ -193,8 +193,14 @@
     "onTheWay": "on the way",
     "outStore": "Ready to ship",
     "localMarket": "This town's market: stock and price against natural",
-    "slotLegend": "Number in the corner: stock in all storehouses. Tag: price as % of natural (red dear, blue cheap).",
-    "emptyTile": "Open land. Pick a building from the bar below to build here."
+    "slotLegend": "Bottom-right: stock in storehouses. Top-right tag: price as % of natural (red dear, blue cheap).",
+    "emptyTile": "Open land. Pick a building from the bar below to build here.",
+    "specHands": "Hands for next split",
+    "specReach": "Reach cap",
+    "cartsOut": "Shipping out",
+    "cartsIn": "Supplies arriving",
+    "noCarts": "No carts in transit right now.",
+    "shopsCount": "{n, plural, one {# workshop} other {# workshops}}"
   },
   "overlay": {
     "label": "Overlay",
@@ -203,7 +209,11 @@
     "prices": "Prices",
     "wages": "Wages",
     "mood": "Class mood",
-    "traffic": "Traffic and jams"
+    "traffic": "Traffic and jams",
+    "alt": "Workshop badges (V)",
+    "zoomIn": "Zoom in (+)",
+    "zoomOut": "Zoom out (−)",
+    "fit": "Fit map"
   },
   "policy": {
     "title": "Policy cards",
@@ -801,7 +811,10 @@
     "balance": "Balance, last 12 months",
     "perYear": "units per year",
     "empty": "Statistics appear after the first month.",
-    "note": "Used = bought by households and investors, plus consumed by workshops as inputs."
+    "note": "Used = bought by households and investors, plus consumed by workshops as inputs.",
+    "range1": "1y",
+    "range5": "5y",
+    "range10": "10y"
   },
   "alerts": {
     "label": "Alerts",
@@ -839,7 +852,13 @@
     "council": "Council"
   },
   "gov": {
-    "label": "Government"
+    "label": "Government",
+    "budget": "Budget",
+    "tax": "Taxes",
+    "laws": "Laws",
+    "institutions": "Institutions",
+    "stats": "Stats",
+    "codex": "Codex"
   },
   "laws": {
     "title": "Laws & charters",

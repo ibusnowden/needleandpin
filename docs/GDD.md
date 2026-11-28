@@ -102,7 +102,7 @@ Every core mechanic traces back to a specific idea in one of the two thinkers. T
 | Prohibition of usury (*riba*); partnership and profit-sharing contracts | Two finance paths (section 4.7) |
 | The ruler's duty of justice and fair, moderate taxation | Justice budget line; overtaxation drains Maslaha |
 
-**Accuracy rules for the content team:** advisors are *inspired by* the two thinkers and speak in paraphrase, never invented quotes. Codex quotes are cited by book and chapter. Smith is quoted from the original 1776 English. Ghazali is quoted from the original Arabic (public domain, written c. 1100), using the Dar al-Minhaj critical edition as the reference text, with the team's own English translation checked against the published scholarly translations. Modern translations are never copied. Full list in section 16. Have one economic historian review the codex before launch.
+**Accuracy rules for the content team:** advisors are *inspired by* the two thinkers and speak in paraphrase, never invented quotes. Codex quotes are cited by book and chapter. Smith is quoted from the original 1776 English. Ghazali is quoted from the original Arabic (public domain, written c. 1100), using the Dar al-Minhaj critical edition as the reference text, with the team's own English translation checked against the published scholarly translations. Modern translations are never copied. Full list in section 17. Have one economic historian review the codex before launch.
 
 ## 4. Economy systems
 
@@ -543,7 +543,7 @@ Left out of the MVP: rivals' AI, finance paths, other scenarios, campaign, class
 - **Real-time or turn-based on the map?** The design assumes turn-based with animated resolution. A pausable real-time mode could be tested later.
 - **How far into the modern era?** Modern policy debates (central banks, welfare states) are more politically charged. Possibly stop at 1914 for version 1.
 - **Name:** "The Needle & The Pin" is the working title. Alternatives: *Opulence*, *The Invisible Hand*, *Wealth & Measure*.
-- **Translations of Ghazali:** resolved. Quote the original Arabic with our own translations (section 16).
+- **Translations of Ghazali:** resolved. Quote the original Arabic with our own translations (section 17).
 
 > **Source check, 26 Nov 2026.** Every Ghazali passage the game quotes was checked against the Arabic of the *Ihya'*
 > (Dar al-Ma'rifa, Beirut, 4 vols, via al-Maktaba al-Shamila) and of *al-Mustasfa* (ed. 'Abd al-Shafi). Corrections
@@ -625,7 +625,72 @@ Three more thinkers from the Islamic world fit the game naturally and could each
 
 The writers should check each claim against the sources before these advisors speak.
 
-## 16. Sources and reading list
+## 16. Benchmark mode: AI models as players
+
+The same simulation doubles as an evaluation for AI models such as Claude, GPT, Gemini and open-weight models. They play the scenarios through a text interface and are ranked on a public leaderboard. It's practical because the simulation core is engine-free and deterministic (section 12): it can run headless, thousands of times, with the same seeds for every model.
+
+### What it measures that other benchmarks don't
+
+Economic agent benchmarks already exist: Vending-Bench (running a vending business), EcoGym, Market-Bench, and CivBench (Civilization). This one adds four things:
+
+1. **Two goals that pull apart.** A model must raise Opulence and Maslaha together. Maximizing one number isn't enough; the model has to manage a trade-off.
+2. **Temptations with delayed costs.** Debasement, monopoly charters and grain tariffs pay off now and hurt about ten turns later. This directly tests whether a model resists short-term reward.
+3. **A human-meaningful baseline.** The ghost of history (real GDP and wages) shows whether a model ran Britain better or worse than Britain actually did.
+4. **Explained decisions.** Models give a one-line reason for each major policy. We can check whether the reasons match what they did and what happened.
+
+### How a model plays
+
+- **Interface:** a headless runner exposes the game as tools: `observe()` returns a compact text and JSON state summary; actions include `build`, `set_policy`, `set_tax`, `respond_event`, `found_institution` and `end_turn`. It's offered both as a gym-style Python API and as an MCP server, so any tool-using model can connect.
+- **Same information as a human:** the map as a list of regions, prices, meters, advisor lines and event cards, plus the codex text. No hidden-state access.
+- **Turn budget:** each turn has a cap on actions and a tool-call budget. Invalid actions are rejected and counted.
+- **Memory:** models get a scratchpad that persists across turns. That keeps long-horizon coherence the thing being measured, not context-window size.
+
+### Tracks
+
+| Track | Setup | Tests |
+| --- | --- | --- |
+| **Solo** | Britain 1776 and Abbasid Baghdad, 20 seeds each, scripted rivals | Planning, the two-goal trade-off, resisting temptation |
+| **Crisis** | Short 15-turn starts in a famine, bank run or trade war | Recovery under pressure |
+| **Arena** | Four models share a map as rival nations, negotiating trade treaties in natural language | Negotiation, cooperation vs. exploitation; ranked by Elo |
+| **Held-out** | Unpublished scenarios and seeds, rotated each season | Generalization; guards against training on the benchmark |
+
+### Leaderboard
+
+The main score is the **Good Society Score**: the geometric mean of final Opulence and Maslaha, so a lopsided nation ranks below a balanced one. The leaderboard shows it alongside the parts:
+
+| Column | Meaning |
+| --- | --- |
+| Good Society Score | Geometric mean of the two meters, averaged over seeds, with a 95% interval |
+| Opulence / Maslaha | Each meter, reported separately |
+| Ghost ratio | Final real wage divided by the historical real wage |
+| Win rate | Share of runs ending in a Golden Age |
+| Temptation index | How often the model took a short-term trap card, and the cost that followed |
+| Collapse rate | Share of runs ending in revolution, bankruptcy or famine |
+| Explanation consistency | How often a model's stated reason matches its actions and outcomes |
+| Arena Elo | Multiplayer rating |
+| Cost | Tokens and dollars per game |
+
+**Baselines on the same board:** a random player, the five scripted bots (section 13), the historical autopilot, and human players. The human scores come from opt-in telemetry of the public game.
+
+### Keeping it honest
+
+- **Determinism and versioning:** every run records the simulation version, seed and full action log, so any result can be replayed and checked.
+- **Fixed settings:** the same system prompt and tools for every model. The provider's default settings, plus a disclosed "best effort" run where vendors may tune the prompt.
+- **Contamination:** the public scenarios will end up online. The held-out track and seasonal rotation keep the headline score meaningful.
+- **Value neutrality:** the Maslaha weights are published, and the faith component measures freedom and trust, not religion (section 8). The two meters are always shown separately, so no one has to accept our weighting.
+- **Statistics:** at least 20 seeds per scenario, with confidence intervals. Models whose intervals overlap are shown as tied.
+
+### Cost and build plan
+
+The state summary must stay under about 3,000 tokens a turn. An 80-turn game is then roughly 0.3 to 0.5 million tokens, so a full solo track (2 scenarios × 20 seeds) is about 40 games per model. This estimate should be measured on the first prototype.
+
+1. **With the MVP:** a headless runner and gym API on top of the simulation core, plus the scripted bots as the first entries.
+2. **Next:** the MCP server, the solo and crisis tracks, a static leaderboard page, and a paper or blog post with the first results.
+3. **Later:** the arena track, held-out seasons, and an open submission process for new models.
+
+The benchmark also helps the game itself: thousands of AI playthroughs are a cheap way to find broken strategies before human players do.
+
+## 17. Sources and reading list
 
 The team's working library. Original texts are the reference; translations are for checking our own translations, never for copying.
 

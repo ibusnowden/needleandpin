@@ -11,7 +11,7 @@ import {
   BASKET, BUILDINGS, CARRY_COST, CLASS_IDS, DAYS_PER_YEAR, GOODS, GOOD_IDS, HEX_CAPACITY, SIM, STOREHOUSE_BUY, TOOL_WEAR,
   type ClassId, type GoodId,
 } from "./defs.ts";
-import { capacity, landShare, realNaturalPrices, specMult, totalPop, updateReachAndLevels, worldPrice } from "./economy.ts";
+import { PRODUCTION_ORDER, capacity, landShare, realNaturalPrices, specMult, totalPop, updateReachAndLevels, worldPrice } from "./economy.ts";
 import { key } from "./hex.ts";
 import { streamRng } from "./rng.ts";
 import { buildGraph, type Graph } from "./transport.ts";
@@ -42,7 +42,7 @@ interface Ctx {
 let CTX: Ctx | null = null;
 
 export function ctxFor(s: GameState): Ctx {
-  const version = `${s.seed}|${s.scenario}|${s.netVersion}|${s.policies.internalTolls ? 1 : 0}|${s.institutions.merchantShipping ? 1 : 0}|${Math.round(s.society.banditry * 20)}`;
+  const version = `${s.seed}|${s.scenario}|${s.netVersion}|${s.towns.length}|${s.buildings.length}|${s.policies.internalTolls ? 1 : 0}|${s.institutions.merchantShipping ? 1 : 0}|${Math.round(s.society.banditry * 20)}`;
   if (CTX && CTX.version === version) return CTX;
   const g = buildGraph(s);
   const cap = new Float64Array(g.n);
@@ -74,15 +74,42 @@ function tree(ctx: Ctx, src: number) {
   const g = ctx.g;
   const dist = new Float64Array(g.n).fill(Infinity);
   const prev = new Int32Array(g.n).fill(-1);
-  const heap: [number, number][] = [[0, src]];
+  // True binary min-heap (parallel arrays keep hot Dijkstra allocations small).
+  const hn: number[] = [src];
+  const hd: number[] = [0];
+  const push = (node: number, d: number) => {
+    hn.push(node); hd.push(d);
+    let i = hn.length - 1;
+    while (i > 0) {
+      const p = (i - 1) >> 1;
+      if (hd[p] <= hd[i]) break;
+      [hn[p], hn[i]] = [hn[i], hn[p]];
+      [hd[p], hd[i]] = [hd[i], hd[p]];
+      i = p;
+    }
+  };
+  const pop = (): [number, number] => {
+    const top: [number, number] = [hd[0], hn[0]];
+    const ln = hn.pop()!, ld = hd.pop()!;
+    if (hn.length) {
+      hn[0] = ln; hd[0] = ld;
+      let i = 0;
+      for (;;) {
+        const l = 2 * i + 1, r = l + 1;
+        let m = i;
+        if (l < hn.length && hd[l] < hd[m]) m = l;
+        if (r < hn.length && hd[r] < hd[m]) m = r;
+        if (m === i) break;
+        [hn[m], hn[i]] = [hn[i], hn[m]];
+        [hd[m], hd[i]] = [hd[i], hd[m]];
+        i = m;
+      }
+    }
+    return top;
+  };
   dist[src] = 0;
-  while (heap.length) {
-    // Small binary heap (pop min).
-    let mi = 0;
-    for (let i = 1; i < heap.length; i++) if (heap[i][0] < heap[mi][0]) mi = i;
-    const [du, u] = heap[mi];
-    heap[mi] = heap[heap.length - 1];
-    heap.pop();
+  while (hn.length) {
+    const [du, u] = pop();
     if (du > dist[u]) continue;
     for (let d = 0; d < 6; d++) {
       const v = g.nbrs[u * 6 + d];
@@ -90,7 +117,7 @@ function tree(ctx: Ctx, src: number) {
       if (g.isSea[v] && !g.isSea[u] && !g.isPort[u]) continue;
       if (!g.isSea[v] && g.isSea[u] && !g.isPort[v]) continue;
       const nd = du + g.enter[v];
-      if (nd < dist[v]) { dist[v] = nd; prev[v] = u; heap.push([nd, v]); }
+      if (nd < dist[v]) { dist[v] = nd; prev[v] = u; push(v, nd); }
     }
   }
   t = { dist, prev };
@@ -281,7 +308,7 @@ function shipOutputs(s: GameState, ctx: Ctx): void {
           if (!best || v > best.value * 1.05) best = { dest: "abroad", to: ab.tile, value: v };
         }
       }
-      if (!best || best.value <= s.goods[g].natural * 0.12) { b.status = b.status === "working" ? "blocked" : b.status; break; }
+      if (!best || best.value <= (s.goods[g].anchor ?? s.goods[g].natural) * 0.12) { b.status = b.status === "working" ? "blocked" : b.status; break; }
       b.outBuf -= 1;
       spawn(s, { good: g, qty: 1, kind: best.dest === "abroad" ? "export" : "goods", path: pathTo(ctx, from, best.to), dest: best.dest, from: b.id, paid: 0 });
       sent++;
@@ -351,11 +378,11 @@ function merchants(s: GameState, ctx: Ctx): void {
         const d = days(ctx, from, to);
         if (!Number.isFinite(d)) continue;
         const gain = m.price[g] * STOREHOUSE_BUY - a.price[g] - c * d;
-        if (gain > s.goods[g].natural * 0.06 && (!best || gain > best.gain)) best = { m, to, gain };
+        if (gain > (s.goods[g].anchor ?? s.goods[g].natural) * 0.06 && (!best || gain > best.gain)) best = { m, to, gain };
       }
       if (!best) continue;
       // Wider gaps justify bigger lots.
-      const qty = Math.max(1, Math.min(Math.floor(a.stock[g] / 3), Math.round(best.gain / Math.max(1e-6, s.goods[g].natural * 0.1))));
+      const qty = Math.max(1, Math.min(Math.floor(a.stock[g] / 3), Math.round(best.gain / Math.max(1e-6, (s.goods[g].anchor ?? s.goods[g].natural) * 0.1))));
       a.stock[g] -= qty;
       a.draw[g] += 0.05 * qty;
       s.acc.merchantMargin += a.price[g] * qty;
@@ -399,6 +426,12 @@ function deliver(s: GameState, c: Cart): void {
   const carriers = carry(s) * tripDays * c.qty * 0.6;
   s.acc.carriers += carriers;
   s.mInc.laborers += carriers;
+  // Carriage per unit, by good and direction (part of the cost of bringing goods to market).
+  if (c.qty > 0 && c.kind !== "merchant") {
+    const gs = s.goods[c.good];
+    const k = c.dest.startsWith("b:") ? "carryIn" : "carryOut";
+    gs[k] = (gs[k] ?? 0) + 0.05 * (carriers / c.qty - (gs[k] ?? 0));
+  }
   if (c.dest.startsWith("b:")) {
     const b = s.buildings.find((x) => x.id === c.dest.slice(2));
     if (b) {
@@ -514,16 +547,17 @@ function consume(s: GameState): void {
 function prices(s: GameState): void {
   for (const m of s.markets) {
     for (const g of GOOD_IDS) {
-      const nat = g === "spices" ? s.goods.spices.natural : s.goods[g].natural;
+      const nat = s.goods[g].anchor ?? s.goods[g].natural;
       const rate = Math.max(0.02, m.want[g] + m.draw[g] * 0.5 + m.short[g]);
       const cover = m.stock[g] / (rate * 20);
       let target = nat * Math.min(3.5, Math.max(0.4, Math.pow(Math.max(0.01, cover), -0.45)));
-      if (g === "bread" && s.policies.breadPriceCap) target = Math.min(target, nat);
-      if (g === "pins" && s.policies.pinMonopoly) target = Math.max(target, nat * 1.6);
+      // Laws act on Smith's natural price: a cap at the cost of bread, a monopoly charging well above the cost of pins.
+      if (g === "bread" && s.policies.breadPriceCap) target = Math.min(target, s.goods.bread.natural);
+      if (g === "pins" && s.policies.pinMonopoly) target = Math.max(target, s.goods.pins.natural * 1.6);
       // Low gain: a high gain makes prices oscillate in boom-bust cycles that players read as random.
       m.price[g] += (target - m.price[g]) * 0.035;
       // A legal price cap is a ceiling, not a tendency.
-      if (g === "bread" && s.policies.breadPriceCap) m.price[g] = Math.min(m.price[g], nat);
+      if (g === "bread" && s.policies.breadPriceCap) m.price[g] = Math.min(m.price[g], s.goods.bread.natural);
     }
   }
 }
@@ -576,8 +610,19 @@ function month(s: GameState, ctx: Ctx): void {
     s.classes[c].income = s.classes[c].income > 0 ? s.classes[c].income * 0.5 + annual * 0.5 : annual;
   }
   s.mInc = { laborers: 0, merchants: 0, landlords: 0 };
-  // Production statistics: one entry per month, ten years kept.
+  // Output per worker actually achieved this month, by good (for the natural price).
   const st = stat(s);
+  const workersOf = {} as Record<GoodId, number>;
+  for (const b of s.buildings) { const g = BUILDINGS[b.type].good; if (g) workersOf[g] = (workersOf[g] ?? 0) + b.workers; }
+  for (const g of GOOD_IDS) {
+    const w = workersOf[g] ?? 0;
+    if (w > 0.5 && st.made[g] > 0) {
+      const y = (st.made[g] * 12) / w;
+      s.goods[g].perWorker = s.goods[g].perWorker ? s.goods[g].perWorker! + 0.3 * (y - s.goods[g].perWorker!) : y;
+    }
+  }
+  s.labor.ordWage = s.labor.ordWage ? s.labor.ordWage + 0.25 * (s.labor.avgWage - s.labor.ordWage) : s.labor.avgWage;
+  // Production statistics: one entry per month, ten years kept.
   (s.stats ??= []).push({ year: s.year, month: Math.floor((s.day - 1) / 30), made: st.made, used: st.used });
   if (s.stats.length > 120) s.stats.shift();
   s.mStat = { made: zero(), used: zero() };
@@ -646,7 +691,8 @@ function monthlyNatural(s: GameState): void {
   const anchor = 0.5 * (s.labor.avgWage || 1) + 0.5 * s.money.priceLevel;
   s.labor.refWage = (s.labor.refWage || 1) + ((anchor - (s.labor.refWage || 1)) * 0.15) / 12 * 12 / 12;
   const real = realNaturalPrices(s);
-  for (const g of GOOD_IDS) s.goods[g].natural = g === "spices" ? real.spices * s.money.priceLevel : real[g] * (s.labor.refWage || 1);
+  for (const g of GOOD_IDS) s.goods[g].anchor = g === "spices" ? real.spices * s.money.priceLevel : real[g] * (s.labor.refWage || 1);
+  smithNatural(s);
   // National market price: population-weighted average of the town markets.
   const pop = totalPop(s);
   for (const g of GOOD_IDS) {
@@ -660,6 +706,28 @@ function monthlyNatural(s: GameState): void {
     if (g === "bread" && s.policies.breadPriceCap) s.goods[g].price = Math.min(s.goods[g].price, s.goods[g].natural);
     s.goods[g].stock = st;
   }
+}
+
+/**
+ * Smith's natural price, in production order: inputs at their natural prices plus labour at the ordinary wage
+ * (economy-wide, so a monopoly or a cap cannot feed back on itself) over the output a worker actually achieves,
+ * grossed up for ordinary profit and rent (labour's share of value added). Imports cost the world price.
+ */
+function smithNatural(s: GameState): void {
+  const w = s.labor.ordWage || s.labor.avgWage || 1;
+  for (const g of PRODUCTION_ORDER) {
+    const def = GOODS[g];
+    let inputs = 0;
+    for (const [ig, q] of Object.entries(def.inputs) as [GoodId, number][]) inputs += q * (s.goods[ig].natural + (s.goods[ig].carryIn ?? 0));
+    const y = s.goods[g].perWorker;
+    // At the workshop door: inputs + labour at the ordinary wage, with ordinary profit and rent. At market: plus
+    // carriage, and the storehouse keeper's margin (he buys at STOREHOUSE_BUY of the market price).
+    const door = inputs + w / Math.max(0.05, y ?? 0) / SIM.laborShare;
+    s.goods[g].natural = y && y > 0 ? (door + (s.goods[g].carryOut ?? 0)) / STOREHOUSE_BUY : (s.goods[g].anchor ?? s.goods[g].natural);
+  }
+  // Imports: the world price with duties paid, carried in from the port, through the storehouse.
+  const sp = s.goods.spices;
+  sp.natural = (worldPrice(s, "spices") * s.money.priceLevel * (1 + importDuty(s, "spices")) + (sp.carryOut ?? 0)) / STOREHOUSE_BUY;
 }
 
 /** Household and investor demand per market per day, from class incomes (§4.6, Ghazali's tiers). */

@@ -12,7 +12,7 @@ import type { Building, GameState, TurnReport } from "./types.ts";
 export const specMult = (s: number, g?: GoodId) => Math.pow(g ? SPEC_BASE[g] : SIM.specBase, s - 1);
 export const capacity = (level: number) => Math.round(SIM.maxWorkersPerLevel * level) + 2;
 
-const PRODUCTION_ORDER: GoodId[] = ["grain", "wool", "timber", "ore", "bread", "cloth", "tools", "housing", "pins"];
+export const PRODUCTION_ORDER: GoodId[] = ["grain", "wool", "timber", "ore", "bread", "cloth", "tools", "housing", "pins"];
 
 /** Comfort and luxury spending shares by class (§4.6). Necessities are bought first. */
 const SPEND: Record<ClassId, Partial<Record<GoodId, number>>> = {

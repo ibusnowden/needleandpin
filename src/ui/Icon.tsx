@@ -31,6 +31,10 @@ const P: Record<string, string> = {
   play: "M7 5l12 7-12 7z",
   play2: "M4 5l8 7-8 7z M12 5l8 7-8 7z",
   play4: "M3 6l6 6-6 6z M9 6l6 6-6 6z M15 6l6 6-6 6z",
+  alt: "M4 6h16v12H4z M8 14l2.5-5 2.5 5 M8.7 12.6h3.6 M15.5 9v5",
+  zoomIn: "M10.5 4.5a6 6 0 1 0 0 12 6 6 0 0 0 0-12z M15 15l5 5 M10.5 8v5 M8 10.5h5",
+  zoomOut: "M10.5 4.5a6 6 0 1 0 0 12 6 6 0 0 0 0-12z M15 15l5 5 M8 10.5h5",
+  fit: "M4 9V4h5 M15 4h5v5 M20 15v5h-5 M9 20H4v-5",
 };
 
 const FILLED = new Set(["play", "play2", "play4", "skip"]);
